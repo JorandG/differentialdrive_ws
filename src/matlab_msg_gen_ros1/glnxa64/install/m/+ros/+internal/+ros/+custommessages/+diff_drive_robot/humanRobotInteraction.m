@@ -26,4 +26,4 @@ info.MatPath{4} = 'StartFilling';
 info.MatPath{5} = 'FinishFilling';
 info.MatPath{6} = 'StartServing';
 info.MatPath{7} = 'FinishServing';
-info.MatPath{8} = 'confirm';
+info.MatPath{8} = 'Confirm';

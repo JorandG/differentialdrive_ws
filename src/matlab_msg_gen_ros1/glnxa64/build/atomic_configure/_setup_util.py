@@ -1,4 +1,4 @@
-#!/home/nuc1/.matlab/R2023a/ros1/glnxa64/venv/bin/python3
+#!/home/jorand/.matlab/R2023a/ros1/glnxa64/venv/bin/python3
 # -*- coding: utf-8 -*-
 
 # Software License Agreement (BSD License)
@@ -273,7 +273,7 @@ if __name__ == '__main__':
             try:
                 CMAKE_PREFIX_PATH = os.environ['ROS1_INSTALL_DIR'].split(';')
             except:
-                CMAKE_PREFIX_PATH = '/usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1;/usr/local/MATLAB/R2023a/toolbox/ros/mlroscpp/custom_messages;/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install'.split(';')
+                CMAKE_PREFIX_PATH = '/usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1;/usr/local/MATLAB/R2023a/toolbox/ros/mlroscpp/custom_messages;/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install'.split(';')
         else:
             # don't consider any other prefix path than this one
             CMAKE_PREFIX_PATH = []

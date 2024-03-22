@@ -149,8 +149,4 @@ add_custom_command(
                    ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CATKIN_DEVEL_PREFIX}/_ert_rtw/${file_i}
 				   )
 endforeach(file_i)
-<<<<<<< HEAD
-# Generated on Mon Mar 18 15:45:58 2024
-=======
-# Generated on Thu Mar 21 16:34:49 2024
->>>>>>> 95e11d8b27aef3b738036dd411f52d033d04ac77
+# Generated on Fri Mar 22 11:03:08 2024

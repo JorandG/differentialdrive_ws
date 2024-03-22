@@ -1,8 +1,8 @@
-prefix=/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel
+prefix=/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel
 
 Name: diff_drive_robot
 Description: Description of diff_drive_robot
 Version: 0.0.0
-Cflags: -I/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/include -I/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/include
+Cflags: -I/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/include -I/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/include
 Libs: -L${prefix}/lib 
 Requires: message_runtime message_runtime roscpp

@@ -114,9 +114,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
         throw std::invalid_argument("Field 'FinishServing' is wrong type; expected a double.");
     }
     try {
-        //confirm
-        const matlab::data::TypedArray<int32_t> confirm_arr = arr["Confirm"];
-        msg->confirm = confirm_arr[0];
+        //Confirm
+        const matlab::data::TypedArray<int32_t> Confirm_arr = arr["Confirm"];
+        msg->Confirm = Confirm_arr[0];
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'Confirm' is missing.");
     } catch (matlab::Exception&) {
@@ -150,9 +150,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     // FinishServing
     auto currentElement_FinishServing = (msg + ctr)->FinishServing;
     outArray[ctr]["FinishServing"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_FinishServing_type::const_iterator, double>({currentElement_FinishServing.size(),1}, currentElement_FinishServing.begin(), currentElement_FinishServing.end());
-    // confirm
-    auto currentElement_confirm = (msg + ctr)->confirm;
-    outArray[ctr]["Confirm"] = factory.createScalar(currentElement_confirm);
+    // Confirm
+    auto currentElement_Confirm = (msg + ctr)->Confirm;
+    outArray[ctr]["Confirm"] = factory.createScalar(currentElement_Confirm);
     }
     return std::move(outArray);
   } 
