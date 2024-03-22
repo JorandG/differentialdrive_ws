@@ -8,10 +8,11 @@ classdef HumanRobotInteraction < ros.Message
         MessageType = 'diff_drive_robot/HumanRobotInteraction' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = '274af9f6b9a200f779772ba4dac2aa42' % The MD5 Checksum of the message definition
-        PropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' } % List of non-constant message properties
-        ROSPropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' } % List of non-constant ROS message properties
+        MD5Checksum = '2402b372c323854bf168ba5d3851350c' % The MD5 Checksum of the message definition
+        PropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'Confirm' } % List of non-constant message properties
+        ROSPropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'confirm' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
+            '' ...
             '' ...
             '' ...
             '' ...
@@ -30,6 +31,7 @@ classdef HumanRobotInteraction < ros.Message
         FinishFilling
         StartServing
         FinishServing
+        Confirm
     end
     methods
         function set.HumanID(obj, val)
@@ -40,39 +42,75 @@ classdef HumanRobotInteraction < ros.Message
         end
         function set.RobotVelocity(obj, val)
             validClasses = {'numeric'};
-            validAttributes = {'nonempty', 'scalar'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'RobotVelocity');
             obj.RobotVelocity = double(val);
         end
         function set.WaitingTime(obj, val)
             validClasses = {'numeric'};
-            validAttributes = {'nonempty', 'scalar'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'WaitingTime');
             obj.WaitingTime = double(val);
         end
         function set.StartFilling(obj, val)
             validClasses = {'numeric'};
-            validAttributes = {'nonempty', 'scalar'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'StartFilling');
             obj.StartFilling = double(val);
         end
         function set.FinishFilling(obj, val)
             validClasses = {'numeric'};
-            validAttributes = {'nonempty', 'scalar'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'FinishFilling');
             obj.FinishFilling = double(val);
         end
         function set.StartServing(obj, val)
             validClasses = {'numeric'};
-            validAttributes = {'nonempty', 'scalar'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'StartServing');
             obj.StartServing = double(val);
         end
         function set.FinishServing(obj, val)
             validClasses = {'numeric'};
-            validAttributes = {'nonempty', 'scalar'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'FinishServing');
             obj.FinishServing = double(val);
+        end
+        function set.Confirm(obj, val)
+            validClasses = {'numeric'};
+            validAttributes = {'nonempty', 'scalar'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'Confirm');
+            obj.Confirm = int32(val);
         end
     end
     methods (Static, Access = {?matlab.unittest.TestCase, ?ros.Message})

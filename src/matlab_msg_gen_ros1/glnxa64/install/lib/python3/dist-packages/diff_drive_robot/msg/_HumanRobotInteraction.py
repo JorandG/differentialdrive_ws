@@ -8,19 +8,20 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "274af9f6b9a200f779772ba4dac2aa42"
+  _md5sum = "2402b372c323854bf168ba5d3851350c"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
-float64 RobotVelocity
-float64 WaitingTime
-float64 StartFilling
-float64 FinishFilling
-float64 StartServing
-float64 FinishServing
+float64[] RobotVelocity
+float64[] WaitingTime
+float64[] StartFilling
+float64[] FinishFilling
+float64[] StartServing
+float64[] FinishServing
+int32 confirm
 """
-  __slots__ = ['HumanID','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing']
-  _slot_types = ['int32','float64','float64','float64','float64','float64','float64']
+  __slots__ = ['HumanID','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','confirm']
+  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32']
 
   def __init__(self, *args, **kwds):
     """
@@ -30,7 +31,7 @@ float64 FinishServing
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing
+       HumanID,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,confirm
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -42,25 +43,28 @@ float64 FinishServing
       if self.HumanID is None:
         self.HumanID = 0
       if self.RobotVelocity is None:
-        self.RobotVelocity = 0.
+        self.RobotVelocity = []
       if self.WaitingTime is None:
-        self.WaitingTime = 0.
+        self.WaitingTime = []
       if self.StartFilling is None:
-        self.StartFilling = 0.
+        self.StartFilling = []
       if self.FinishFilling is None:
-        self.FinishFilling = 0.
+        self.FinishFilling = []
       if self.StartServing is None:
-        self.StartServing = 0.
+        self.StartServing = []
       if self.FinishServing is None:
-        self.FinishServing = 0.
+        self.FinishServing = []
+      if self.confirm is None:
+        self.confirm = 0
     else:
       self.HumanID = 0
-      self.RobotVelocity = 0.
-      self.WaitingTime = 0.
-      self.StartFilling = 0.
-      self.FinishFilling = 0.
-      self.StartServing = 0.
-      self.FinishServing = 0.
+      self.RobotVelocity = []
+      self.WaitingTime = []
+      self.StartFilling = []
+      self.FinishFilling = []
+      self.StartServing = []
+      self.FinishServing = []
+      self.confirm = 0
 
   def _get_types(self):
     """
@@ -74,8 +78,34 @@ float64 FinishServing
     :param buff: buffer, ``StringIO``
     """
     try:
-      _x = self
-      buff.write(_get_struct_i6d().pack(_x.HumanID, _x.RobotVelocity, _x.WaitingTime, _x.StartFilling, _x.FinishFilling, _x.StartServing, _x.FinishServing))
+      _x = self.HumanID
+      buff.write(_get_struct_i().pack(_x))
+      length = len(self.RobotVelocity)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.RobotVelocity))
+      length = len(self.WaitingTime)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.WaitingTime))
+      length = len(self.StartFilling)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.StartFilling))
+      length = len(self.FinishFilling)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.FinishFilling))
+      length = len(self.StartServing)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.StartServing))
+      length = len(self.FinishServing)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.FinishServing))
+      _x = self.confirm
+      buff.write(_get_struct_i().pack(_x))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -88,10 +118,60 @@ float64 FinishServing
       codecs.lookup_error("rosmsg").msg_type = self._type
     try:
       end = 0
-      _x = self
       start = end
-      end += 52
-      (_x.HumanID, _x.RobotVelocity, _x.WaitingTime, _x.StartFilling, _x.FinishFilling, _x.StartServing, _x.FinishServing,) = _get_struct_i6d().unpack(str[start:end])
+      end += 4
+      (self.HumanID,) = _get_struct_i().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.RobotVelocity = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.WaitingTime = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.StartFilling = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.FinishFilling = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.StartServing = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.FinishServing = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (self.confirm,) = _get_struct_i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -104,8 +184,34 @@ float64 FinishServing
     :param numpy: numpy python module
     """
     try:
-      _x = self
-      buff.write(_get_struct_i6d().pack(_x.HumanID, _x.RobotVelocity, _x.WaitingTime, _x.StartFilling, _x.FinishFilling, _x.StartServing, _x.FinishServing))
+      _x = self.HumanID
+      buff.write(_get_struct_i().pack(_x))
+      length = len(self.RobotVelocity)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.RobotVelocity.tostring())
+      length = len(self.WaitingTime)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.WaitingTime.tostring())
+      length = len(self.StartFilling)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.StartFilling.tostring())
+      length = len(self.FinishFilling)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.FinishFilling.tostring())
+      length = len(self.StartServing)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.StartServing.tostring())
+      length = len(self.FinishServing)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.FinishServing.tostring())
+      _x = self.confirm
+      buff.write(_get_struct_i().pack(_x))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -119,10 +225,60 @@ float64 FinishServing
       codecs.lookup_error("rosmsg").msg_type = self._type
     try:
       end = 0
-      _x = self
       start = end
-      end += 52
-      (_x.HumanID, _x.RobotVelocity, _x.WaitingTime, _x.StartFilling, _x.FinishFilling, _x.StartServing, _x.FinishServing,) = _get_struct_i6d().unpack(str[start:end])
+      end += 4
+      (self.HumanID,) = _get_struct_i().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.RobotVelocity = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.WaitingTime = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.StartFilling = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.FinishFilling = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.StartServing = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.FinishServing = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (self.confirm,) = _get_struct_i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -131,9 +287,9 @@ _struct_I = genpy.struct_I
 def _get_struct_I():
     global _struct_I
     return _struct_I
-_struct_i6d = None
-def _get_struct_i6d():
-    global _struct_i6d
-    if _struct_i6d is None:
-        _struct_i6d = struct.Struct("<i6d")
-    return _struct_i6d
+_struct_i = None
+def _get_struct_i():
+    global _struct_i
+    if _struct_i is None:
+        _struct_i = struct.Struct("<i")
+    return _struct_i
