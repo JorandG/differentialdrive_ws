@@ -8,7 +8,7 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "2402b372c323854bf168ba5d3851350c"
+  _md5sum = "a3487fb54248fa58bf6d4fa71ad8c145"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
@@ -18,9 +18,9 @@ float64[] StartFilling
 float64[] FinishFilling
 float64[] StartServing
 float64[] FinishServing
-int32 confirm
+int32 Confirm
 """
-  __slots__ = ['HumanID','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','confirm']
+  __slots__ = ['HumanID','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','Confirm']
   _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32']
 
   def __init__(self, *args, **kwds):
@@ -31,7 +31,7 @@ int32 confirm
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,confirm
+       HumanID,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,Confirm
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -54,8 +54,8 @@ int32 confirm
         self.StartServing = []
       if self.FinishServing is None:
         self.FinishServing = []
-      if self.confirm is None:
-        self.confirm = 0
+      if self.Confirm is None:
+        self.Confirm = 0
     else:
       self.HumanID = 0
       self.RobotVelocity = []
@@ -64,7 +64,7 @@ int32 confirm
       self.FinishFilling = []
       self.StartServing = []
       self.FinishServing = []
-      self.confirm = 0
+      self.Confirm = 0
 
   def _get_types(self):
     """
@@ -104,7 +104,7 @@ int32 confirm
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.FinishServing))
-      _x = self.confirm
+      _x = self.Confirm
       buff.write(_get_struct_i().pack(_x))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
@@ -171,7 +171,7 @@ int32 confirm
       self.FinishServing = s.unpack(str[start:end])
       start = end
       end += 4
-      (self.confirm,) = _get_struct_i().unpack(str[start:end])
+      (self.Confirm,) = _get_struct_i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -210,7 +210,7 @@ int32 confirm
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.FinishServing.tostring())
-      _x = self.confirm
+      _x = self.Confirm
       buff.write(_get_struct_i().pack(_x))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
@@ -278,7 +278,7 @@ int32 confirm
       self.FinishServing = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
-      (self.confirm,) = _get_struct_i().unpack(str[start:end])
+      (self.Confirm,) = _get_struct_i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill

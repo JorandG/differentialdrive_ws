@@ -8,9 +8,9 @@ classdef HumanRobotInteraction < ros.Message
         MessageType = 'diff_drive_robot/HumanRobotInteraction' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = '2402b372c323854bf168ba5d3851350c' % The MD5 Checksum of the message definition
+        MD5Checksum = 'a3487fb54248fa58bf6d4fa71ad8c145' % The MD5 Checksum of the message definition
         PropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'Confirm' } % List of non-constant message properties
-        ROSPropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'confirm' } % List of non-constant ROS message properties
+        ROSPropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'Confirm' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
             '' ...
             '' ...

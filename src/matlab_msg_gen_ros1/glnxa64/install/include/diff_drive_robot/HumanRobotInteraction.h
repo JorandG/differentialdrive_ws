@@ -31,7 +31,7 @@ struct HumanRobotInteraction_
     , FinishFilling()
     , StartServing()
     , FinishServing()
-    , confirm(0)  {
+    , Confirm(0)  {
     }
   HumanRobotInteraction_(const ContainerAllocator& _alloc)
     : HumanID(0)
@@ -41,7 +41,7 @@ struct HumanRobotInteraction_
     , FinishFilling(_alloc)
     , StartServing(_alloc)
     , FinishServing(_alloc)
-    , confirm(0)  {
+    , Confirm(0)  {
   (void)_alloc;
     }
 
@@ -68,8 +68,8 @@ struct HumanRobotInteraction_
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _FinishServing_type;
   _FinishServing_type FinishServing;
 
-   typedef int32_t _confirm_type;
-  _confirm_type confirm;
+   typedef int32_t _Confirm_type;
+  _Confirm_type Confirm;
 
 
 
@@ -107,7 +107,7 @@ bool operator==(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAlloca
     lhs.FinishFilling == rhs.FinishFilling &&
     lhs.StartServing == rhs.StartServing &&
     lhs.FinishServing == rhs.FinishServing &&
-    lhs.confirm == rhs.confirm;
+    lhs.Confirm == rhs.Confirm;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -164,12 +164,12 @@ struct MD5Sum< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "2402b372c323854bf168ba5d3851350c";
+    return "a3487fb54248fa58bf6d4fa71ad8c145";
   }
 
   static const char* value(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x2402b372c323854bULL;
-  static const uint64_t static_value2 = 0xf168ba5d3851350cULL;
+  static const uint64_t static_value1 = 0xa3487fb54248fa58ULL;
+  static const uint64_t static_value2 = 0xbf6d4fa71ad8c145ULL;
 };
 
 template<class ContainerAllocator>
@@ -195,7 +195,7 @@ struct Definition< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator
 "float64[] FinishFilling\n"
 "float64[] StartServing\n"
 "float64[] FinishServing\n"
-"int32 confirm\n"
+"int32 Confirm\n"
 ;
   }
 
@@ -221,7 +221,7 @@ namespace serialization
       stream.next(m.FinishFilling);
       stream.next(m.StartServing);
       stream.next(m.FinishServing);
-      stream.next(m.confirm);
+      stream.next(m.Confirm);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -278,8 +278,8 @@ struct Printer< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
       s << indent << "  FinishServing[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.FinishServing[i]);
     }
-    s << indent << "confirm: ";
-    Printer<int32_t>::stream(s, indent + "  ", v.confirm);
+    s << indent << "Confirm: ";
+    Printer<int32_t>::stream(s, indent + "  ", v.Confirm);
   }
 };
 
