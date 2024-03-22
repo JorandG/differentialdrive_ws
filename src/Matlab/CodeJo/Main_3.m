@@ -22,9 +22,9 @@ end
 
 % ----------------------------- Global Parameters ---------------------------- %
 global num_robots;
-num_robots = 2;
+num_robots = 1;
 
-simulation = 1;
+simulation = 0;
 % ---------------------------------------------------------------------------- %
 
 % ------------------------------------ ROS ----------------------------------- %
@@ -179,8 +179,13 @@ while ros.internal.Global.isNodeActive
         % ---------------------------------------------------------------------------- %
 
         % ----------------------------------- Pose ----------------------------------- %
-        robot{i}.odometry.Data = robot{i}.odometry.Subscriber.LatestMessage;
-        robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
+        if simulation == 1
+            robot{i}.odometry.Data = robot{i}.odometry.Subscriber.LatestMessage;
+            robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
+        else
+            robot{i}.odometry.Data = receive(robot{i}.odometry.Subscriber,1);
+            robot{i}.pose = odometry_robot_pose_real(robot{i}.odometry.Data);
+        end
         % ---------------------------------------------------------------------------- %
 
         % ----------------------- Trapezoidal Velocity Profile ----------------------- %
@@ -453,7 +458,7 @@ function odometry_robot_pose_real = odometry_robot_pose_real(poseStampedMsg)
     % ---------------------------------------------------------------------------- %
     %                                    Return                                    %
     % ---------------------------------------------------------------------------- %
-    odometry_robot_pose_real = [x,y,RPY(1,3)];
+    odometry_robot_pose_real = [x,y,RPY(1,3)]
     % ---------------------------------------------------------------------------- %
 end
 
