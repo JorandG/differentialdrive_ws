@@ -25,21 +25,23 @@ struct HumanRobotInteraction_
 
   HumanRobotInteraction_()
     : HumanID(0)
-    , RobotVelocity(0.0)
-    , WaitingTime(0.0)
-    , StartFilling(0.0)
-    , FinishFilling(0.0)
-    , StartServing(0.0)
-    , FinishServing(0.0)  {
+    , RobotVelocity()
+    , WaitingTime()
+    , StartFilling()
+    , FinishFilling()
+    , StartServing()
+    , FinishServing()
+    , confirm(0)  {
     }
   HumanRobotInteraction_(const ContainerAllocator& _alloc)
     : HumanID(0)
-    , RobotVelocity(0.0)
-    , WaitingTime(0.0)
-    , StartFilling(0.0)
-    , FinishFilling(0.0)
-    , StartServing(0.0)
-    , FinishServing(0.0)  {
+    , RobotVelocity(_alloc)
+    , WaitingTime(_alloc)
+    , StartFilling(_alloc)
+    , FinishFilling(_alloc)
+    , StartServing(_alloc)
+    , FinishServing(_alloc)
+    , confirm(0)  {
   (void)_alloc;
     }
 
@@ -48,23 +50,26 @@ struct HumanRobotInteraction_
    typedef int32_t _HumanID_type;
   _HumanID_type HumanID;
 
-   typedef double _RobotVelocity_type;
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _RobotVelocity_type;
   _RobotVelocity_type RobotVelocity;
 
-   typedef double _WaitingTime_type;
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _WaitingTime_type;
   _WaitingTime_type WaitingTime;
 
-   typedef double _StartFilling_type;
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _StartFilling_type;
   _StartFilling_type StartFilling;
 
-   typedef double _FinishFilling_type;
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _FinishFilling_type;
   _FinishFilling_type FinishFilling;
 
-   typedef double _StartServing_type;
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _StartServing_type;
   _StartServing_type StartServing;
 
-   typedef double _FinishServing_type;
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _FinishServing_type;
   _FinishServing_type FinishServing;
+
+   typedef int32_t _confirm_type;
+  _confirm_type confirm;
 
 
 
@@ -101,7 +106,8 @@ bool operator==(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAlloca
     lhs.StartFilling == rhs.StartFilling &&
     lhs.FinishFilling == rhs.FinishFilling &&
     lhs.StartServing == rhs.StartServing &&
-    lhs.FinishServing == rhs.FinishServing;
+    lhs.FinishServing == rhs.FinishServing &&
+    lhs.confirm == rhs.confirm;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -134,12 +140,12 @@ struct IsMessage< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator>
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> const>
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
@@ -158,12 +164,12 @@ struct MD5Sum< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "274af9f6b9a200f779772ba4dac2aa42";
+    return "2402b372c323854bf168ba5d3851350c";
   }
 
   static const char* value(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x274af9f6b9a200f7ULL;
-  static const uint64_t static_value2 = 0x79772ba4dac2aa42ULL;
+  static const uint64_t static_value1 = 0x2402b372c323854bULL;
+  static const uint64_t static_value2 = 0xf168ba5d3851350cULL;
 };
 
 template<class ContainerAllocator>
@@ -183,12 +189,13 @@ struct Definition< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator
   static const char* value()
   {
     return "int32 HumanID\n"
-"float64 RobotVelocity\n"
-"float64 WaitingTime\n"
-"float64 StartFilling\n"
-"float64 FinishFilling\n"
-"float64 StartServing\n"
-"float64 FinishServing\n"
+"float64[] RobotVelocity\n"
+"float64[] WaitingTime\n"
+"float64[] StartFilling\n"
+"float64[] FinishFilling\n"
+"float64[] StartServing\n"
+"float64[] FinishServing\n"
+"int32 confirm\n"
 ;
   }
 
@@ -214,6 +221,7 @@ namespace serialization
       stream.next(m.FinishFilling);
       stream.next(m.StartServing);
       stream.next(m.FinishServing);
+      stream.next(m.confirm);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -234,18 +242,44 @@ struct Printer< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
   {
     s << indent << "HumanID: ";
     Printer<int32_t>::stream(s, indent + "  ", v.HumanID);
-    s << indent << "RobotVelocity: ";
-    Printer<double>::stream(s, indent + "  ", v.RobotVelocity);
-    s << indent << "WaitingTime: ";
-    Printer<double>::stream(s, indent + "  ", v.WaitingTime);
-    s << indent << "StartFilling: ";
-    Printer<double>::stream(s, indent + "  ", v.StartFilling);
-    s << indent << "FinishFilling: ";
-    Printer<double>::stream(s, indent + "  ", v.FinishFilling);
-    s << indent << "StartServing: ";
-    Printer<double>::stream(s, indent + "  ", v.StartServing);
-    s << indent << "FinishServing: ";
-    Printer<double>::stream(s, indent + "  ", v.FinishServing);
+    s << indent << "RobotVelocity[]" << std::endl;
+    for (size_t i = 0; i < v.RobotVelocity.size(); ++i)
+    {
+      s << indent << "  RobotVelocity[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.RobotVelocity[i]);
+    }
+    s << indent << "WaitingTime[]" << std::endl;
+    for (size_t i = 0; i < v.WaitingTime.size(); ++i)
+    {
+      s << indent << "  WaitingTime[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.WaitingTime[i]);
+    }
+    s << indent << "StartFilling[]" << std::endl;
+    for (size_t i = 0; i < v.StartFilling.size(); ++i)
+    {
+      s << indent << "  StartFilling[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.StartFilling[i]);
+    }
+    s << indent << "FinishFilling[]" << std::endl;
+    for (size_t i = 0; i < v.FinishFilling.size(); ++i)
+    {
+      s << indent << "  FinishFilling[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.FinishFilling[i]);
+    }
+    s << indent << "StartServing[]" << std::endl;
+    for (size_t i = 0; i < v.StartServing.size(); ++i)
+    {
+      s << indent << "  StartServing[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.StartServing[i]);
+    }
+    s << indent << "FinishServing[]" << std::endl;
+    for (size_t i = 0; i < v.FinishServing.size(); ++i)
+    {
+      s << indent << "  FinishServing[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.FinishServing[i]);
+    }
+    s << indent << "confirm: ";
+    Printer<int32_t>::stream(s, indent + "  ", v.confirm);
   }
 };
 

@@ -50,7 +50,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     try {
         //RobotVelocity
         const matlab::data::TypedArray<double> RobotVelocity_arr = arr["RobotVelocity"];
-        msg->RobotVelocity = RobotVelocity_arr[0];
+        size_t nelem = RobotVelocity_arr.getNumberOfElements();
+        	msg->RobotVelocity.resize(nelem);
+        	std::copy(RobotVelocity_arr.begin(), RobotVelocity_arr.begin()+nelem, msg->RobotVelocity.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'RobotVelocity' is missing.");
     } catch (matlab::Exception&) {
@@ -59,7 +61,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     try {
         //WaitingTime
         const matlab::data::TypedArray<double> WaitingTime_arr = arr["WaitingTime"];
-        msg->WaitingTime = WaitingTime_arr[0];
+        size_t nelem = WaitingTime_arr.getNumberOfElements();
+        	msg->WaitingTime.resize(nelem);
+        	std::copy(WaitingTime_arr.begin(), WaitingTime_arr.begin()+nelem, msg->WaitingTime.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'WaitingTime' is missing.");
     } catch (matlab::Exception&) {
@@ -68,7 +72,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     try {
         //StartFilling
         const matlab::data::TypedArray<double> StartFilling_arr = arr["StartFilling"];
-        msg->StartFilling = StartFilling_arr[0];
+        size_t nelem = StartFilling_arr.getNumberOfElements();
+        	msg->StartFilling.resize(nelem);
+        	std::copy(StartFilling_arr.begin(), StartFilling_arr.begin()+nelem, msg->StartFilling.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'StartFilling' is missing.");
     } catch (matlab::Exception&) {
@@ -77,7 +83,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     try {
         //FinishFilling
         const matlab::data::TypedArray<double> FinishFilling_arr = arr["FinishFilling"];
-        msg->FinishFilling = FinishFilling_arr[0];
+        size_t nelem = FinishFilling_arr.getNumberOfElements();
+        	msg->FinishFilling.resize(nelem);
+        	std::copy(FinishFilling_arr.begin(), FinishFilling_arr.begin()+nelem, msg->FinishFilling.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'FinishFilling' is missing.");
     } catch (matlab::Exception&) {
@@ -86,7 +94,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     try {
         //StartServing
         const matlab::data::TypedArray<double> StartServing_arr = arr["StartServing"];
-        msg->StartServing = StartServing_arr[0];
+        size_t nelem = StartServing_arr.getNumberOfElements();
+        	msg->StartServing.resize(nelem);
+        	std::copy(StartServing_arr.begin(), StartServing_arr.begin()+nelem, msg->StartServing.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'StartServing' is missing.");
     } catch (matlab::Exception&) {
@@ -95,17 +105,28 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     try {
         //FinishServing
         const matlab::data::TypedArray<double> FinishServing_arr = arr["FinishServing"];
-        msg->FinishServing = FinishServing_arr[0];
+        size_t nelem = FinishServing_arr.getNumberOfElements();
+        	msg->FinishServing.resize(nelem);
+        	std::copy(FinishServing_arr.begin(), FinishServing_arr.begin()+nelem, msg->FinishServing.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'FinishServing' is missing.");
     } catch (matlab::Exception&) {
         throw std::invalid_argument("Field 'FinishServing' is wrong type; expected a double.");
     }
+    try {
+        //confirm
+        const matlab::data::TypedArray<int32_t> confirm_arr = arr["Confirm"];
+        msg->confirm = confirm_arr[0];
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'Confirm' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'Confirm' is wrong type; expected a int32.");
+    }
   }
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_HumanRobotInteraction_common::get_arr(MDFactory_T& factory, const diff_drive_robot::HumanRobotInteraction* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotVelocity","WaitingTime","StartFilling","FinishFilling","StartServing","FinishServing"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotVelocity","WaitingTime","StartFilling","FinishFilling","StartServing","FinishServing","Confirm"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/HumanRobotInteraction");
     // HumanID
@@ -113,22 +134,25 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     outArray[ctr]["HumanID"] = factory.createScalar(currentElement_HumanID);
     // RobotVelocity
     auto currentElement_RobotVelocity = (msg + ctr)->RobotVelocity;
-    outArray[ctr]["RobotVelocity"] = factory.createScalar(currentElement_RobotVelocity);
+    outArray[ctr]["RobotVelocity"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotVelocity_type::const_iterator, double>({currentElement_RobotVelocity.size(),1}, currentElement_RobotVelocity.begin(), currentElement_RobotVelocity.end());
     // WaitingTime
     auto currentElement_WaitingTime = (msg + ctr)->WaitingTime;
-    outArray[ctr]["WaitingTime"] = factory.createScalar(currentElement_WaitingTime);
+    outArray[ctr]["WaitingTime"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_WaitingTime_type::const_iterator, double>({currentElement_WaitingTime.size(),1}, currentElement_WaitingTime.begin(), currentElement_WaitingTime.end());
     // StartFilling
     auto currentElement_StartFilling = (msg + ctr)->StartFilling;
-    outArray[ctr]["StartFilling"] = factory.createScalar(currentElement_StartFilling);
+    outArray[ctr]["StartFilling"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_StartFilling_type::const_iterator, double>({currentElement_StartFilling.size(),1}, currentElement_StartFilling.begin(), currentElement_StartFilling.end());
     // FinishFilling
     auto currentElement_FinishFilling = (msg + ctr)->FinishFilling;
-    outArray[ctr]["FinishFilling"] = factory.createScalar(currentElement_FinishFilling);
+    outArray[ctr]["FinishFilling"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_FinishFilling_type::const_iterator, double>({currentElement_FinishFilling.size(),1}, currentElement_FinishFilling.begin(), currentElement_FinishFilling.end());
     // StartServing
     auto currentElement_StartServing = (msg + ctr)->StartServing;
-    outArray[ctr]["StartServing"] = factory.createScalar(currentElement_StartServing);
+    outArray[ctr]["StartServing"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_StartServing_type::const_iterator, double>({currentElement_StartServing.size(),1}, currentElement_StartServing.begin(), currentElement_StartServing.end());
     // FinishServing
     auto currentElement_FinishServing = (msg + ctr)->FinishServing;
-    outArray[ctr]["FinishServing"] = factory.createScalar(currentElement_FinishServing);
+    outArray[ctr]["FinishServing"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_FinishServing_type::const_iterator, double>({currentElement_FinishServing.size(),1}, currentElement_FinishServing.begin(), currentElement_FinishServing.end());
+    // confirm
+    auto currentElement_confirm = (msg + ctr)->confirm;
+    outArray[ctr]["Confirm"] = factory.createScalar(currentElement_confirm);
     }
     return std::move(outArray);
   } 
