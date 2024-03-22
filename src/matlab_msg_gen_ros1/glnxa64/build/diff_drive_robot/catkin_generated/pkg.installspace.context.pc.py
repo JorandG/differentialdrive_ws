@@ -4,5 +4,5 @@ PROJECT_PKG_CONFIG_INCLUDE_DIRS = "${prefix}/include".split(';') if "${prefix}/i
 PROJECT_CATKIN_DEPENDS = "message_runtime;message_runtime;roscpp".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "diff_drive_robot"
-PROJECT_SPACE_DIR = "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install"
+PROJECT_SPACE_DIR = "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install"
 PROJECT_VERSION = "0.0.0"

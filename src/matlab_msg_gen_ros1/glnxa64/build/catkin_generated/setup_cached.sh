@@ -7,8 +7,16 @@
 # new environment variables
 
 # modified environment variables
+<<<<<<< HEAD
+export CMAKE_PREFIX_PATH="/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH="/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PYTHONPATH="/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages:$PYTHONPATH"
+export ROS_PACKAGE_PATH="/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src:$ROS_PACKAGE_PATH"
+=======
 export CMAKE_PREFIX_PATH="/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel:$CMAKE_PREFIX_PATH"
 export LD_LIBRARY_PATH="/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib:$LD_LIBRARY_PATH"
 export PKG_CONFIG_PATH="/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PYTHONPATH="/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages:$PYTHONPATH"
 export ROS_PACKAGE_PATH="/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src:$ROS_PACKAGE_PATH"
+>>>>>>> 95e11d8b27aef3b738036dd411f52d033d04ac77
