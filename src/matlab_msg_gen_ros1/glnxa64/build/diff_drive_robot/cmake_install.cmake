@@ -1,8 +1,8 @@
-# Install script for directory: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot
+# Install script for directory: /home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install")
+  set(CMAKE_INSTALL_PREFIX "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -43,50 +43,50 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot/msg" TYPE FILE FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/HumanRobotInteraction.msg")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot/msg" TYPE FILE FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/HumanRobotInteraction.msg")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot/cmake" TYPE FILE FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robot-msg-paths.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot/cmake" TYPE FILE FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robot-msg-paths.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/include/diff_drive_robot")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/include/diff_drive_robot")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  execute_process(COMMAND "/home/jorand/.matlab/R2023a/ros1/glnxa64/venv/bin/python3" -m compileall "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages/diff_drive_robot")
+  execute_process(COMMAND "/home/nuc1/.matlab/R2023a/ros1/glnxa64/venv/bin/python3" -m compileall "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages/diff_drive_robot")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages/diff_drive_robot")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages/diff_drive_robot")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robot.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robot.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot/cmake" TYPE FILE FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robot-msg-extras.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot/cmake" TYPE FILE FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robot-msg-extras.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot/cmake" TYPE FILE FILES
-    "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robotConfig.cmake"
-    "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robotConfig-version.cmake"
+    "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robotConfig.cmake"
+    "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot/catkin_generated/installspace/diff_drive_robotConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot" TYPE FILE FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot" TYPE FILE FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/package.xml")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/include/")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/include/")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/libdiff_drive_robot_matlab.so")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/libdiff_drive_robot_matlab.so")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libdiff_drive_robot_matlab.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libdiff_drive_robot_matlab.so")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -99,6 +99,6 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/m/" TYPE DIRECTORY FILES "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/m/" FILES_MATCHING REGEX "/[^/]*\\.m$")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/m/" TYPE DIRECTORY FILES "/home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/m/" FILES_MATCHING REGEX "/[^/]*\\.m$")
 endif()
 
