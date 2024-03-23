@@ -28,12 +28,12 @@
     </inertial>
     <visual>
       <geometry>
-        <box size="0.3 0.2 0.1"/>
+        <cylinder length="0.03" radius="0.17"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <box size="0.3 0.2 0.1"/>
+        <cylinder length="0.03" radius="0.17"/>
       </geometry>
     </collision>
   </link>
@@ -52,13 +52,13 @@
     <visual>
       <origin rpy="1.57079632679 0 0 " xyz="0 0 0"/>
       <geometry>
-        <cylinder length="0.05" radius="0.07"/>
+        <cylinder length="0.02" radius="0.035"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="1.57079632679 0 0 " xyz="0 0 0"/>
       <geometry>
-        <cylinder length="0.05" radius="0.07"/>
+        <cylinder length="0.02" radius="0.035"/>
       </geometry>
     </collision>
   </link>
@@ -82,13 +82,13 @@
     <visual>
       <origin rpy="1.57079632679 0 0 " xyz="0 0 0"/>
       <geometry>
-        <cylinder length="0.05" radius="0.07"/>
+        <cylinder length="0.02" radius="0.035"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="1.57079632679 0 0 " xyz="0 0 0"/>
       <geometry>
-        <cylinder length="0.05" radius="0.07"/>
+        <cylinder length="0.02" radius="0.035"/>
       </geometry>
     </collision>
   </link>
@@ -103,8 +103,8 @@
     <turnGravityOff>false</turnGravityOff>
   </gazebo>
   
-  <!-- Caster Wheel -->
-  <link name="caster_wheel">
+  <!-- Caster Wheels -->
+  <link name="front_caster_wheel">
     <inertial>
       <mass value="0.01"/>
       <inertia ixx="0.00005" ixy="0" ixz="0" iyy="0.00005" iyz="0" izz="0.00005"/>
@@ -121,7 +121,34 @@
     </collision>
   </link>
 
-  <gazebo reference="caster_wheel">
+  <gazebo reference="front_caster_wheel">
+    <mu1 value="0.1"/>
+    <mu2 value="0.1"/>
+    <kp value="10000000.0"/>
+    <kd value="1000.0"/>
+    <fdir1 value="1 0 0"/>
+    <material>Gazebo/DarkGrey</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+  <link name="rear_caster_wheel">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.00005" ixy="0" ixz="0" iyy="0.00005" iyz="0" izz="0.00005"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="rear_caster_wheel">
     <mu1 value="0.1"/>
     <mu2 value="0.1"/>
     <kp value="10000000.0"/>
@@ -135,21 +162,27 @@
   <joint name="right_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
-    <origin xyz="-0.1 -0.1 0" rpy="0 0 0"/>
+    <origin xyz="0.0 -0.11 -0.01" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
 
   <joint name="left_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="left_wheel"/>
-    <origin xyz="-0.1 0.1 0" rpy="0 0 0"/>
+    <origin xyz="0.0 0.11 -0.01" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
   </joint>
 
-  <joint name="caster_wheel_joint" type="fixed">
+  <joint name="front_caster_wheel_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="caster_wheel"/>
-    <origin xyz="0.1 0 -0.05" rpy="0 0 0"/>
+    <child link="front_caster_wheel"/>
+    <origin xyz="0.08 0 -0.025" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="rear_caster_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="rear_caster_wheel"/>
+    <origin xyz="-0.08 0 -0.025" rpy="0 0 0"/>
   </joint>
 
   <!-- Gazebo Plugins for Differential Drive -->

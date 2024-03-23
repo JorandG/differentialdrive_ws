@@ -39,14 +39,6 @@ for i=1:num_robots
     robot{i}.odometry.Data = receive(robot{i}.odometry.Subscriber,1);
 end
 
-% robot{1}.velocities_publisher = rospublisher('/nuc1/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
-% robot{1}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot1/pose', 'geometry_msgs/PoseStamped');
-% robot{1}.odometry.Data = receive(robot{1}.odometry.Subscriber,1);
-% 
-% robot{2}.velocities_publisher = rospublisher('/nuc3/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
-% robot{2}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot3/pose', 'geometry_msgs/PoseStamped');
-% robot{2}.odometry.Data = receive(robot{2}.odometry.Subscriber,1);
-
 if simulation == 1
     gazeboModelStates.Subscriber = rossubscriber('/gazebo/model_states', 'gazebo_msgs/ModelStates');
     gazeboModelStates.Data = receive(gazeboModelStates.Subscriber);
@@ -55,37 +47,62 @@ end
 
 % ----------------------------------- Robot ---------------------------------- %
 for i=1:num_robots
+    % ----------------------------------- Name ----------------------------------- %
     robot{i}.name = sprintf('diff_drive_robot%d', i);
+    % ---------------------------------------------------------------------------- %
+
+    % ----------------------------------- Index ---------------------------------- %
     if simulation == 1
         robot{i}.index = find(strcmp(gazeboModelStates.Data.Name, robot{i}.name)); % returns the linear indices corresponding to the nonzero entries of the array
     else
         robot{i}.index = i;
     end
+    % ---------------------------------------------------------------------------- %
+
+    % ---------------------------- Home Configuration ---------------------------- %
+    if simulation == 1
+        robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
+    else
+        robot{i}.pose = odometry_robot_pose_real(robot{i}.odometry.Data);
+    end
+
+    robot{i}.home_configuration = robot{i}.pose(1,:);
+    home_configurations(i,:) = robot{i}.home_configuration(1,:);
+    % ---------------------------------------------------------------------------- %
+
 end
 
-distanceThreshold = 0.1;
+% distanceThreshold = 0.1;
 % ---------------------------------------------------------------------------- %
 
 % ----------------------------------- Path ----------------------------------- %
-warehouse_positions = [-0.7, 0.1; -0.8, 0.8]; % Initial Location
-warehouse_orientation = 0.0; % Initial Orientation of the Robot (The robot orientation is the angle between the robot heading and the positive X-axis, measured counterclockwise).
+% warehouse_positions = [-1.00, -0.5; 0, 0.5]; % Initial Location
+% warehouse_orientation = 0.0; % Initial Orientation of the Robot (The robot orientation is the angle between the robot heading and the positive X-axis, measured counterclockwise).
 
-desired_positions = [1.3, 1.8; 0.8, 2.0];
-%desired_positions = [2.4, 3.8; 2.0, 3.0];
+desired_positions = [1.7, 2.5; 1.0, 2.3];
+%desired_positions = [1.3, 1.8; 0.8, 2.0]; %positions for the lab testing
 
-
-desired_timing = [30; 50];
+desired_timing = [40; 40];
 
 for i=1:num_robots
-    robot{i}.home_position = warehouse_positions(i,:);
-    robot{i}.waypoints.positions = [desired_positions(i,1), robot{i}.home_position(1,2); desired_positions(i,:); desired_positions(i,1), robot{i}.home_position(1,2);warehouse_positions(i,:)];
-    robot{i}.waypoints.orientations = [0; pi/2.0; -pi/2.0; pi]
+    % robot{i}.home_position = warehouse_positions(i,:);
+    % robot{i}.waypoints.positions = [desired_positions(i,1), robot{i}.home_position(1,2); desired_positions(i,:); desired_positions(i,1), robot{i}.home_position(1,2);warehouse_positions(i,:)];
+    % robot{i}.waypoints.orientations = [0; pi/2.0; -pi/2.0; pi];
+
+    robot{i}.waypoints.positions = [desired_positions(i,1), robot{i}.home_configuration(1,2); desired_positions(i,:); desired_positions(i,1), robot{i}.home_configuration(1,2); robot{i}.home_configuration(1,1:2)];
+    robot{i}.waypoints.orientations = [0.0; pi/2.0; -pi/2.0; pi];
+
     robot{i}.waypoints.times = [20.0;20.0;20.0;20.0];
 
-    robot{i}.goal.initial_position =  warehouse_positions(i,:);
-    robot{i}.goal.initial_orientation = 0;
+    % robot{i}.goal.initial_position =  warehouse_positions(i,:);
+    % robot{i}.goal.initial_orientation = 0;
+
+    robot{i}.goal.initial_position =  robot{i}.home_configuration(1,1:2);
+    robot{i}.goal.initial_orientation = robot{i}.home_configuration(1,3);
+
     robot{i}.goal.final_position = robot{i}.waypoints.positions(1,:);
-    robot{i}.goal.final_orientation = 0;
+    robot{i}.goal.final_orientation = robot{i}.waypoints.orientations(1,:);
+
     robot{i}.goal.displacement = robot{i}.goal.final_position - robot{i}.goal.initial_position;
     robot{i}.goal.duration = robot{i}.waypoints.times(1,1);
     robot{i}.goal.final_waypoint_reached = 0;
@@ -122,6 +139,8 @@ for i=1:num_robots
 
     robot{i}.controller.b = 0.06;  % Control point
 
+    robot{i}.controller.distance_threshold = 0.1;
+
     robot{i}.controller.k1 = 1.0; % First Gain
     robot{i}.controller.k2 = 1; % Second Gain
     robot{i}.controller.k3 = 1; % Second Gain
@@ -129,15 +148,15 @@ end
 % ---------------------------------------------------------------------------- %
 
 
-% ----------------------------------- Pose ----------------------------------- %
-for i=1:num_robots
-    if simulation == 1
-        robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
-    else
-        robot{i}.pose = odometry_robot_pose_real(robot{i}.odometry.Data);
-    end
-end
-% ---------------------------------------------------------------------------- %
+% % ----------------------------------- Pose ----------------------------------- %
+% for i=1:num_robots
+%     if simulation == 1
+%         robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
+%     else
+%         robot{i}.pose = odometry_robot_pose_real(robot{i}.odometry.Data);
+%     end
+% end
+% % ---------------------------------------------------------------------------- %
 
 % ----------------------------------- State ---------------------------------- %
 for i=1:num_robots
@@ -158,8 +177,8 @@ ylabel('Y (m)');
 
 for i=1:num_robots
     plot(robot{i}.waypoints.positions(:,1), robot{i}.waypoints.positions(:,2), '-o', 'LineWidth', 2);
-    xlim([min([warehouse_positions(:,1),desired_positions(:,1)],[],'all') - 1, max([warehouse_positions(:,1),desired_positions(:,1)],[],'all') + 1]);
-    ylim([min([warehouse_positions(:,2),desired_positions(:,2)],[],'all') - 1, max([warehouse_positions(:,2),desired_positions(:,2)],[],'all') + 1]);
+    xlim([min([home_configurations(:,1),desired_positions(:,1)],[],'all') - 1, max([home_configurations(:,1),desired_positions(:,1)],[],'all') + 1]);
+    ylim([min([home_configurations(:,2),desired_positions(:,2)],[],'all') - 1, max([home_configurations(:,2),desired_positions(:,2)],[],'all') + 1]);
 end
 % ---------------------------------------------------------------------------- %
 
@@ -278,7 +297,8 @@ while ros.internal.Global.isNodeActive
         % ---------------------------------------------------------------------------- %
 
         % ----------------------------------- Check ---------------------------------- %
-        if elapsed_time >= (robot{i}.goal.duration + 5)
+        if ((elapsed_time >= robot{i}.goal.duration) && (norm([y_1d y_2d] - [y_1 y_2]) <= robot{i}.controller.distance_threshold))
+
             % -------------------------------- Velocities -------------------------------- %
             robot{i}.linearVelocity = 0.0;
             robot{i}.angularVelocity = 0.0;
@@ -447,8 +467,8 @@ function odometry_robot_pose_real = odometry_robot_pose_real(poseStampedMsg)
     % ---------------------------------------------------------------------------- %
 
     % --------------------------------- Position --------------------------------- %
-    x = -poseStampedMsg.Pose.Position.X;
-    y = -poseStampedMsg.Pose.Position.Y;
+    x = poseStampedMsg.Pose.Position.X;
+    y = poseStampedMsg.Pose.Position.Y;
     % ---------------------------------------------------------------------------- %
     
 
@@ -468,7 +488,7 @@ function odometry_robot_pose_real = odometry_robot_pose_real(poseStampedMsg)
     % ---------------------------------------------------------------------------- %
     %                                    Return                                    %
     % ---------------------------------------------------------------------------- %
-    odometry_robot_pose_real = [x,y,RPY(1,3)]
+    odometry_robot_pose_real = [x,y,RPY(1,3)];
     % ---------------------------------------------------------------------------- %
 end
 
