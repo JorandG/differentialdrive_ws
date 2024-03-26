@@ -7,12 +7,13 @@ clc;
 clear;
 clear global;
 simulation = 0;
-nuc1nuc3 = 0;
+nuc1nuc3 = 1;
 % ---------------------------------------------------------------------------- %
 
 % ---------------------------------------------------------------------------- %
 %                                  Connection                                  %
 % ---------------------------------------------------------------------------- %
+
 if ros.internal.Global.isNodeActive == 0
     if simulation == 1
         setenv('ROS_HOSTNAME','localhost')
@@ -29,8 +30,13 @@ end
 % ---------------------------------------------------------------------------- %
 
 % ----------------------------- Global Parameters ---------------------------- %
-global num_robots;
-num_robots = 1;
+num_robots = 2;
+warehouse_configurations = [-0.9, 0.1, 0.0; -1, 0.8, 0.0]; % (x, y, theta); The theta parameter describes the orientation of the Robot (The robot orientation is the angle between the robot heading and the positive X-axis, measured counterclockwise).
+distanceThreshold = 10.0;
+obstacleAvoidanceThreshold = 1.0;
+%desired_positions = [1.5, 2.5; 1.0, 2.0]; %(x,y)
+desired_positions = [1.3, 1.8; 0.8, 2.0];
+desired_timing = [40; 40];
 % ---------------------------------------------------------------------------- %
 
 % ------------------------------------ ROS ----------------------------------- %
@@ -77,45 +83,39 @@ for i=1:num_robots
     % ---------------------------------------------------------------------------- %
 
     % ---------------------------- Home Configuration ---------------------------- %
+    robot{i}.home_configuration = warehouse_configurations(i,:);
+    % ---------------------------------------------------------------------------- %
+end
+% ---------------------------------------------------------------------------- %
+
+% ----------------------------------- Pose ----------------------------------- %
+for i=1:num_robots
     if simulation == 1
         robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
     else
         robot{i}.pose = odometry_robot_pose_real(robot{i}.odometry.Data);
     end
-
-    robot{i}.home_configuration = robot{i}.pose(1,:);
-    home_configurations(i,:) = robot{i}.home_configuration(1,:);
-    % ---------------------------------------------------------------------------- %
-
 end
-
-% distanceThreshold = 0.1;
 % ---------------------------------------------------------------------------- %
 
 % ----------------------------------- Path ----------------------------------- %
-% warehouse_positions = [-1.00, -0.5; 0, 0.5]; % Initial Location
-% warehouse_orientation = 0.0; % Initial Orientation of the Robot (The robot orientation is the angle between the robot heading and the positive X-axis, measured counterclockwise).
-
-desired_positions = [1.7, 2.5; 1.0, 2.3];
-%desired_positions = [1.3, 1.8; 0.8, 2.0]; %positions for the lab testing
-
-desired_timing = [40; 40];
-
 for i=1:num_robots
-    % robot{i}.home_position = warehouse_positions(i,:);
-    % robot{i}.waypoints.positions = [desired_positions(i,1), robot{i}.home_position(1,2); desired_positions(i,:); desired_positions(i,1), robot{i}.home_position(1,2);warehouse_positions(i,:)];
-    % robot{i}.waypoints.orientations = [0; pi/2.0; -pi/2.0; pi];
-
+    % --------------------------------- Positions -------------------------------- %
     robot{i}.waypoints.positions = [desired_positions(i,1), robot{i}.home_configuration(1,2); desired_positions(i,:); desired_positions(i,1), robot{i}.home_configuration(1,2); robot{i}.home_configuration(1,1:2)];
+    % ---------------------------------------------------------------------------- %
+
+    % ------------------------------- Orientations ------------------------------- %
     robot{i}.waypoints.orientations = [0.0; pi/2.0; -pi/2.0; pi];
+    % ---------------------------------------------------------------------------- %
 
-    robot{i}.waypoints.times = [20.0;20.0;20.0;20.0];
+    % ----------------------------------- Time ----------------------------------- %
+    robot{i}.waypoints.times = [20.0; 20.0; 20.0; 20.0];
+    % ---------------------------------------------------------------------------- %
 
-    % robot{i}.goal.initial_position =  warehouse_positions(i,:);
-    % robot{i}.goal.initial_orientation = 0;
 
-    robot{i}.goal.initial_position =  robot{i}.home_configuration(1,1:2);
-    robot{i}.goal.initial_orientation = robot{i}.home_configuration(1,3);
+    % -------------------------------- Goal set up ------------------------------- %
+    robot{i}.goal.initial_position =  robot{i}.pose(1,1:2);
+    robot{i}.goal.initial_orientation = robot{i}.pose(1,3);
 
     robot{i}.goal.final_position = robot{i}.waypoints.positions(1,:);
     robot{i}.goal.final_orientation = robot{i}.waypoints.orientations(1,:);
@@ -123,17 +123,20 @@ for i=1:num_robots
     robot{i}.goal.displacement = robot{i}.goal.final_position - robot{i}.goal.initial_position;
     robot{i}.goal.duration = robot{i}.waypoints.times(1,1);
     robot{i}.goal.final_waypoint_reached = 0;
+    % ---------------------------------------------------------------------------- %
 
+    % ---------------------------------- Timers ---------------------------------- %
     robot{i}.start_time.local.updated = 0;
     robot{i}.start_time.local.value = 0;
 
     robot{i}.start_time.global.initialized = 0;
     robot{i}.start_time.global.value = 0;
+    % ---------------------------------------------------------------------------- %
 end
 % ---------------------------------------------------------------------------- %
 
 % ----------------------------------- Time ----------------------------------- %
-frequency =  100;
+frequency =  50;
 Ts = 1/frequency;
 loop_rate = rateControl(frequency);
 r = rosrate(frequency);
@@ -154,26 +157,15 @@ end
 for i=1:num_robots
     robot{i}.controller.waypoint_index = 1;
 
-    robot{i}.controller.b = 0.06;  % Control point
+    robot{i}.controller.b = 0.1; %0.06;  % Control point
 
-    robot{i}.controller.distance_threshold = 0.1;
+    robot{i}.controller.distance_threshold = distanceThreshold;
 
-    robot{i}.controller.k1 = 1.0; % First Gain
-    robot{i}.controller.k2 = 1; % Second Gain
-    robot{i}.controller.k3 = 1; % Second Gain
+    robot{i}.controller.k1 = 1.2; % 1.5; % First Gain
+    robot{i}.controller.k2 = 1.2; % 1.5; % Second Gain
+    robot{i}.controller.k3 = 1.01; % Second Gain
 end
 % ---------------------------------------------------------------------------- %
-
-
-% % ----------------------------------- Pose ----------------------------------- %
-% for i=1:num_robots
-%     if simulation == 1
-%         robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
-%     else
-%         robot{i}.pose = odometry_robot_pose_real(robot{i}.odometry.Data);
-%     end
-% end
-% % ---------------------------------------------------------------------------- %
 
 % ----------------------------------- State ---------------------------------- %
 for i=1:num_robots
@@ -194,10 +186,9 @@ ylabel('Y (m)');
 
 for i=1:num_robots
     plot(robot{i}.waypoints.positions(:,1), robot{i}.waypoints.positions(:,2), '-o', 'LineWidth', 2);
-    xlim([min([home_configurations(:,1),desired_positions(:,1)],[],'all') - 1, max([home_configurations(:,1),desired_positions(:,1)],[],'all') + 1]);
-    ylim([min([home_configurations(:,2),desired_positions(:,2)],[],'all') - 1, max([home_configurations(:,2),desired_positions(:,2)],[],'all') + 1]);
+    xlim([min([warehouse_configurations(:,1),desired_positions(:,1)],[],'all') - 1, max([warehouse_configurations(:,1),desired_positions(:,1)],[],'all') + 1]);
+    ylim([min([warehouse_configurations(:,2),desired_positions(:,2)],[],'all') - 1, max([warehouse_configurations(:,2),desired_positions(:,2)],[],'all') + 1]);
 end
-
 % ---------------------------------------------------------------------------- %
 
 % ---------------------------------------------------------------------------- %
@@ -226,11 +217,10 @@ while ros.internal.Global.isNodeActive
         % ---------------------------------------------------------------------------- %
 
         % ----------------------------------- Pose ----------------------------------- %
+        robot{i}.odometry.Data = robot{i}.odometry.Subscriber.LatestMessage;
         if simulation == 1
-            robot{i}.odometry.Data = robot{i}.odometry.Subscriber.LatestMessage;
             robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
         else
-            robot{i}.odometry.Data = receive(robot{i}.odometry.Subscriber,1);
             robot{i}.pose = odometry_robot_pose_real(robot{i}.odometry.Data);
         end
         % ---------------------------------------------------------------------------- %
@@ -295,10 +285,31 @@ while ros.internal.Global.isNodeActive
         y_1 = robot{i}.pose(1,1) + (robot{i}.controller.b * cos(robot{i}.pose(1,3)));
         y_2 = robot{i}.pose(1,2) + (robot{i}.controller.b * sin(robot{i}.pose(1,3)));
 
+        u_1 = dy_1d + robot{i}.controller.k1*(y_1d - y_1);
+        u_2 = dy_2d + robot{i}.controller.k2*(y_2d - y_2);
+        % ---------------------------------------------------------------------------- %
 
-        u_1 = dy_1d + 1.5*(y_1d - y_1);
-        u_2 = dy_2d + 1.5*(y_2d - y_2);
-        
+        % ---------------------------------------------------------------------------- %
+        %                              Obstacle Avoidance                              %
+        % ---------------------------------------------------------------------------- %
+        for j=1:num_robots
+            if j~=i
+                distance = norm(robot{j}.pose(1,1:2) - robot{i}.pose(1,1:2))
+                unit_vector = (robot{j}.pose(1,1:2) - robot{i}.pose(1,1:2))/distance;
+                linearVelocityOffset = [0.0 , 0.0];
+                gain = 0.5;
+                if distance <= obstacleAvoidanceThreshold
+                    linearVelocityOffset = gain*(-unit_vector)*(obstacleAvoidanceThreshold - distance);
+                end
+                u_1 = u_1 + linearVelocityOffset(1,1);
+                u_2 = u_2 + linearVelocityOffset(1,2);
+            end
+        end
+        % ---------------------------------------------------------------------------- %
+
+        % ---------------------------------------------------------------------------- %
+        %                                  Velocities                                  %
+        % ---------------------------------------------------------------------------- %
         velocities = [cos(robot{i}.pose(1,3)) sin(robot{i}.pose(1,3)); -(sin(robot{i}.pose(1,3))/robot{i}.controller.b) (cos(robot{i}.pose(1,3))/robot{i}.controller.b)]*[u_1 u_2]';
 
         robot{i}.linearVelocity = velocities(1,1);
@@ -307,7 +318,9 @@ while ros.internal.Global.isNodeActive
         robot{i}.angularVelocity = sign(robot{i}.angularVelocity)*min(abs(robot{i}.angularVelocity),1.0);
         % ---------------------------------------------------------------------------- %
 
-        % ----------------------------------- State ---------------------------------- %
+        % ---------------------------------------------------------------------------- %
+        %                                     State                                    %
+        % ---------------------------------------------------------------------------- %
         robot{i}.q.nominal(end+1,:) = desired_position;
         robot{i}.q.actual(end+1,:) = robot{i}.pose(1,1:2);
 
@@ -332,11 +345,14 @@ while ros.internal.Global.isNodeActive
                 robot{i}.controller.waypoint_index = robot{i}.controller.waypoint_index + 1;
                 waypoint_index = robot{i}.controller.waypoint_index;
                 
-                robot{i}.goal.initial_position =  robot{i}.q.nominal(end,:);
+                robot{i}.goal.initial_position =  robot{i}.q.actual(end,:);
                 robot{i}.goal.initial_orientation = robot{i}.pose(1,3);
+
                 robot{i}.goal.final_position = robot{i}.waypoints.positions(waypoint_index,:);
                 robot{i}.goal.final_orientation = robot{i}.waypoints.orientations(waypoint_index,:);
+
                 robot{i}.goal.displacement = robot{i}.goal.final_position - robot{i}.goal.initial_position;
+
                 robot{i}.goal.duration = robot{i}.waypoints.times(waypoint_index,1);
                 % ---------------------------------------------------------------------------- %
             else
@@ -357,9 +373,13 @@ while ros.internal.Global.isNodeActive
         vel_msg = rosmessage(robot{i}.velocities_publisher);
         vel_msg.Linear.X = robot{i}.linearVelocity;
         vel_msg.Angular.Z = robot{i}.angularVelocity;
-        send(robot{i}.velocities_publisher, vel_msg)
+        send(robot{i}.velocities_publisher, vel_msg);
 
-        plot(robot{i}.pose(1), robot{i}.pose(2), 'r*');
+        if robot{i}.controller.waypoint_index > size(robot{i}.waypoints.positions,1)/2.0
+            plot(robot{i}.pose(1), robot{i}.pose(2), 'g*');
+        else
+            plot(robot{i}.pose(1), robot{i}.pose(2), 'r*');
+        end
         drawnow;
     end
     % ---------------------------------------------------------------------------- %
@@ -377,39 +397,6 @@ while ros.internal.Global.isNodeActive
 
     % ----------------------------------- Wait ----------------------------------- %
     waitfor(loop_rate);
-    % ---------------------------------------------------------------------------- %
-end
-% ---------------------------------------------------------------------------- %
-
-
-% ---------------------------------------------------------------------------- %
-%                                   CALLBACKS                                  %
-% ---------------------------------------------------------------------------- %
-function gazeboModelStates_SUB_CB(~,msg)
-    % ---------------------------------------------------------------------------- %
-    %                               Gloabl Variables                               %
-    % ---------------------------------------------------------------------------- %
-    global gazeboModelStates;
-    % ---------------------------------------------------------------------------- %
-
-    % ---------------------------------------------------------------------------- %
-    %                                  Processing                                  %
-    % ---------------------------------------------------------------------------- %
-    gazeboModelStates.Data = msg;
-    % ---------------------------------------------------------------------------- %
-end
-
-function odometry_SUB_CB(~,msg,index)
-    % ---------------------------------------------------------------------------- %
-    %                               Gloabl Variables                               %
-    % ---------------------------------------------------------------------------- %
-    global robot;
-    % ---------------------------------------------------------------------------- %
-
-    % ---------------------------------------------------------------------------- %
-    %                                  Processing                                  %
-    % ---------------------------------------------------------------------------- %
-    robot{index}.odometry.Data = msg;
     % ---------------------------------------------------------------------------- %
 end
 % ---------------------------------------------------------------------------- %
@@ -485,8 +472,8 @@ function odometry_robot_pose_real = odometry_robot_pose_real(poseStampedMsg)
     % ---------------------------------------------------------------------------- %
 
     % --------------------------------- Position --------------------------------- %
-    x = poseStampedMsg.Pose.Position.X;
-    y = poseStampedMsg.Pose.Position.Y;
+    x = -poseStampedMsg.Pose.Position.X;
+    y = -poseStampedMsg.Pose.Position.Y;
     % ---------------------------------------------------------------------------- %
     
 

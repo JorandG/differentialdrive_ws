@@ -6,13 +6,22 @@ close all;
 clc;
 clear;
 clear global;
+simulation = 0;
+nuc1nuc3 = 1;
 % ---------------------------------------------------------------------------- %
 
 % ---------------------------------------------------------------------------- %
 %                                  Connection                                  %
 % ---------------------------------------------------------------------------- %
+
 if ros.internal.Global.isNodeActive == 0
-    rosinit('http://localhost:11311');
+    if simulation == 1
+        setenv('ROS_HOSTNAME','localhost')
+        rosinit('http://localhost:11311');
+    else
+        setenv('ROS_HOSTNAME','192.168.0.137')
+        rosinit('http://192.168.0.137:11311');
+    end
 end
 % ---------------------------------------------------------------------------- %
 
@@ -23,29 +32,29 @@ end
 % ----------------------------- Global Parameters ---------------------------- %
 global num_robots;
 num_robots = 2;
-
-simulation = 1;
 % ---------------------------------------------------------------------------- %
 
 % ------------------------------------ ROS ----------------------------------- %
-for i=1:num_robots
-    if simulation == 1
-        robot{i}.velocities_publisher = rospublisher(sprintf('/robot%d/cmd_vel', i),'geometry_msgs/Twist');
-        robot{i}.odometry.Subscriber = rossubscriber(sprintf('/robot%d/odom', i), 'nav_msgs/Odometry');
-    else
-        robot{i}.velocities_publisher = rospublisher(sprintf('/nuc%d/cmd_vel_mux/input/teleop', i),'geometry_msgs/Twist');
-        robot{i}.odometry.Subscriber = rossubscriber(sprintf('/vrpn_client_node/Turtlebot%d/pose', i), 'geometry_msgs/PoseStamped');
+if nuc1nuc3 == 0
+    for i=1:num_robots
+        if simulation == 1
+            robot{i}.velocities_publisher = rospublisher(sprintf('/robot%d/cmd_vel', i),'geometry_msgs/Twist');
+            robot{i}.odometry.Subscriber = rossubscriber(sprintf('/robot%d/odom', i), 'nav_msgs/Odometry');
+        else
+            robot{i}.velocities_publisher = rospublisher(sprintf('/nuc%d/cmd_vel_mux/input/teleop', i),'geometry_msgs/Twist');
+            robot{i}.odometry.Subscriber = rossubscriber(sprintf('/vrpn_client_node/Turtlebot%d/pose', i), 'geometry_msgs/PoseStamped');
+        end
+        robot{i}.odometry.Data = receive(robot{i}.odometry.Subscriber,1);
     end
-    robot{i}.odometry.Data = receive(robot{i}.odometry.Subscriber,1);
-end
+else
+    robot{1}.velocities_publisher = rospublisher('/nuc1/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
+    robot{1}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot1/pose', 'geometry_msgs/PoseStamped');
+    robot{1}.odometry.Data = receive(robot{1}.odometry.Subscriber,1);
 
-% robot{1}.velocities_publisher = rospublisher('/nuc1/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
-% robot{1}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot1/pose', 'geometry_msgs/PoseStamped');
-% robot{1}.odometry.Data = receive(robot{1}.odometry.Subscriber,1);
-% 
-% robot{2}.velocities_publisher = rospublisher('/nuc3/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
-% robot{2}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot3/pose', 'geometry_msgs/PoseStamped');
-% robot{2}.odometry.Data = receive(robot{2}.odometry.Subscriber,1);
+    robot{2}.velocities_publisher = rospublisher('/nuc3/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
+    robot{2}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot3/pose', 'geometry_msgs/PoseStamped');
+    robot{2}.odometry.Data = receive(robot{2}.odometry.Subscriber,2);
+end
 
 if simulation == 1
     gazeboModelStates.Subscriber = rossubscriber('/gazebo/model_states', 'gazebo_msgs/ModelStates');
@@ -67,7 +76,7 @@ distanceThreshold = 0.1;
 % ---------------------------------------------------------------------------- %
 
 % ----------------------------------- Path ----------------------------------- %
-warehouse_positions = [-0.7, 0.1; -0.8, 0.8]; % Initial Location
+warehouse_positions = [-0.9, 0.1; -1, 0.8]; % Initial Location
 warehouse_orientation = 0.0; % Initial Orientation of the Robot (The robot orientation is the angle between the robot heading and the positive X-axis, measured counterclockwise).
 
 desired_positions = [1.3, 1.8; 0.8, 2.0];
