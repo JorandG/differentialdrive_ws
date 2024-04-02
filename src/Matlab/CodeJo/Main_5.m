@@ -6,14 +6,31 @@ close all;
 clc;
 clear;
 clear global;
-simulation = 0;
-nuc1nuc3 = 1;
+% ---------------------------------------------------------------------------- %
+
+% ----------------------------- Global Parameters ---------------------------- %
+simulation = 1;
+num_robots = 2;
+
+warehouse_configurations = [-0.9, 0.1, 0.0; -1, 0.8, 0.0]; %[-1.00, -1.0, 0.0; 0, 1.0, 0.0]; % (x, y, theta); The theta parameter describes the orientation of the Robot (The robot orientation is the angle between the robot heading and the positive X-axis, measured counterclockwise).
+
+distanceThreshold = 0.06; % 6 cm
+
+obstacleAvoidanceEnabled = true;
+obstacleAvoidanceThreshold = 0.5; % 1 m
+obstacleAvoidanceGain = 1.5;
+obstacleAvoidanceEta = 1.01;
+
+desired_positions = [1.3, 1.8; 0.8, 2.0]; %[2.0, 2.5; 1.0, 3.0]; %(x,y)
+
+% desired_positions = [5.0 -0.5; -5.0, -0.5]; %(x,y)
+% desired_orientations = [0.0; 3.14];
+% desired_timing = [40; 40];
 % ---------------------------------------------------------------------------- %
 
 % ---------------------------------------------------------------------------- %
 %                                  Connection                                  %
 % ---------------------------------------------------------------------------- %
-
 if ros.internal.Global.isNodeActive == 0
     if simulation == 1
         setenv('ROS_HOSTNAME','localhost')
@@ -29,38 +46,22 @@ end
 %                                  Declaration                                 %
 % ---------------------------------------------------------------------------- %
 
-% ----------------------------- Global Parameters ---------------------------- %
-num_robots = 2;
-warehouse_configurations = [-0.9, 0.1, 0.0; -1, 0.8, 0.0]; % (x, y, theta); The theta parameter describes the orientation of the Robot (The robot orientation is the angle between the robot heading and the positive X-axis, measured counterclockwise).
-distanceThreshold = 10.0;
-obstacleAvoidanceThreshold = 1.0;
-%desired_positions = [1.5, 2.5; 1.0, 2.0]; %(x,y)
-desired_positions = [1.3, 1.8; 0.8, 2.0];
-desired_timing = [40; 40];
-% ---------------------------------------------------------------------------- %
-
 % ------------------------------------ ROS ----------------------------------- %
-if nuc1nuc3 == 0
-    for i=1:num_robots
-        if simulation == 1
-            robot{i}.velocities_publisher = rospublisher(sprintf('/robot%d/cmd_vel', i),'geometry_msgs/Twist');
-            robot{i}.odometry.Subscriber = rossubscriber(sprintf('/robot%d/odom', i), 'nav_msgs/Odometry');
-        else
-            robot{i}.velocities_publisher = rospublisher(sprintf('/nuc%d/cmd_vel_mux/input/teleop', i),'geometry_msgs/Twist');
-            robot{i}.odometry.Subscriber = rossubscriber(sprintf('/vrpn_client_node/Turtlebot%d/pose', i), 'geometry_msgs/PoseStamped');
+for i=1:num_robots
+    if simulation == 1
+        robot{i}.velocities_publisher = rospublisher(sprintf('/robot%d/cmd_vel', i),'geometry_msgs/Twist');
+        robot{i}.odometry.Subscriber = rossubscriber(sprintf('/robot%d/odom', i), 'nav_msgs/Odometry');
+    else
+        if i == 1
+            robot{i}.velocities_publisher = rospublisher('/nuc1/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
+            robot{i}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot1/pose','geometry_msgs/PoseStamped');
+        elseif i == 2
+            robot{i}.velocities_publisher = rospublisher('/nuc3/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
+            robot{i}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot3/pose','geometry_msgs/PoseStamped');
         end
-        robot{i}.odometry.Data = receive(robot{i}.odometry.Subscriber,1);
     end
-else
-    robot{1}.velocities_publisher = rospublisher('/nuc1/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
-    robot{1}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot1/pose', 'geometry_msgs/PoseStamped');
-    robot{1}.odometry.Data = receive(robot{1}.odometry.Subscriber,1);
-
-    robot{2}.velocities_publisher = rospublisher('/nuc3/cmd_vel_mux/input/teleop','geometry_msgs/Twist');
-    robot{2}.odometry.Subscriber = rossubscriber('/vrpn_client_node/Turtlebot3/pose', 'geometry_msgs/PoseStamped');
-    robot{2}.odometry.Data = receive(robot{2}.odometry.Subscriber,2);
+    robot{i}.odometry.Data = receive(robot{i}.odometry.Subscriber,1);
 end
-
 
 if simulation == 1
     gazeboModelStates.Subscriber = rossubscriber('/gazebo/model_states', 'gazebo_msgs/ModelStates');
@@ -102,16 +103,22 @@ end
 for i=1:num_robots
     % --------------------------------- Positions -------------------------------- %
     robot{i}.waypoints.positions = [desired_positions(i,1), robot{i}.home_configuration(1,2); desired_positions(i,:); desired_positions(i,1), robot{i}.home_configuration(1,2); robot{i}.home_configuration(1,1:2)];
+    % robot{i}.waypoints.positions = desired_positions(i,:);
     % ---------------------------------------------------------------------------- %
 
     % ------------------------------- Orientations ------------------------------- %
     robot{i}.waypoints.orientations = [0.0; pi/2.0; -pi/2.0; pi];
+    % robot{i}.waypoints.orientations = desired_orientations(i,:);
+    % ---------------------------------------------------------------------------- %
+
+    % ---------------------- Condition for changing Waypoint --------------------- %
+    robot{i}.waypoints.reaching_condition = ['t';'d';'t';'d'];
+    % robot{i}.waypoints.reaching_condition = ['d'];
     % ---------------------------------------------------------------------------- %
 
     % ----------------------------------- Time ----------------------------------- %
     robot{i}.waypoints.times = [20.0; 20.0; 20.0; 20.0];
     % ---------------------------------------------------------------------------- %
-
 
     % -------------------------------- Goal set up ------------------------------- %
     robot{i}.goal.initial_position =  robot{i}.pose(1,1:2);
@@ -122,6 +129,8 @@ for i=1:num_robots
 
     robot{i}.goal.displacement = robot{i}.goal.final_position - robot{i}.goal.initial_position;
     robot{i}.goal.duration = robot{i}.waypoints.times(1,1);
+    robot{i}.goal.reaching_condition = robot{i}.waypoints.reaching_condition(1,1);
+
     robot{i}.goal.final_waypoint_reached = 0;
     % ---------------------------------------------------------------------------- %
 
@@ -157,13 +166,28 @@ end
 for i=1:num_robots
     robot{i}.controller.waypoint_index = 1;
 
-    robot{i}.controller.b = 0.1; %0.06;  % Control point
+    robot{i}.controller.b = 0.15;  % Control point
+
+    robot{i}.controller.y_1 = robot{i}.pose(1,1) + (robot{i}.controller.b * cos(robot{i}.pose(1,3)));
+    robot{i}.controller.y_2 = robot{i}.pose(1,2) + (robot{i}.controller.b * sin(robot{i}.pose(1,3)));
+
+    robot{i}.controller.y_1_i = robot{i}.controller.y_1;
+    robot{i}.controller.y_2_i = robot{i}.controller.y_2;
+
+    robot{i}.controller.y_1d = robot{i}.controller.y_1_i;
+    robot{i}.controller.y_2d = robot{i}.controller.y_2_i;
+    
+    robot{i}.controller.y_1_f = robot{i}.controller.y_1_i;
+    robot{i}.controller.y_2_f = robot{i}.controller.y_2_i;
+
+    robot{i}.controller.error = 0.0;
 
     robot{i}.controller.distance_threshold = distanceThreshold;
+    robot{i}.controller.obstacleAvoidance.state = false;
 
-    robot{i}.controller.k1 = 1.2; % 1.5; % First Gain
-    robot{i}.controller.k2 = 1.2; % 1.5; % Second Gain
-    robot{i}.controller.k3 = 1.01; % Second Gain
+    robot{i}.controller.k1 = 0.8; % 1.5; % First Gain
+    robot{i}.controller.k2 = 0.8; % 1.5; % Second Gain
+    robot{i}.controller.k3 = 1.0; % Second Gain
 end
 % ---------------------------------------------------------------------------- %
 
@@ -184,10 +208,20 @@ hold on;
 xlabel('X (m)');
 ylabel('Y (m)');
 
+% ----------------------------- Find Limit Values ---------------------------- %
+x_values = [warehouse_configurations(:,1)',desired_positions(:,1)'];
+y_values = [warehouse_configurations(:,2)',desired_positions(:,2)'];
+
+for i=1:num_robots
+    x_values(1,end + 1) = robot{i}.pose(:,1);
+    y_values(1,end + 1) = robot{i}.pose(:,2);
+end
+% ---------------------------------------------------------------------------- %
+
 for i=1:num_robots
     plot(robot{i}.waypoints.positions(:,1), robot{i}.waypoints.positions(:,2), '-o', 'LineWidth', 2);
-    xlim([min([warehouse_configurations(:,1),desired_positions(:,1)],[],'all') - 1, max([warehouse_configurations(:,1),desired_positions(:,1)],[],'all') + 1]);
-    ylim([min([warehouse_configurations(:,2),desired_positions(:,2)],[],'all') - 1, max([warehouse_configurations(:,2),desired_positions(:,2)],[],'all') + 1]);
+    xlim([min(x_values,[],'all') - 1, max(x_values,[],'all') + 1]);
+    ylim([min(y_values,[],'all') - 1, max(y_values,[],'all') + 1]);
 end
 % ---------------------------------------------------------------------------- %
 
@@ -218,15 +252,11 @@ while ros.internal.Global.isNodeActive
 
         % ----------------------------------- Pose ----------------------------------- %
         robot{i}.odometry.Data = robot{i}.odometry.Subscriber.LatestMessage;
-        if simulation == 1
-            robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
-        else
-            robot{i}.pose = odometry_robot_pose_real(robot{i}.odometry.Data);
-        end
+        robot{i}.pose = odometry_robot_pose_sim(robot{i}.odometry.Data.Pose);
         % ---------------------------------------------------------------------------- %
 
         % ----------------------- Trapezoidal Velocity Profile ----------------------- %
-        elapsed_time = r.TotalElapsedTime - robot{i}.start_time.local.value
+        elapsed_time = r.TotalElapsedTime - robot{i}.start_time.local.value;
         [s,ds,dds] = trapezoidal(0,1,elapsed_time,robot{i}.goal.duration);
         % ---------------------------------------------------------------------------- %
 
@@ -267,42 +297,68 @@ while ros.internal.Global.isNodeActive
         % ---------------------------------------------------------------------------- %
         %                          Input/Output Linearization                          %
         % ---------------------------------------------------------------------------- %
-        y_1_i = robot{i}.goal.initial_position(1,1) + (robot{i}.controller.b * cos(robot{i}.goal.initial_orientation));
-        y_2_i = robot{i}.goal.initial_position(1,2) + (robot{i}.controller.b * cos(robot{i}.goal.initial_orientation));
+        robot{i}.controller.y_1_i = robot{i}.goal.initial_position(1,1) + (robot{i}.controller.b * cos(robot{i}.goal.initial_orientation));
+        robot{i}.controller.y_2_i = robot{i}.goal.initial_position(1,2) + (robot{i}.controller.b * sin(robot{i}.goal.initial_orientation));
         
-        y_1_f = robot{i}.goal.final_position(1,1) + (robot{i}.controller.b * cos(robot{i}.goal.final_orientation));
-        y_2_f = robot{i}.goal.final_position(1,2) + (robot{i}.controller.b * cos(robot{i}.goal.final_orientation));
+        robot{i}.controller.y_1_f = robot{i}.goal.final_position(1,1) + (robot{i}.controller.b * cos(robot{i}.goal.final_orientation));
+        robot{i}.controller.y_2_f = robot{i}.goal.final_position(1,2) + (robot{i}.controller.b * sin(robot{i}.goal.final_orientation));
 
-        y_1d = y_1_i + (y_1_f - y_1_i)*s;
-        y_2d = y_2_i + (y_2_f - y_2_i)*s;
+        robot{i}.controller.y_1d = robot{i}.controller.y_1_i + (robot{i}.controller.y_1_f - robot{i}.controller.y_1_i)*s;
+        robot{i}.controller.y_2d = robot{i}.controller.y_2_i + (robot{i}.controller.y_2_f - robot{i}.controller.y_2_i)*s;
 
-        dy_1d = (y_1_f - y_1_i)*ds;
-        dy_2d = (y_2_f - y_2_i)*ds;
+        dy_1d = (robot{i}.controller.y_1_f - robot{i}.controller.y_1_i)*ds;
+        dy_2d = (robot{i}.controller.y_2_f - robot{i}.controller.y_2_i)*ds;
         
-        displacement = [y_1_f, y_2_f] - [y_1_i, y_2_i];
-        theta_des = atan2(displacement(1,2),displacement(1,1));
+        robot{i}.controller.error = [robot{i}.controller.y_1_f, robot{i}.controller.y_2_f] - [robot{i}.controller.y_1_i, robot{i}.controller.y_2_i];
 
-        y_1 = robot{i}.pose(1,1) + (robot{i}.controller.b * cos(robot{i}.pose(1,3)));
-        y_2 = robot{i}.pose(1,2) + (robot{i}.controller.b * sin(robot{i}.pose(1,3)));
+        robot{i}.controller.y_1 = robot{i}.pose(1,1) + (robot{i}.controller.b * cos(robot{i}.pose(1,3)));
+        robot{i}.controller.y_2 = robot{i}.pose(1,2) + (robot{i}.controller.b * sin(robot{i}.pose(1,3)));
 
-        u_1 = dy_1d + robot{i}.controller.k1*(y_1d - y_1);
-        u_2 = dy_2d + robot{i}.controller.k2*(y_2d - y_2);
+        u_1 = dy_1d + robot{i}.controller.k1*(robot{i}.controller.y_1d - robot{i}.controller.y_1);
+        u_2 = dy_2d + robot{i}.controller.k2*(robot{i}.controller.y_2d - robot{i}.controller.y_2);
         % ---------------------------------------------------------------------------- %
 
         % ---------------------------------------------------------------------------- %
         %                              Obstacle Avoidance                              %
         % ---------------------------------------------------------------------------- %
-        for j=1:num_robots
-            if j~=i
-                distance = norm(robot{j}.pose(1,1:2) - robot{i}.pose(1,1:2))
-                unit_vector = (robot{j}.pose(1,1:2) - robot{i}.pose(1,1:2))/distance;
-                linearVelocityOffset = [0.0 , 0.0];
-                gain = 0.5;
-                if distance <= obstacleAvoidanceThreshold
-                    linearVelocityOffset = gain*(-unit_vector)*(obstacleAvoidanceThreshold - distance);
+        if obstacleAvoidanceEnabled == true
+            for j=1:num_robots
+                if j~=i
+                    % distance = norm(robot{j}.pose(1,1:2) - robot{i}.pose(1,1:2));
+                    % unit_vector = (robot{j}.pose(1,1:2) - robot{i}.pose(1,1:2))/distance;
+
+                    % distance_ij = norm(([robot{j}.controller.y_1, robot{j}.controller.y_2] - [robot{i}.controller.y_1, robot{i}.controller.y_2]));
+                    
+                    % r_ij = ([robot{j}.controller.y_1, robot{j}.controller.y_2] - [robot{i}.controller.y_1, robot{i}.controller.y_2])/distance_ij;
+
+                    % r_ides = ([y_1d y_2d] - [robot{i}.controller.y_1, robot{i}.controller.y_2])/norm([y_1d y_2d] - [robot{i}.controller.y_1, robot{i}.controller.y_2]);
+
+                    % linearVelocityOffset = [0.0 , 0.0];
+                    % gain = 1.5;
+
+                    % if distance <= obstacleAvoidanceThreshold
+                    %     linearVelocityOffset = gain*(-unit_vector)*(obstacleAvoidanceThreshold - distance);
+                    % end
+
+                    % if distance <= obstacleAvoidanceThreshold && (r_ij*r_ides') > 0
+                    %     linearVelocityOffset = gain*(-unit_vector)*(obstacleAvoidanceThreshold - distance);
+                    % end
+
+                    distance_ij = norm([robot{j}.controller.y_1, robot{j}.controller.y_2] - [robot{i}.controller.y_1, robot{i}.controller.y_2]);
+                    r_ij = ([robot{j}.controller.y_1, robot{j}.controller.y_2] - [robot{i}.controller.y_1, robot{i}.controller.y_2])/distance_ij;
+
+                    
+                    if distance_ij <= obstacleAvoidanceThreshold
+                        linearVelocityOffset = (-r_ij)*(obstacleAvoidanceGain/(distance_ij^2))*(1/distance_ij - 1/obstacleAvoidanceThreshold)^(obstacleAvoidanceEta - 1);
+                        robot{i}.controller.obstacleAvoidance.state = true;
+                    else
+                        robot{i}.controller.obstacleAvoidance.state = false;
+                        linearVelocityOffset = [0, 0];
+                    end
+
+                    u_1 = u_1 + linearVelocityOffset(1,1);
+                    u_2 = u_2 + linearVelocityOffset(1,2);
                 end
-                u_1 = u_1 + linearVelocityOffset(1,1);
-                u_2 = u_2 + linearVelocityOffset(1,2);
             end
         end
         % ---------------------------------------------------------------------------- %
@@ -328,12 +384,7 @@ while ros.internal.Global.isNodeActive
         % ---------------------------------------------------------------------------- %
 
         % ----------------------------------- Check ---------------------------------- %
-        if ((elapsed_time >= robot{i}.goal.duration) && (norm([y_1d y_2d] - [y_1 y_2]) <= robot{i}.controller.distance_threshold))
-
-            % -------------------------------- Velocities -------------------------------- %
-            robot{i}.linearVelocity = 0.0;
-            robot{i}.angularVelocity = 0.0;
-            % ---------------------------------------------------------------------------- %
+        if ((robot{i}.goal.reaching_condition == 't' && elapsed_time >= robot{i}.goal.duration) || (robot{i}.goal.reaching_condition == 'd' && norm([robot{i}.controller.y_1_f, robot{i}.controller.y_2_f] - [robot{i}.controller.y_1, robot{i}.controller.y_2]) <= robot{i}.controller.distance_threshold))
 
             % --------------------------------- Waypoint --------------------------------- %
             if robot{i}.controller.waypoint_index < size(robot{i}.waypoints.positions,1)
@@ -352,13 +403,16 @@ while ros.internal.Global.isNodeActive
                 robot{i}.goal.final_orientation = robot{i}.waypoints.orientations(waypoint_index,:);
 
                 robot{i}.goal.displacement = robot{i}.goal.final_position - robot{i}.goal.initial_position;
-
                 robot{i}.goal.duration = robot{i}.waypoints.times(waypoint_index,1);
+                robot{i}.goal.reaching_condition = robot{i}.waypoints.reaching_condition(waypoint_index,1);
                 % ---------------------------------------------------------------------------- %
             else
                 % ---------------------------------- Message --------------------------------- %
                 disp(['Robot ', num2str(i), ' reached the final waypoint. Stopping.']);
                 robot{i}.goal.final_waypoint_reached = 1;
+
+                robot{i}.linearVelocity = 0.0;
+                robot{i}.angularVelocity = 0.0;
                 % ---------------------------------------------------------------------------- %
             end
             % ---------------------------------------------------------------------------- %
@@ -375,12 +429,12 @@ while ros.internal.Global.isNodeActive
         vel_msg.Angular.Z = robot{i}.angularVelocity;
         send(robot{i}.velocities_publisher, vel_msg);
 
-        if robot{i}.controller.waypoint_index > size(robot{i}.waypoints.positions,1)/2.0
-            plot(robot{i}.pose(1), robot{i}.pose(2), 'g*');
-        else
-            plot(robot{i}.pose(1), robot{i}.pose(2), 'r*');
-        end
-        drawnow;
+        % if robot{i}.controller.obstacleAvoidance.state == false
+        %     plot(robot{i}.pose(1), robot{i}.pose(2), '-*', 'Color', "#77AC30");
+        % else
+        %     plot(robot{i}.pose(1), robot{i}.pose(2), '-*', 'Color', "#D95319");
+        % end
+        % drawnow;
     end
     % ---------------------------------------------------------------------------- %
 
@@ -445,7 +499,6 @@ function odometry_robot_pose_sim = odometry_robot_pose_sim(navMsg)
     y = navMsg.Pose.Position.Y;
     % ---------------------------------------------------------------------------- %
     
-
     % -------------------------- Orientation: Quaternion ------------------------- %
     Qx = navMsg.Pose.Orientation.X;
     Qy = navMsg.Pose.Orientation.Y;
@@ -472,8 +525,8 @@ function odometry_robot_pose_real = odometry_robot_pose_real(poseStampedMsg)
     % ---------------------------------------------------------------------------- %
 
     % --------------------------------- Position --------------------------------- %
-    x = -poseStampedMsg.Pose.Position.X;
-    y = -poseStampedMsg.Pose.Position.Y;
+    x = poseStampedMsg.Pose.Position.X;
+    y = poseStampedMsg.Pose.Position.Y;
     % ---------------------------------------------------------------------------- %
     
 

@@ -114,6 +114,28 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
         throw std::invalid_argument("Field 'FinishServing' is wrong type; expected a double.");
     }
     try {
+        //TimeFilling
+        const matlab::data::TypedArray<double> TimeFilling_arr = arr["TimeFilling"];
+        size_t nelem = TimeFilling_arr.getNumberOfElements();
+        	msg->TimeFilling.resize(nelem);
+        	std::copy(TimeFilling_arr.begin(), TimeFilling_arr.begin()+nelem, msg->TimeFilling.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'TimeFilling' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'TimeFilling' is wrong type; expected a double.");
+    }
+    try {
+        //TimeServing
+        const matlab::data::TypedArray<double> TimeServing_arr = arr["TimeServing"];
+        size_t nelem = TimeServing_arr.getNumberOfElements();
+        	msg->TimeServing.resize(nelem);
+        	std::copy(TimeServing_arr.begin(), TimeServing_arr.begin()+nelem, msg->TimeServing.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'TimeServing' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'TimeServing' is wrong type; expected a double.");
+    }
+    try {
         //Confirm
         const matlab::data::TypedArray<int32_t> Confirm_arr = arr["Confirm"];
         msg->Confirm = Confirm_arr[0];
@@ -122,11 +144,20 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     } catch (matlab::Exception&) {
         throw std::invalid_argument("Field 'Confirm' is wrong type; expected a int32.");
     }
+    try {
+        //Task
+        const matlab::data::TypedArray<int32_t> Task_arr = arr["Task"];
+        msg->Task = Task_arr[0];
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'Task' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'Task' is wrong type; expected a int32.");
+    }
   }
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_HumanRobotInteraction_common::get_arr(MDFactory_T& factory, const diff_drive_robot::HumanRobotInteraction* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotVelocity","WaitingTime","StartFilling","FinishFilling","StartServing","FinishServing","Confirm"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotVelocity","WaitingTime","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","Confirm","Task"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/HumanRobotInteraction");
     // HumanID
@@ -150,9 +181,18 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     // FinishServing
     auto currentElement_FinishServing = (msg + ctr)->FinishServing;
     outArray[ctr]["FinishServing"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_FinishServing_type::const_iterator, double>({currentElement_FinishServing.size(),1}, currentElement_FinishServing.begin(), currentElement_FinishServing.end());
+    // TimeFilling
+    auto currentElement_TimeFilling = (msg + ctr)->TimeFilling;
+    outArray[ctr]["TimeFilling"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_TimeFilling_type::const_iterator, double>({currentElement_TimeFilling.size(),1}, currentElement_TimeFilling.begin(), currentElement_TimeFilling.end());
+    // TimeServing
+    auto currentElement_TimeServing = (msg + ctr)->TimeServing;
+    outArray[ctr]["TimeServing"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_TimeServing_type::const_iterator, double>({currentElement_TimeServing.size(),1}, currentElement_TimeServing.begin(), currentElement_TimeServing.end());
     // Confirm
     auto currentElement_Confirm = (msg + ctr)->Confirm;
     outArray[ctr]["Confirm"] = factory.createScalar(currentElement_Confirm);
+    // Task
+    auto currentElement_Task = (msg + ctr)->Task;
+    outArray[ctr]["Task"] = factory.createScalar(currentElement_Task);
     }
     return std::move(outArray);
   } 

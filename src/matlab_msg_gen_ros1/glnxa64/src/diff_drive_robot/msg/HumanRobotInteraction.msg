@@ -5,4 +5,7 @@ float64[] StartFilling
 float64[] FinishFilling
 float64[] StartServing
 float64[] FinishServing
+float64[] TimeFilling
+float64[] TimeServing
 int32 Confirm
+int32 Task

@@ -8,7 +8,7 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "a3487fb54248fa58bf6d4fa71ad8c145"
+  _md5sum = "de174b2c964b25d7c321b35769a1829f"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
@@ -18,10 +18,13 @@ float64[] StartFilling
 float64[] FinishFilling
 float64[] StartServing
 float64[] FinishServing
+float64[] TimeFilling
+float64[] TimeServing
 int32 Confirm
+int32 Task
 """
-  __slots__ = ['HumanID','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','Confirm']
-  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32']
+  __slots__ = ['HumanID','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','Confirm','Task']
+  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32','int32']
 
   def __init__(self, *args, **kwds):
     """
@@ -31,7 +34,7 @@ int32 Confirm
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,Confirm
+       HumanID,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,Confirm,Task
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -54,8 +57,14 @@ int32 Confirm
         self.StartServing = []
       if self.FinishServing is None:
         self.FinishServing = []
+      if self.TimeFilling is None:
+        self.TimeFilling = []
+      if self.TimeServing is None:
+        self.TimeServing = []
       if self.Confirm is None:
         self.Confirm = 0
+      if self.Task is None:
+        self.Task = 0
     else:
       self.HumanID = 0
       self.RobotVelocity = []
@@ -64,7 +73,10 @@ int32 Confirm
       self.FinishFilling = []
       self.StartServing = []
       self.FinishServing = []
+      self.TimeFilling = []
+      self.TimeServing = []
       self.Confirm = 0
+      self.Task = 0
 
   def _get_types(self):
     """
@@ -104,8 +116,16 @@ int32 Confirm
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.FinishServing))
-      _x = self.Confirm
-      buff.write(_get_struct_i().pack(_x))
+      length = len(self.TimeFilling)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.TimeFilling))
+      length = len(self.TimeServing)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.TimeServing))
+      _x = self
+      buff.write(_get_struct_2i().pack(_x.Confirm, _x.Task))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -171,7 +191,24 @@ int32 Confirm
       self.FinishServing = s.unpack(str[start:end])
       start = end
       end += 4
-      (self.Confirm,) = _get_struct_i().unpack(str[start:end])
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.TimeFilling = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.TimeServing = s.unpack(str[start:end])
+      _x = self
+      start = end
+      end += 8
+      (_x.Confirm, _x.Task,) = _get_struct_2i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -210,8 +247,16 @@ int32 Confirm
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.FinishServing.tostring())
-      _x = self.Confirm
-      buff.write(_get_struct_i().pack(_x))
+      length = len(self.TimeFilling)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.TimeFilling.tostring())
+      length = len(self.TimeServing)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.TimeServing.tostring())
+      _x = self
+      buff.write(_get_struct_2i().pack(_x.Confirm, _x.Task))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -278,7 +323,24 @@ int32 Confirm
       self.FinishServing = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
-      (self.Confirm,) = _get_struct_i().unpack(str[start:end])
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.TimeFilling = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.TimeServing = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      _x = self
+      start = end
+      end += 8
+      (_x.Confirm, _x.Task,) = _get_struct_2i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -287,6 +349,12 @@ _struct_I = genpy.struct_I
 def _get_struct_I():
     global _struct_I
     return _struct_I
+_struct_2i = None
+def _get_struct_2i():
+    global _struct_2i
+    if _struct_2i is None:
+        _struct_2i = struct.Struct("<2i")
+    return _struct_2i
 _struct_i = None
 def _get_struct_i():
     global _struct_i

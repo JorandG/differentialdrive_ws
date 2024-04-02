@@ -28,9 +28,5 @@
   #define DIFF_DRIVE_ROBOT_PUBLIC_TYPE
 #endif
 #endif  // DIFF_DRIVE_ROBOT__VISIBILITY_CONTROL_H_
-<<<<<<< HEAD
-// Generated 22-Mar-2024 11:03:08
-=======
-// Generated 22-Mar-2024 10:40:16
->>>>>>> b03feb9ca63054b9c4e1be37b791bfe1af572687
+// Generated 01-Apr-2024 19:23:28
 // Copyright 2019-2020 The MathWorks, Inc.

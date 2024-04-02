@@ -154,11 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-<<<<<<< HEAD
-    foreach(path /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib;/usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/lib;/usr/local/MATLAB/R2023a/toolbox/ros/mlroscpp/custom_messages/lib)
-=======
-    foreach(path /home/nuc1/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib;/usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/lib;/usr/local/MATLAB/R2023a/toolbox/ros/mlroscpp/custom_messages/lib)
->>>>>>> b03feb9ca63054b9c4e1be37b791bfe1af572687
+    foreach(path /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib;/usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/lib;/usr/local/MATLAB/R2023a/toolbox/ros/mlroscpp/custom_messages/lib;/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
