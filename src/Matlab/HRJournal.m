@@ -1,7 +1,7 @@
 addpath('/opt/gurobi1000/linux64/matlab');
 savepath;
 
-addpath('/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m')
+addpath('~/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m')
 savepath
 
 clear all;
