@@ -6,7 +6,7 @@ savepath
 
 clear all;
 
-global MILPData MILPDataPub sizeFinishFilling msgTime pubTime pub msg humanSub humanData Ph human num_farming_robot tasknum tasknum1 num_robots initialTime num_filling_boxes idx_going_tasks idx_depot_tasks idx_waiting_tasks idx_services_tasks dist  num_humans VelRob HumWait HumTimeList num_service_tasks num_tasks num_depot_tasks service_time num_agents humanTime_filling humanTime_filling1 WeightHumanwaiting WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+global timingData TimingSub MILPData MILPDataPub sizeFinishFilling msgTime pubTime pub msg humanSub humanData Ph human num_farming_robot tasknum tasknum1 num_robots initialTime num_filling_boxes idx_going_tasks idx_depot_tasks idx_waiting_tasks idx_services_tasks dist  num_humans VelRob HumWait HumTimeList num_service_tasks num_tasks num_depot_tasks service_time num_agents humanTime_filling humanTime_filling1 WeightHumanwaiting WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
 
 num_humans = 2;
 num_agents = num_humans;
@@ -29,12 +29,6 @@ if ros.internal.Global.isNodeActive == 0
     end
 end
 
-%humanSub = rossubscriber('/human_robot_interaction1', 'diff_drive_robot/HumanRobotInteraction')
-%humanData = receive(humanSub{1}, 5);
-
-pubTime = rospublisher('/Timing', 'std_msgs/Float64');
-msgTime = rosmessage(pubTime);
-
 for r=1:num_robots
     MILPDataPub{r} = rospublisher(sprintf("/MILPResults%d", r), 'diff_drive_robot/MILPResult');
     MILPData{r} = rosmessage(MILPDataPub{r});
@@ -52,20 +46,19 @@ for r=1:num_robots
 end
 
 for h=1:num_humans
-    humanData{h} = rossubscriber(sprintf("/human_robot_interaction%d", h), 'diff_drive_robot/HumanRobotInteraction').LatestMessage
-    humanSub1{h} = rossubscriber(sprintf("/human_robot_interaction%d", h), 'diff_drive_robot/HumanRobotInteraction', @humanSubCallback).LatestMessage;
-    humanSub{h} = rossubscriber(sprintf("/human_robot_interaction%d", h), 'diff_drive_robot/HumanRobotInteraction')
+    humanData{h} = rossubscriber(sprintf("/human_robot_interaction%d", h), 'diff_drive_robot/HumanRobotInteraction').LatestMessage;
+    humanSub{h} = rossubscriber(sprintf("/human_robot_interaction%d", h), 'diff_drive_robot/HumanRobotInteraction');
     pub{h} = rospublisher(sprintf("/human_robot_interaction%d", h), 'diff_drive_robot/HumanRobotInteraction');
     humanData{h} = rosmessage(pub{h});
-    humanData{h}.HumanID = h
-    humanData{h}.RobotVelocity = 0.0
-    humanData{h}.WaitingTime = 0.0
+    humanData{h}.HumanID = h;
+    humanData{h}.RobotVelocity = 0.0;
+    humanData{h}.WaitingTime = 0.0;
     humanData{h}.StartFilling = [0.0, 157.0, 314.0];
     humanData{h}.FinishFilling = [150.0, 307.0, 464.0];
     humanData{h}.TimeFilling = ones(1, num_agents)*150;
     humanData{h}.TimeServing = ones(1, num_agents)*7.0;
-    humanData{h}.StartServing = 0.0
-    humanData{h}.FinishServing = 0.0
+    humanData{h}.StartServing = 0.0;
+    humanData{h}.FinishServing = 0.0;
     humanData{h}.Task = 1;
     send(pub{h}, humanData{h});
 end 
@@ -76,8 +69,7 @@ for i=1:num_agents
         human{i}.TimeStartFilling = [];
         human{i}.TimeStartServing = [];
         human{i}.TimeFinishServing = [];
-        human{i}.TimeHumFilling =  [];
-        
+        human{i}.TimeHumFilling =  [];  
     end
 end
 
@@ -98,6 +90,7 @@ for i=1:num_agents
         humanData{i}.FinishServing;
     end
 end
+
 for j=1:num_robots
     tasknum{j} = 1;
     tasknum1{j} = 1;
@@ -123,19 +116,11 @@ idx_going_tasks = 1:num_service_tasks;
 idx_waiting_tasks = num_service_tasks+1:num_service_tasks*2;
 idx_services_tasks = num_service_tasks*2+1:num_service_tasks*3;
 idx_depot_tasks = num_service_tasks*3+1:num_service_tasks*4;
+
 % Positions
-min_base_distance = 5.5;
-%probot = [zeros(1,num_robots); 0:min_base_distance:min_base_distance*(num_robots-1)]
-probot = [2, 3, 4, 5; 1, 1, 1, 1];
-i_values = [4, 7, 8, 11, 12, 14];% x positions of the humans in the field
-j_values = 5:10;% y positions of the humans
-position_hum = zeros(num_agents,2);
-for i=1:num_agents
-    indi = randi(length(i_values), 1);
-    indj = randi(length(j_values), 1);
-    position_hum(i,1) = i_values(indi);
-    position_hum(i,2) = j_values(indj);
-end
+probot = [-1, -0.5; 0, 0.5];
+position_hum = [2, 3; 1, 2];
+
 ptasks = repmat(position_hum.', 1, num_filling_boxes);
 [dist, service_time] = computeDist(num_tasks, num_robots, position_hum, ptasks, num_service_tasks, probot, idx_going_tasks, service_time);
 timeReall = 0;
@@ -150,6 +135,19 @@ humanTime_filling = ones(1, num_agents*num_filling_boxes)*150; %Find the first p
 drawnow
 ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll);
 display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+
+% Command to run ROS node for timing
+command = 'source /opt/ros/noetic/setup.bash && rosnode list | grep "^/timer_publisher" | xargs -I {} rosnode kill {}';
+[status, cmdout] = system(command); % Shutting down old timer
+disp('Starting new timer node: ');
+command = 'source /home/jorand/differentialdrive_ws/devel/setup.bash && rosrun diff_drive_robot timing.py &';
+[status, cmdout] = system(command, '-echo');
+TimingSub = rossubscriber('/Timing', 'std_msgs/Float64');
+timingData = receive(TimingSub, 1).Data
+for hu=1:num_humans
+    HumanID = hu;
+    hum1(HumanID); %human app
+end
 simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
 
 function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll)
@@ -336,7 +334,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
 end
 
 function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time)
-    global  num_robots num_agents human num_filling_boxes num_phases 
+    global  num_tasks num_robots num_agents human num_filling_boxes num_phases 
 
     service_time1 = [];
     serv_time = 7;
@@ -374,19 +372,26 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
         %%%%%%%%%%%%%%%%%
 
         %%%%%%%%%%%%%%% Human time filling
-        %if humanTime_filling(curr_hum) ~= humanTime_filling(curr_hum) && ~ismember(curr_hum, idx_to_ignore_h) %if the new time needed to fill a box is different from before and is not a task to ignore
-            All.timeFh(curr_hum) = All.timeSh(curr_hum) + humanTime_filling(curr_hum); %We update the finishing time
-            curr_hum_slow = true;
-            hum_slow = curr_hum;
-            checkShift = true;
-            if (curr_hum + num_agents)<num_agents*num_filling_boxes+1 && Alloc.timeSh(curr_hum + num_agents) < All.timeFh(curr_hum) %If the starting time of the next human task is lower than the finishing time of the current human task i.e. the human is slower
-                disp('slower')
-                All.timeSh(curr_hum + num_agents) = All.timeFh(curr_hum) + serv_time;%service_time1(curr_hum); %We update the starting time of the next task
-            elseif (curr_hum + num_agents)<num_agents*num_filling_boxes+1 && Alloc.timeSh(curr_hum + num_agents) > All.timeFh(curr_hum) %If the starting time of the next human task is higher than the finishing time of the current human task i.e. the human is faster
-                disp('faster')
-                All.timeSh(curr_hum+num_agents) = All.timeFh(curr_hum) + serv_time;%service_time1(curr_hum);%We update the starting time of the next task
+        % if humanTime_filling(curr_hum) ~= humanTime_filling(curr_hum) && ~ismember(curr_hum, idx_to_ignore_h) %if the new time needed to fill a box is different from before and is not a task to ignore
+        %     All.timeFh(curr_hum) = All.timeSh(curr_hum) + humanTime_filling(curr_hum); %We update the finishing time
+        %     curr_hum_slow = true;
+        %     hum_slow = curr_hum;
+        %     checkShift = true;
+        %     if (curr_hum + num_agents)<num_agents*num_filling_boxes+1 && Alloc.timeSh(curr_hum + num_agents) < All.timeFh(curr_hum) %If the starting time of the next human task is lower than the finishing time of the current human task i.e. the human is slower
+        %         disp('slower')
+        %         All.timeSh(curr_hum + num_agents) = All.timeFh(curr_hum) + serv_time;%service_time1(curr_hum); %We update the starting time of the next task
+        %     elseif (curr_hum + num_agents)<num_agents*num_filling_boxes+1 && Alloc.timeSh(curr_hum + num_agents) > All.timeFh(curr_hum) %If the starting time of the next human task is higher than the finishing time of the current human task i.e. the human is faster
+        %         disp('faster')
+        %         All.timeSh(curr_hum+num_agents) = All.timeFh(curr_hum) + serv_time;%service_time1(curr_hum);%We update the starting time of the next task
+        %     end
+        % end
+
+        if humanTime_filling(curr_hum)>150
+            for s=curr_hum+num_agents:num_agents:num_tasks 
+                All.timeSh(s) = All.timeFh(s-num_agents) + serv_time
+                All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum)
             end
-        %end
+        end
     
         %%%%%%%%%%%%%%%%%%
         prev_dep_time = All.timeF(dep);
@@ -472,16 +477,16 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
             end
         end
     end
-    for j = 1:num_agents
-        idx_curr_hum = j:num_agents:num_agents*num_filling_boxes;
-        for i = 2:num_filling_boxes
-            if All.timeSh(idx_curr_hum(i)) < All.timeF(idx_curr_hum(i-1))
-                curr_duration = All.timeFh(idx_curr_hum(i)) - All.timeSh(idx_curr_hum(i));
-                All.timeSh(idx_curr_hum(i)) = All.timeF(idx_curr_hum(i-1));
-                All.timeFh(idx_curr_hum(i)) = All.timeSh(idx_curr_hum(i)) + curr_duration;
-            end
-        end
-    end
+    % for j = 1:num_agents
+    %     idx_curr_hum = j:num_agents:num_agents*num_filling_boxes;
+    %     for i = 2:num_filling_boxes
+    %         if All.timeSh(idx_curr_hum(i)) < All.timeF(idx_curr_hum(i-1))
+    %             curr_duration = All.timeFh(idx_curr_hum(i)) - All.timeSh(idx_curr_hum(i));
+    %             All.timeSh(idx_curr_hum(i)) = All.timeF(idx_curr_hum(i-1));
+    %             All.timeFh(idx_curr_hum(i)) = All.timeSh(idx_curr_hum(i)) + curr_duration;
+    %         end
+    %     end
+    % end
     All.makespan = max(All.timeF);
     AllUpdated = All;
 end
@@ -489,7 +494,7 @@ end
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
     global num_phases
     %% Display
-    %close all
+    close all
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
     colors_matrix = rand(num_agents*num_filling_boxes*4,3);
@@ -587,7 +592,7 @@ end
 
 
 function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
-    global MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+    global timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
     ReAll1 = ReAll
     num_phases = 4;
     duration = ReAll.makespan;
@@ -602,7 +607,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
         for h=1:num_agents
             humanData{h} = humanSub{h}.LatestMessage;
             while true
-                pause(0.01); % Avoid overloading with too frequent requests
+                pause(0.1); % Avoid overloading with too frequent requests
+                timingData = receive(TimingSub, 1).Data;
                 try
                     humanData{h} = humanSub{h}.LatestMessage;
                     if ~isempty(humanData{h}) % Example condition
@@ -614,7 +620,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     disp('Error while waiting for humanData. Trying again...');
                 end
             end
-            humanTime_filling(h:2:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling
+            humanTime_filling(h:2:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
             ReAll.timeFh(h:2:end) = humanData{h}.FinishFilling; 
             ReAll.timeSh(h:2:end) = humanData{h}.StartFilling;
         end
@@ -716,8 +722,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         %ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll);                        
                         ReAll = updateSchedule(ReAll, ReAll1, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time);
                         % Send new timings on the topic
-                        humanData{u}.FinishFilling = ReAll.timeFh(u:2:end)
-                        humanData{u}.StartFilling = ReAll.timeSh(u:2:end)
+                        humanData{u}.FinishFilling = ReAll.timeFh(u:2:end);
+                        humanData{u}.StartFilling = ReAll.timeSh(u:2:end);
                         if humanData{u}.Task > 2
                             humanData{u}.Task = 3;
                         else
@@ -729,11 +735,11 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     if humanData{u}.Task < 2
                         disp('update schedule one');
                         first_allocation = 2
-                        ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll);                        
-                        %ReAll = updateSchedule(ReAll, ReAll1, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time);
+                        %ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll);                        
+                        ReAll = updateSchedule(ReAll, ReAll1, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time);
                         % Send new timings on the topic
-                        humanData{u}.FinishFilling = ReAll.timeFh(u:2:end)
-                        humanData{u}.StartFilling = ReAll.timeSh(u:2:end)
+                        humanData{u}.FinishFilling = ReAll.timeFh(u:2:end);
+                        humanData{u}.StartFilling = ReAll.timeSh(u:2:end);
                         humanData{u}.Task = humanData{u}.Task + 1;
                         send(pub{u}, humanData{u});    
                     end
@@ -752,7 +758,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
             for rob=1:num_robots
                 index = find(X1(:,rob)>0.1);
                 inittime = ReAll.timeS(X1(:,rob)>0.1);
-                endtime = ReAll.timeF(X1(:,rob)>0.1)
+                endtime = ReAll.timeF(X1(:,rob)>0.1);
                 z = 1;
                 for k=1:length(inittime)
                     if find(index(k) == idx_going_tasks)
@@ -781,9 +787,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
             end
 
         end
-        valuetime = valuetime + 1;
+        %valuetime = valuetime + 1;
+        valuetime = timingData;
         disp(['valuetime : ', num2str(valuetime)]);            
-        msgTime.Data = valuetime; % For example, using MATLAB's now function as a timing value
-        send(pubTime, msgTime);
     end
 end

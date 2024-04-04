@@ -52,7 +52,8 @@ add_message_files(
   FILES
   HumanRobotInteraction.msg
   MILPResult.msg
-)
+  TimeMessage.msg
+  )
 
 ## Generate services in the 'srv' folder
 # add_service_files(

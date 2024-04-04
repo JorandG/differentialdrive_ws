@@ -32,7 +32,7 @@ num_robots = 2;
 warehouse_configurations = [-1.00, -0.5, 0.0; 0, 0.5, 0.0]; % (x, y, theta); The theta parameter describes the orientation of the Robot (The robot orientation is the angle between the robot heading and the positive X-axis, measured counterclockwise).
 distanceThreshold = 10.0;
 obstacleAvoidanceThreshold = 1.0;
-desired_positions = [1.5, 2.5; 1.0, 2.0]; %(x,y)
+desired_positions = [2, 3; 1, 2]; %(x,y)
 desired_timing = [40; 40];
 % ---------------------------------------------------------------------------- %
 
