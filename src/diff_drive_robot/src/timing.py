@@ -15,7 +15,7 @@ def publish_timer():
     timer = 0.0
     
     # Time increment per tick, based on the update rate (5Hz => 0.2 seconds per update)
-    time_increment = 1
+    time_increment = 0.6
     
     while not rospy.is_shutdown():
         # Publish the current value of the timer
