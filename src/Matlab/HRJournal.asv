@@ -53,7 +53,7 @@ for h=1:num_humans
     humanData{h}.HumanID = h;
     humanData{h}.RobotVelocity = 0.0;
     humanData{h}.WaitingTime = 0.0;
-    humanData{h}.StartFilling = [0.0, 162.0, 324.0, 486.0];
+    humanData{h}.StartFilling = [0.0, 162.0, 324.0];%, 486.0];
     humanData{h}.FinishFilling = [150.0, 312.0, 474.0];%, 636];
     humanData{h}.TimeFilling = ones(1, num_agents)*150;
     humanData{h}.TimeServing = ones(1, num_agents)*7.0;
@@ -656,6 +656,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
 
                 if humanData{u}.Confirm == 1 %if human{u}.confirmModif == 1
                     humanData{u}.Confirm = 0;
+                    newDatas = 1;
                     timeReall = timingData;
                     difference = abs(timeReall - humanData{u}.FinishFilling(humanData{u}.Task)); %used for the updateschedule
                     humanData{u}.FinishFilling(humanData{u}.Task) = timeReall;
@@ -670,14 +671,6 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
                         ReAll.timeFh(h:num_humans:end) = humanData{h}.FinishFilling; 
                     end
-                    % k=0;
-                    % for k=1:num_service_tasks
-                    %     if ReAll.timeF(k) >= timeReall 
-                    %         idx_to_consider_r(end+1) = k;
-                    %     else
-                    %         idx_to_ignore_r(end+1) = k;
-                    %     end
-                    % end
                     
                     l=0;
                     for l=1:num_service_tasks
@@ -732,37 +725,37 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                 end
             end
             %% ROS Topics for reallocation
-            X1 = repmat(ReAll.X,num_phases,1);
-            for rob=1:num_robots
-                index = find(X1(:,rob)>0.1);
-                inittime = ReAll.timeS(X1(:,rob)>0.1);
-                endtime = ReAll.timeF(X1(:,rob)>0.1);
-                z = 1;
-                for k=1:length(inittime)
-                    if find(index(k) == idx_going_tasks)
-                        MILPData{rob}.Humans(z) = mod(index(k), num_agents);
-                        if MILPData{rob}.Humans(z) == 0
-                            MILPData{rob}.Humans(z) = num_agents;
+            if newd
+                for rob=1:num_robots
+                    index = find(X1(:,rob)>0.1);
+                    inittime = ReAll.timeS(X1(:,rob)>0.1);
+                    endtime = ReAll.timeF(X1(:,rob)>0.1);
+                    z = 1;
+                    for k=1:length(inittime)
+                        if find(index(k) == idx_going_tasks)
+                            MILPData{rob}.Humans(z) = mod(index(k), num_agents);
+                            if MILPData{rob}.Humans(z) == 0
+                                MILPData{rob}.Humans(z) = num_agents;
+                            end
                         end
+                        z = z + 1;
                     end
-                    z = z + 1;
+                    MILPData{rob}.RobotID = rob;
+                    
+                    %Start timings
+                    MILPData{rob}.GoingStart = inittime(1:num_filling_boxes);
+                    MILPData{rob}.WaitingStart = inittime(num_filling_boxes+1:num_filling_boxes*2);
+                    MILPData{rob}.ServingStart = inittime(num_filling_boxes*2+1:num_filling_boxes*3);
+                    MILPData{rob}.DepotStart = inittime(num_filling_boxes*3+1:num_filling_boxes*4);
+                    
+                    %Finish timings
+                    MILPData{rob}.GoingFinish = endtime(1:num_filling_boxes);
+                    MILPData{rob}.WaitingFinish = endtime(num_filling_boxes+1:num_filling_boxes*2);
+                    MILPData{rob}.ServingFinish = endtime(num_filling_boxes*2+1:num_filling_boxes*3);
+                    MILPData{rob}.DepotFinish = endtime(num_filling_boxes*3+1:num_filling_boxes*4);
+    
+                    send(MILPDataPub{rob}, MILPData{rob});
                 end
-                MILPData{rob}.RobotID = rob;
-                
-                %Start timings
-                MILPData{rob}.GoingStart = inittime(1:num_filling_boxes);
-                MILPData{rob}.WaitingStart = inittime(num_filling_boxes+1:num_filling_boxes*2);
-                MILPData{rob}.ServingStart = inittime(num_filling_boxes*2+1:num_filling_boxes*3);
-                MILPData{rob}.DepotStart = inittime(num_filling_boxes*3+1:num_filling_boxes*4);
-                
-                %Finish timings
-                MILPData{rob}.GoingFinish = endtime(1:num_filling_boxes);
-                MILPData{rob}.WaitingFinish = endtime(num_filling_boxes+1:num_filling_boxes*2);
-                MILPData{rob}.ServingFinish = endtime(num_filling_boxes*2+1:num_filling_boxes*3);
-                MILPData{rob}.DepotFinish = endtime(num_filling_boxes*3+1:num_filling_boxes*4);
-
-                send(MILPDataPub{rob}, MILPData{rob});
-            end
 
         end
         valuetime = timingData;

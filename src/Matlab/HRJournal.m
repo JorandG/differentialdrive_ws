@@ -560,7 +560,7 @@ end
 
 
 function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
-    global difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+    global  difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
     ReAll1 = ReAll
     num_phases = 4;
     duration = ReAll.makespan;
@@ -569,6 +569,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
     first_allocation = 0;
     confirmModif = 0;
     i = 0;
+    newDatas = 1;
    
     while (valuetime <= duration)
         h=0;
@@ -656,6 +657,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
 
                 if humanData{u}.Confirm == 1 %if human{u}.confirmModif == 1
                     humanData{u}.Confirm = 0;
+                    newDatas = 1;
                     timeReall = timingData;
                     difference = abs(timeReall - humanData{u}.FinishFilling(humanData{u}.Task)); %used for the updateschedule
                     humanData{u}.FinishFilling(humanData{u}.Task) = timeReall;
@@ -670,14 +672,6 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
                         ReAll.timeFh(h:num_humans:end) = humanData{h}.FinishFilling; 
                     end
-                    % k=0;
-                    % for k=1:num_service_tasks
-                    %     if ReAll.timeF(k) >= timeReall 
-                    %         idx_to_consider_r(end+1) = k;
-                    %     else
-                    %         idx_to_ignore_r(end+1) = k;
-                    %     end
-                    % end
                     
                     l=0;
                     for l=1:num_service_tasks
@@ -732,38 +726,39 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                 end
             end
             %% ROS Topics for reallocation
-            X1 = repmat(ReAll.X,num_phases,1);
-            for rob=1:num_robots
-                index = find(X1(:,rob)>0.1);
-                inittime = ReAll.timeS(X1(:,rob)>0.1);
-                endtime = ReAll.timeF(X1(:,rob)>0.1);
-                z = 1;
-                for k=1:length(inittime)
-                    if find(index(k) == idx_going_tasks)
-                        MILPData{rob}.Humans(z) = mod(index(k), num_agents);
-                        if MILPData{rob}.Humans(z) == 0
-                            MILPData{rob}.Humans(z) = num_agents;
+            if newDatas == 1
+                for rob=1:num_robots
+                    index = find(X1(:,rob)>0.1);
+                    inittime = ReAll.timeS(X1(:,rob)>0.1);
+                    endtime = ReAll.timeF(X1(:,rob)>0.1);
+                    z = 1;
+                    for k=1:length(inittime)
+                        if find(index(k) == idx_going_tasks)
+                            MILPData{rob}.Humans(z) = mod(index(k), num_agents);
+                            if MILPData{rob}.Humans(z) == 0
+                                MILPData{rob}.Humans(z) = num_agents;
+                            end
                         end
+                        z = z + 1;
                     end
-                    z = z + 1;
+                    MILPData{rob}.RobotID = rob;
+                    
+                    %Start timings
+                    MILPData{rob}.GoingStart = inittime(1:num_filling_boxes);
+                    MILPData{rob}.WaitingStart = inittime(num_filling_boxes+1:num_filling_boxes*2);
+                    MILPData{rob}.ServingStart = inittime(num_filling_boxes*2+1:num_filling_boxes*3);
+                    MILPData{rob}.DepotStart = inittime(num_filling_boxes*3+1:num_filling_boxes*4);
+                    
+                    %Finish timings
+                    MILPData{rob}.GoingFinish = endtime(1:num_filling_boxes);
+                    MILPData{rob}.WaitingFinish = endtime(num_filling_boxes+1:num_filling_boxes*2);
+                    MILPData{rob}.ServingFinish = endtime(num_filling_boxes*2+1:num_filling_boxes*3);
+                    MILPData{rob}.DepotFinish = endtime(num_filling_boxes*3+1:num_filling_boxes*4);
+    
+                    send(MILPDataPub{rob}, MILPData{rob});
+                    newDatas = 0;
                 end
-                MILPData{rob}.RobotID = rob;
-                
-                %Start timings
-                MILPData{rob}.GoingStart = inittime(1:num_filling_boxes);
-                MILPData{rob}.WaitingStart = inittime(num_filling_boxes+1:num_filling_boxes*2);
-                MILPData{rob}.ServingStart = inittime(num_filling_boxes*2+1:num_filling_boxes*3);
-                MILPData{rob}.DepotStart = inittime(num_filling_boxes*3+1:num_filling_boxes*4);
-                
-                %Finish timings
-                MILPData{rob}.GoingFinish = endtime(1:num_filling_boxes);
-                MILPData{rob}.WaitingFinish = endtime(num_filling_boxes+1:num_filling_boxes*2);
-                MILPData{rob}.ServingFinish = endtime(num_filling_boxes*2+1:num_filling_boxes*3);
-                MILPData{rob}.DepotFinish = endtime(num_filling_boxes*3+1:num_filling_boxes*4);
-
-                send(MILPDataPub{rob}, MILPData{rob});
             end
-
         end
         valuetime = timingData;
         disp(['valuetime : ', num2str(valuetime)]);            
