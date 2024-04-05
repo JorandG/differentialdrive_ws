@@ -142,7 +142,7 @@ command = 'source /opt/ros/noetic/setup.bash && rosnode list | grep "^/timer_pub
 [status, cmdout] = system(command); % Shutting down old timer
 disp('Starting new timer node: ');
 command = 'source /home/jorand/differentialdrive_ws/devel/setup.bash && rosrun diff_drive_robot timing.py &';
-[status, cmdout] = system(command, '-echo');
+[status, cmdout] = system(command, '-echo'); % Starting new timer
 TimingSub = rossubscriber('/Timing', 'std_msgs/Float64');
 timingData = receive(TimingSub, 1).Data
 for hu=1:num_humans
@@ -353,6 +353,7 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
     dist1 = dist;
     dist1 = repmat(dist1,num_phases,1);
 
+    %Shifting human timings (to do before updating robot times)
     for curr_hum=1:num_tasks
         %Shifts human timings
         if All.timeFh(curr_hum)==timeReall
@@ -360,8 +361,6 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                 All.timeSh(s) = All.timeSh(s) + difference;
                 difference = abs(All.timeFh(s) - (All.timeSh(s) + humanTime_filling(curr_hum)))
                 All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum);
-                %All.timeSh(s) = All.timeF(s) - humanTime_filling(curr_hum);
-                %All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum);
             end
         end
     end
@@ -375,32 +374,6 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
             serv = curr_hum+num_tasks*(num_phases-2);
             wait = curr_hum+num_tasks*(num_phases-3);
         end
-        %%%%%%%%%%%%%%% service_time
-        if service_time1(curr_hum) ~= service_time(curr_hum) && ~ismember(curr_hum, idx_to_ignore_h)
-            diff_service_time = service_time1(curr_hum) - service_time(curr_hum);
-            All.timeFh(curr_hum) = All.timeFh(curr_hum) + diff_service_time;
-            All.timeS(dep) = All.timeF(curr_hum) + service_time1(curr_hum);
-            All.timeF(dep) = All.timeF(dep) + diff_service_time;
-            All.timeF(serv) = All.timeF(serv) + diff_service_time;
-            All.timeF(wait) = All.timeF(wait) + diff_service_time;
-        end
-        %%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%% Human time filling
-        % if humanTime_filling(curr_hum) ~= humanTime_filling(curr_hum) && ~ismember(curr_hum, idx_to_ignore_h) %if the new time needed to fill a box is different from before and is not a task to ignore
-        %     All.timeFh(curr_hum) = All.timeSh(curr_hum) + humanTime_filling(curr_hum); %We update the finishing time
-        %     curr_hum_slow = true;
-        %     hum_slow = curr_hum;
-        %     checkShift = true;
-        %     if (curr_hum + num_agents)<num_agents*num_filling_boxes+1 && Alloc.timeSh(curr_hum + num_agents) < All.timeFh(curr_hum) %If the starting time of the next human task is lower than the finishing time of the current human task i.e. the human is slower
-        %         disp('slower')
-        %         All.timeSh(curr_hum + num_agents) = All.timeFh(curr_hum) + serv_time;%service_time1(curr_hum); %We update the starting time of the next task
-        %     elseif (curr_hum + num_agents)<num_agents*num_filling_boxes+1 && Alloc.timeSh(curr_hum + num_agents) > All.timeFh(curr_hum) %If the starting time of the next human task is higher than the finishing time of the current human task i.e. the human is faster
-        %         disp('faster')
-        %         All.timeSh(curr_hum+num_agents) = All.timeFh(curr_hum) + serv_time;%service_time1(curr_hum);%We update the starting time of the next task
-        %     end
-        % end
-
         
         if All.timeFh(curr_hum)==timeReall
             %human slower
@@ -412,18 +385,7 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
             end
         end
 
-
-    
-        %%%%%%%%%%%%%%%%%%
         prev_dep_time = All.timeF(dep);
-        %%%%%%%%%%%%%%%%%%% Distance
-%                 if dist1(curr_hum) ~= dist(curr_hum) && ~ismember(curr_hum, idx_to_ignore_h) %if the new time distance is different from before and is not a task to ignore
-%                     All.timeF(curr_hum)=All.timeS(curr_hum)+(nonzeros(All.invprod(curr_hum,:)*nonzeros(dist1(curr_hum,:).*All.X(curr_hum,:))));
-%                     All.timeS(dep)=All.timeF(curr_hum) + service_time1(hum_slow); %depot
-%                     All.timeF(dep)=All.timeS(dep)+(nonzeros(All.invprod(dep,:)*nonzeros(dist1(dep,:).*All.X(dep,:))));
-%                 end
-        %%%%%%%%%%%%%%%%%%%%
-
 
         if All.timeF(curr_hum) < All.timeFh(curr_hum) + service_time(curr_hum) || dist1(curr_hum) ~= dist(curr_hum) && ~ismember(curr_hum, idx_to_ignore_h) %If the robot wants to serve the human before he has finished
             prev_timeF_curr_hum = All.timeF(curr_hum);
@@ -432,9 +394,6 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                     disp('speed up going possible')
                     All.timeS(hum_slow) = All.timeFh(hum_slow) - nonzeros(dist1(hum_slow,:).*All.X(hum_slow,:))/max(vel_max); %We speed up to the max velocity to minimize the shifting quantity
                     All.timeF(hum_slow) = All.timeFh(hum_slow); %+ service_time1(hum_slow); %update final time of going
-                    %All.timeS(dep)=All.timeF(hum_slow) + service_time1(hum_slow); %depot
-                    %All.timeF(dep)=All.timeS(dep)+max(vel_max)*nonzeros(dist1(dep,:).*All.X(dep,:)); %+ service_time(dep);%update final time of depot no need to use service_time1
-
                     All.timeS(wait)=All.timeF(hum_slow); %waiting
                     All.timeF(wait)=All.timeS(wait)+waiting_time;
                     All.timeS(serv)=All.timeF(wait); %serving
@@ -446,8 +405,6 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                 disp('speed up NOT possible')
                 All.timeS(curr_hum) = All.timeFh(curr_hum) - (nonzeros(All.invprod(curr_hum,:))*nonzeros(dist1(curr_hum,:).*All.X(curr_hum,:)))
                 All.timeF(curr_hum) = All.timeFh(curr_hum); %+ service_time1(curr_hum); %update final time of picking
-                %All.timeS(dep)=All.timeF(curr_hum) + service_time1(curr_hum); %depot
-                %All.timeF(dep)=All.timeS(dep)+(nonzeros(All.invprod(dep,:))*nonzeros(dist1(dep,:).*All.X(dep,:))) + service_time(dep);%update final time of depot
 
                 All.timeS(wait)=All.timeF(curr_hum); %waiting
                 All.timeF(wait)=All.timeS(wait)+waiting_time;
@@ -478,7 +435,6 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                             first_task_index = first_task_index + 4;
                         end
                     end
-
                 else
                     % the robot is doing the task curr_hum
                     % and we skip to the next pick
@@ -497,25 +453,8 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                 end
             end
         end
-        % %Shifts human timings
-        % if All.timeFh(curr_hum)==timeReall
-        %     for s=curr_hum+num_agents:num_agents:num_tasks 
-        %         All.timeSh(s) = All.timeF(s) - humanTime_filling(curr_hum);
-        %         All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum);
-        %     end
-        % end
     end
 
-    % for j = 1:num_agents
-    %     idx_curr_hum = j:num_agents:num_agents*num_filling_boxes;
-    %     for i = 2:num_filling_boxes
-    %         if All.timeSh(idx_curr_hum(i)) < All.timeF(idx_curr_hum(i-1))
-    %             curr_duration = All.timeFh(idx_curr_hum(i)) - All.timeSh(idx_curr_hum(i));
-    %             All.timeSh(idx_curr_hum(i)) = All.timeF(idx_curr_hum(i-1));
-    %             All.timeFh(idx_curr_hum(i)) = All.timeSh(idx_curr_hum(i)) + curr_duration;
-    %         end
-    %     end
-    % end
     All.makespan = max(All.timeF);
     AllUpdated = All;
 end
@@ -523,7 +462,7 @@ end
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
     global num_phases
     %% Display
-    %close all
+    close all
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
     colors_matrix = rand(num_agents*num_filling_boxes*4,3);
@@ -649,9 +588,6 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     disp('Error while waiting for humanData. Trying again...');
                 end
             end
-            % humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
-            % ReAll.timeFh(h:num_humans:end) = humanData{h}.FinishFilling; 
-            % ReAll.timeSh(h:num_humans:end) = humanData{h}.StartFilling;
         end
         pause(0.1); % Pause for 0.1 second
         duration = ReAll.makespan;
@@ -829,7 +765,6 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
             end
 
         end
-        %valuetime = valuetime + 1;
         valuetime = timingData;
         disp(['valuetime : ', num2str(valuetime)]);            
     end
