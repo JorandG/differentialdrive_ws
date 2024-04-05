@@ -53,8 +53,8 @@ for h=1:num_humans
     humanData{h}.HumanID = h;
     humanData{h}.RobotVelocity = 0.0;
     humanData{h}.WaitingTime = 0.0;
-    humanData{h}.StartFilling = [0.0, 162.0, 324.0]; %, 486.0];
-    humanData{h}.FinishFilling = [150.0, 312.0, 474.0]; %, 636];
+    humanData{h}.StartFilling = [0.0, 162.0, 324.0, 486.0];
+    humanData{h}.FinishFilling = [150.0, 312.0, 474.0];%, 636];
     humanData{h}.TimeFilling = ones(1, num_agents)*150;
     humanData{h}.TimeServing = ones(1, num_agents)*7.0;
     humanData{h}.StartServing = 0.0;
@@ -101,7 +101,7 @@ num_depot_tasks = num_service_tasks;
 num_tasks = num_service_tasks;
 service_time = zeros(num_tasks, num_robots);
 
-M = 10000;
+M = 100000;
 vel_min = ones(num_robots,1)*0.2; % min velocity for the robots
 vel_max = ones(num_robots,1)*0.4; % max velocity for the robots
 % Weights for objective function
@@ -353,12 +353,13 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
     dist1 = dist;
     dist1 = repmat(dist1,num_phases,1);
 
+    %Shifting human timings (to do before updating robot times)
     for curr_hum=1:num_tasks
         %Shifts human timings
         if All.timeFh(curr_hum)==timeReall
             for s=curr_hum+num_agents:num_agents:num_tasks 
                 All.timeSh(s) = All.timeSh(s) + difference;
-                difference = abs(All.timeFh(s) - (All.timeSh(s) + humanTime_filling(curr_hum)))
+                difference = abs(All.timeFh(s) - (All.timeSh(s) + humanTime_filling(curr_hum)));  
                 All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum);
             end
         end
@@ -373,16 +374,7 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
             serv = curr_hum+num_tasks*(num_phases-2);
             wait = curr_hum+num_tasks*(num_phases-3);
         end
-        %%%%%%%%%%%%%%% service_time
-        if service_time1(curr_hum) ~= service_time(curr_hum) && ~ismember(curr_hum, idx_to_ignore_h)
-            diff_service_time = service_time1(curr_hum) - service_time(curr_hum);
-            All.timeFh(curr_hum) = All.timeFh(curr_hum) + diff_service_time;
-            All.timeS(dep) = All.timeF(curr_hum) + service_time1(curr_hum);
-            All.timeF(dep) = All.timeF(dep) + diff_service_time;
-            All.timeF(serv) = All.timeF(serv) + diff_service_time;
-            All.timeF(wait) = All.timeF(wait) + diff_service_time;
-        end
-        %Shifting human timings (to do before upda
+        
         if All.timeFh(curr_hum)==timeReall
             %human slower
             if humanTime_filling(curr_hum) > humanTime_fillingPrev(curr_hum)
@@ -443,7 +435,6 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                             first_task_index = first_task_index + 4;
                         end
                     end
-
                 else
                     % the robot is doing the task curr_hum
                     % and we skip to the next pick
@@ -471,7 +462,7 @@ end
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
     global num_phases
     %% Display
-    %close all
+    close all
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
     colors_matrix = rand(num_agents*num_filling_boxes*4,3);
@@ -666,7 +657,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                 if humanData{u}.Confirm == 1 %if human{u}.confirmModif == 1
                     humanData{u}.Confirm = 0;
                     timeReall = timingData;
-                    difference = abs(timeReall - humanData{u}.FinishFilling(humanData{u}.Task))
+                    difference = abs(timeReall - humanData{u}.FinishFilling(humanData{u}.Task)); %used for the updateschedule
                     humanData{u}.FinishFilling(humanData{u}.Task) = timeReall;
 
                     for h=1:num_agents
@@ -690,7 +681,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     
                     l=0;
                     for l=1:num_service_tasks
-                        if ReAll.timeSh(l) >= timeReall 
+                        if ReAll.timeFh(l) >= timeReall 
                             idx_to_consider_h(end+1) = l;
                             idx_to_consider_r(end+1) = l;
                         else
@@ -704,8 +695,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         disp('update schedule two');
                         first_allocation = 2
                         idx_to_consider_r
-                        %ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll);                        
-                        ReAll = updateSchedule(ReAll, ReAll1, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
+                        ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll);                        
+                        %ReAll = updateSchedule(ReAll, ReAll1, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
                         humanTime_fillingPrev = humanTime_filling;
                         % Send new timings on the topic
                         humanData{u}.FinishFilling = ReAll.timeFh(u:2:end);
