@@ -28,24 +28,30 @@ struct MILPResult_
     , Humans()
     , GoingStart()
     , WaitingStart()
+    , ApproachStart()
     , ServingStart()
     , DepotStart()
     , GoingFinish()
     , WaitingFinish()
+    , ApproachFinish()
     , ServingFinish()
-    , DepotFinish()  {
+    , DepotFinish()
+    , FinishedOperation(0)  {
     }
   MILPResult_(const ContainerAllocator& _alloc)
     : RobotID(0)
     , Humans(_alloc)
     , GoingStart(_alloc)
     , WaitingStart(_alloc)
+    , ApproachStart(_alloc)
     , ServingStart(_alloc)
     , DepotStart(_alloc)
     , GoingFinish(_alloc)
     , WaitingFinish(_alloc)
+    , ApproachFinish(_alloc)
     , ServingFinish(_alloc)
-    , DepotFinish(_alloc)  {
+    , DepotFinish(_alloc)
+    , FinishedOperation(0)  {
   (void)_alloc;
     }
 
@@ -63,6 +69,9 @@ struct MILPResult_
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _WaitingStart_type;
   _WaitingStart_type WaitingStart;
 
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ApproachStart_type;
+  _ApproachStart_type ApproachStart;
+
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ServingStart_type;
   _ServingStart_type ServingStart;
 
@@ -75,11 +84,17 @@ struct MILPResult_
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _WaitingFinish_type;
   _WaitingFinish_type WaitingFinish;
 
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ApproachFinish_type;
+  _ApproachFinish_type ApproachFinish;
+
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ServingFinish_type;
   _ServingFinish_type ServingFinish;
 
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _DepotFinish_type;
   _DepotFinish_type DepotFinish;
+
+   typedef int32_t _FinishedOperation_type;
+  _FinishedOperation_type FinishedOperation;
 
 
 
@@ -114,12 +129,15 @@ bool operator==(const ::diff_drive_robot::MILPResult_<ContainerAllocator1> & lhs
     lhs.Humans == rhs.Humans &&
     lhs.GoingStart == rhs.GoingStart &&
     lhs.WaitingStart == rhs.WaitingStart &&
+    lhs.ApproachStart == rhs.ApproachStart &&
     lhs.ServingStart == rhs.ServingStart &&
     lhs.DepotStart == rhs.DepotStart &&
     lhs.GoingFinish == rhs.GoingFinish &&
     lhs.WaitingFinish == rhs.WaitingFinish &&
+    lhs.ApproachFinish == rhs.ApproachFinish &&
     lhs.ServingFinish == rhs.ServingFinish &&
-    lhs.DepotFinish == rhs.DepotFinish;
+    lhs.DepotFinish == rhs.DepotFinish &&
+    lhs.FinishedOperation == rhs.FinishedOperation;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -176,12 +194,12 @@ struct MD5Sum< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "2d08fbd0bb0c654ece09998565b41c04";
+    return "68b4bc1a777373ac2cd4b494deeac03a";
   }
 
   static const char* value(const ::diff_drive_robot::MILPResult_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x2d08fbd0bb0c654eULL;
-  static const uint64_t static_value2 = 0xce09998565b41c04ULL;
+  static const uint64_t static_value1 = 0x68b4bc1a777373acULL;
+  static const uint64_t static_value2 = 0x2cd4b494deeac03aULL;
 };
 
 template<class ContainerAllocator>
@@ -204,12 +222,15 @@ struct Definition< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
 "int32[] Humans\n"
 "float64[] GoingStart\n"
 "float64[] WaitingStart \n"
+"float64[] ApproachStart\n"
 "float64[] ServingStart\n"
 "float64[] DepotStart\n"
 "float64[] GoingFinish\n"
-"float64[] WaitingFinish \n"
+"float64[] WaitingFinish\n"
+"float64[] ApproachFinish\n"
 "float64[] ServingFinish\n"
 "float64[] DepotFinish\n"
+"int32 FinishedOperation\n"
 ;
   }
 
@@ -232,12 +253,15 @@ namespace serialization
       stream.next(m.Humans);
       stream.next(m.GoingStart);
       stream.next(m.WaitingStart);
+      stream.next(m.ApproachStart);
       stream.next(m.ServingStart);
       stream.next(m.DepotStart);
       stream.next(m.GoingFinish);
       stream.next(m.WaitingFinish);
+      stream.next(m.ApproachFinish);
       stream.next(m.ServingFinish);
       stream.next(m.DepotFinish);
+      stream.next(m.FinishedOperation);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -276,6 +300,12 @@ struct Printer< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
       s << indent << "  WaitingStart[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.WaitingStart[i]);
     }
+    s << indent << "ApproachStart[]" << std::endl;
+    for (size_t i = 0; i < v.ApproachStart.size(); ++i)
+    {
+      s << indent << "  ApproachStart[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.ApproachStart[i]);
+    }
     s << indent << "ServingStart[]" << std::endl;
     for (size_t i = 0; i < v.ServingStart.size(); ++i)
     {
@@ -300,6 +330,12 @@ struct Printer< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
       s << indent << "  WaitingFinish[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.WaitingFinish[i]);
     }
+    s << indent << "ApproachFinish[]" << std::endl;
+    for (size_t i = 0; i < v.ApproachFinish.size(); ++i)
+    {
+      s << indent << "  ApproachFinish[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.ApproachFinish[i]);
+    }
     s << indent << "ServingFinish[]" << std::endl;
     for (size_t i = 0; i < v.ServingFinish.size(); ++i)
     {
@@ -312,6 +348,8 @@ struct Printer< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
       s << indent << "  DepotFinish[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.DepotFinish[i]);
     }
+    s << indent << "FinishedOperation: ";
+    Printer<int32_t>::stream(s, indent + "  ", v.FinishedOperation);
   }
 };
 

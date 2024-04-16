@@ -8,22 +8,24 @@ import struct
 
 
 class MILPResult(genpy.Message):
-  _md5sum = "2d08fbd0bb0c654ece09998565b41c04"
+  _md5sum = "68b4bc1a777373ac2cd4b494deeac03a"
   _type = "diff_drive_robot/MILPResult"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 RobotID
 int32[] Humans
 float64[] GoingStart
 float64[] WaitingStart 
+float64[] ApproachStart
 float64[] ServingStart
 float64[] DepotStart
 float64[] GoingFinish
-float64[] WaitingFinish 
+float64[] WaitingFinish
+float64[] ApproachFinish
 float64[] ServingFinish
 float64[] DepotFinish
-"""
-  __slots__ = ['RobotID','Humans','GoingStart','WaitingStart','ServingStart','DepotStart','GoingFinish','WaitingFinish','ServingFinish','DepotFinish']
-  _slot_types = ['int32','int32[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]']
+int32 FinishedOperation"""
+  __slots__ = ['RobotID','Humans','GoingStart','WaitingStart','ApproachStart','ServingStart','DepotStart','GoingFinish','WaitingFinish','ApproachFinish','ServingFinish','DepotFinish','FinishedOperation']
+  _slot_types = ['int32','int32[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32']
 
   def __init__(self, *args, **kwds):
     """
@@ -33,7 +35,7 @@ float64[] DepotFinish
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       RobotID,Humans,GoingStart,WaitingStart,ServingStart,DepotStart,GoingFinish,WaitingFinish,ServingFinish,DepotFinish
+       RobotID,Humans,GoingStart,WaitingStart,ApproachStart,ServingStart,DepotStart,GoingFinish,WaitingFinish,ApproachFinish,ServingFinish,DepotFinish,FinishedOperation
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -50,6 +52,8 @@ float64[] DepotFinish
         self.GoingStart = []
       if self.WaitingStart is None:
         self.WaitingStart = []
+      if self.ApproachStart is None:
+        self.ApproachStart = []
       if self.ServingStart is None:
         self.ServingStart = []
       if self.DepotStart is None:
@@ -58,21 +62,28 @@ float64[] DepotFinish
         self.GoingFinish = []
       if self.WaitingFinish is None:
         self.WaitingFinish = []
+      if self.ApproachFinish is None:
+        self.ApproachFinish = []
       if self.ServingFinish is None:
         self.ServingFinish = []
       if self.DepotFinish is None:
         self.DepotFinish = []
+      if self.FinishedOperation is None:
+        self.FinishedOperation = 0
     else:
       self.RobotID = 0
       self.Humans = []
       self.GoingStart = []
       self.WaitingStart = []
+      self.ApproachStart = []
       self.ServingStart = []
       self.DepotStart = []
       self.GoingFinish = []
       self.WaitingFinish = []
+      self.ApproachFinish = []
       self.ServingFinish = []
       self.DepotFinish = []
+      self.FinishedOperation = 0
 
   def _get_types(self):
     """
@@ -100,6 +111,10 @@ float64[] DepotFinish
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.WaitingStart))
+      length = len(self.ApproachStart)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.ApproachStart))
       length = len(self.ServingStart)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -116,6 +131,10 @@ float64[] DepotFinish
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.WaitingFinish))
+      length = len(self.ApproachFinish)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.ApproachFinish))
       length = len(self.ServingFinish)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -124,6 +143,8 @@ float64[] DepotFinish
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.DepotFinish))
+      _x = self.FinishedOperation
+      buff.write(_get_struct_i().pack(_x))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -170,6 +191,14 @@ float64[] DepotFinish
       start = end
       s = struct.Struct(pattern)
       end += s.size
+      self.ApproachStart = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
       self.ServingStart = s.unpack(str[start:end])
       start = end
       end += 4
@@ -202,6 +231,14 @@ float64[] DepotFinish
       start = end
       s = struct.Struct(pattern)
       end += s.size
+      self.ApproachFinish = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
       self.ServingFinish = s.unpack(str[start:end])
       start = end
       end += 4
@@ -211,6 +248,9 @@ float64[] DepotFinish
       s = struct.Struct(pattern)
       end += s.size
       self.DepotFinish = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (self.FinishedOperation,) = _get_struct_i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -237,6 +277,10 @@ float64[] DepotFinish
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.WaitingStart.tostring())
+      length = len(self.ApproachStart)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.ApproachStart.tostring())
       length = len(self.ServingStart)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -253,6 +297,10 @@ float64[] DepotFinish
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.WaitingFinish.tostring())
+      length = len(self.ApproachFinish)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.ApproachFinish.tostring())
       length = len(self.ServingFinish)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -261,6 +309,8 @@ float64[] DepotFinish
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.DepotFinish.tostring())
+      _x = self.FinishedOperation
+      buff.write(_get_struct_i().pack(_x))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -308,6 +358,14 @@ float64[] DepotFinish
       start = end
       s = struct.Struct(pattern)
       end += s.size
+      self.ApproachStart = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
       self.ServingStart = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
@@ -340,6 +398,14 @@ float64[] DepotFinish
       start = end
       s = struct.Struct(pattern)
       end += s.size
+      self.ApproachFinish = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
       self.ServingFinish = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
@@ -349,6 +415,9 @@ float64[] DepotFinish
       s = struct.Struct(pattern)
       end += s.size
       self.DepotFinish = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (self.FinishedOperation,) = _get_struct_i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill

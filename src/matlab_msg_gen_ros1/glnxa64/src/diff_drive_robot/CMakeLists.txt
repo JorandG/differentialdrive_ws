@@ -31,6 +31,7 @@ add_message_files(
     FILES
     HumanRobotInteraction.msg
     MILPResult.msg
+    TimeMessage.msg
 )
 ## Generate added messages, services and actions with any dependencies listed here
 generate_messages(
@@ -91,6 +92,7 @@ add_library(
     SHARED
     src/diff_drive_robot_HumanRobotInteraction_message.cpp
     src/diff_drive_robot_MILPResult_message.cpp
+    src/diff_drive_robot_TimeMessage_message.cpp
 )
 target_include_directories(diff_drive_robot_matlab PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -151,4 +153,4 @@ add_custom_command(
                    ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CATKIN_DEVEL_PREFIX}/_ert_rtw/${file_i}
 				   )
 endforeach(file_i)
-# Generated on Tue Apr 02 12:59:05 2024
+# Generated on Tue Apr 16 12:56:57 2024

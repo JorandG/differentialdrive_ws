@@ -46,6 +46,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diff_drive_robot/msg" TYPE FILE FILES
     "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/HumanRobotInteraction.msg"
     "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/MILPResult.msg"
+    "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/TimeMessage.msg"
     )
 endif()
 

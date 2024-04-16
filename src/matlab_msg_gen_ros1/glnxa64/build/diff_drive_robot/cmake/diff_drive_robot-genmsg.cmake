@@ -1,6 +1,6 @@
 # generated from genmsg/cmake/pkg-genmsg.cmake.em
 
-message(STATUS "diff_drive_robot: 2 messages, 0 services")
+message(STATUS "diff_drive_robot: 3 messages, 0 services")
 
 set(MSG_I_FLAGS "-Idiff_drive_robot:/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg;-Istd_msgs:/usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/std_msgs/cmake/../msg")
 
@@ -24,6 +24,11 @@ add_custom_target(_diff_drive_robot_generate_messages_check_deps_${_filename}
   COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "diff_drive_robot" "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/MILPResult.msg" ""
 )
 
+get_filename_component(_filename "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/TimeMessage.msg" NAME_WE)
+add_custom_target(_diff_drive_robot_generate_messages_check_deps_${_filename}
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "diff_drive_robot" "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/TimeMessage.msg" ""
+)
+
 #
 #  langs = gencpp;genpy
 #
@@ -38,6 +43,12 @@ _generate_msg_cpp(diff_drive_robot
 )
 _generate_msg_cpp(diff_drive_robot
   "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/MILPResult.msg"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/diff_drive_robot
+)
+_generate_msg_cpp(diff_drive_robot
+  "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/TimeMessage.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/diff_drive_robot
@@ -61,6 +72,8 @@ get_filename_component(_filename "/home/jorand/differentialdrive_ws/src/matlab_m
 add_dependencies(diff_drive_robot_generate_messages_cpp _diff_drive_robot_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/MILPResult.msg" NAME_WE)
 add_dependencies(diff_drive_robot_generate_messages_cpp _diff_drive_robot_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/TimeMessage.msg" NAME_WE)
+add_dependencies(diff_drive_robot_generate_messages_cpp _diff_drive_robot_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
 add_custom_target(diff_drive_robot_gencpp)
@@ -83,6 +96,12 @@ _generate_msg_py(diff_drive_robot
   ""
   ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/diff_drive_robot
 )
+_generate_msg_py(diff_drive_robot
+  "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/TimeMessage.msg"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/diff_drive_robot
+)
 
 ### Generating Services
 
@@ -101,6 +120,8 @@ add_dependencies(diff_drive_robot_generate_messages diff_drive_robot_generate_me
 get_filename_component(_filename "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/HumanRobotInteraction.msg" NAME_WE)
 add_dependencies(diff_drive_robot_generate_messages_py _diff_drive_robot_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/MILPResult.msg" NAME_WE)
+add_dependencies(diff_drive_robot_generate_messages_py _diff_drive_robot_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/TimeMessage.msg" NAME_WE)
 add_dependencies(diff_drive_robot_generate_messages_py _diff_drive_robot_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
