@@ -8,24 +8,24 @@ import struct
 
 
 class MILPResult(genpy.Message):
-  _md5sum = "68b4bc1a777373ac2cd4b494deeac03a"
+  _md5sum = "346b3371d221a89a547bcd481eb13161"
   _type = "diff_drive_robot/MILPResult"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 RobotID
 int32[] Humans
 float64[] GoingStart
+float64[] ApproachingStart
 float64[] WaitingStart 
-float64[] ApproachStart
 float64[] ServingStart
 float64[] DepotStart
 float64[] GoingFinish
+float64[] ApproachingFinish
 float64[] WaitingFinish
-float64[] ApproachFinish
 float64[] ServingFinish
 float64[] DepotFinish
-int32 FinishedOperation"""
-  __slots__ = ['RobotID','Humans','GoingStart','WaitingStart','ApproachStart','ServingStart','DepotStart','GoingFinish','WaitingFinish','ApproachFinish','ServingFinish','DepotFinish','FinishedOperation']
-  _slot_types = ['int32','int32[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32']
+int32[] FinishedOperation"""
+  __slots__ = ['RobotID','Humans','GoingStart','ApproachingStart','WaitingStart','ServingStart','DepotStart','GoingFinish','ApproachingFinish','WaitingFinish','ServingFinish','DepotFinish','FinishedOperation']
+  _slot_types = ['int32','int32[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]']
 
   def __init__(self, *args, **kwds):
     """
@@ -35,7 +35,7 @@ int32 FinishedOperation"""
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       RobotID,Humans,GoingStart,WaitingStart,ApproachStart,ServingStart,DepotStart,GoingFinish,WaitingFinish,ApproachFinish,ServingFinish,DepotFinish,FinishedOperation
+       RobotID,Humans,GoingStart,ApproachingStart,WaitingStart,ServingStart,DepotStart,GoingFinish,ApproachingFinish,WaitingFinish,ServingFinish,DepotFinish,FinishedOperation
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -50,40 +50,40 @@ int32 FinishedOperation"""
         self.Humans = []
       if self.GoingStart is None:
         self.GoingStart = []
+      if self.ApproachingStart is None:
+        self.ApproachingStart = []
       if self.WaitingStart is None:
         self.WaitingStart = []
-      if self.ApproachStart is None:
-        self.ApproachStart = []
       if self.ServingStart is None:
         self.ServingStart = []
       if self.DepotStart is None:
         self.DepotStart = []
       if self.GoingFinish is None:
         self.GoingFinish = []
+      if self.ApproachingFinish is None:
+        self.ApproachingFinish = []
       if self.WaitingFinish is None:
         self.WaitingFinish = []
-      if self.ApproachFinish is None:
-        self.ApproachFinish = []
       if self.ServingFinish is None:
         self.ServingFinish = []
       if self.DepotFinish is None:
         self.DepotFinish = []
       if self.FinishedOperation is None:
-        self.FinishedOperation = 0
+        self.FinishedOperation = []
     else:
       self.RobotID = 0
       self.Humans = []
       self.GoingStart = []
+      self.ApproachingStart = []
       self.WaitingStart = []
-      self.ApproachStart = []
       self.ServingStart = []
       self.DepotStart = []
       self.GoingFinish = []
+      self.ApproachingFinish = []
       self.WaitingFinish = []
-      self.ApproachFinish = []
       self.ServingFinish = []
       self.DepotFinish = []
-      self.FinishedOperation = 0
+      self.FinishedOperation = []
 
   def _get_types(self):
     """
@@ -107,14 +107,14 @@ int32 FinishedOperation"""
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.GoingStart))
+      length = len(self.ApproachingStart)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.ApproachingStart))
       length = len(self.WaitingStart)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.WaitingStart))
-      length = len(self.ApproachStart)
-      buff.write(_struct_I.pack(length))
-      pattern = '<%sd'%length
-      buff.write(struct.Struct(pattern).pack(*self.ApproachStart))
       length = len(self.ServingStart)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -127,14 +127,14 @@ int32 FinishedOperation"""
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.GoingFinish))
+      length = len(self.ApproachingFinish)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.ApproachingFinish))
       length = len(self.WaitingFinish)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.WaitingFinish))
-      length = len(self.ApproachFinish)
-      buff.write(_struct_I.pack(length))
-      pattern = '<%sd'%length
-      buff.write(struct.Struct(pattern).pack(*self.ApproachFinish))
       length = len(self.ServingFinish)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -143,8 +143,10 @@ int32 FinishedOperation"""
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.DepotFinish))
-      _x = self.FinishedOperation
-      buff.write(_get_struct_i().pack(_x))
+      length = len(self.FinishedOperation)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%si'%length
+      buff.write(struct.Struct(pattern).pack(*self.FinishedOperation))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -183,7 +185,7 @@ int32 FinishedOperation"""
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.WaitingStart = s.unpack(str[start:end])
+      self.ApproachingStart = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -191,7 +193,7 @@ int32 FinishedOperation"""
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.ApproachStart = s.unpack(str[start:end])
+      self.WaitingStart = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -223,7 +225,7 @@ int32 FinishedOperation"""
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.WaitingFinish = s.unpack(str[start:end])
+      self.ApproachingFinish = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -231,7 +233,7 @@ int32 FinishedOperation"""
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.ApproachFinish = s.unpack(str[start:end])
+      self.WaitingFinish = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -250,7 +252,12 @@ int32 FinishedOperation"""
       self.DepotFinish = s.unpack(str[start:end])
       start = end
       end += 4
-      (self.FinishedOperation,) = _get_struct_i().unpack(str[start:end])
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%si'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.FinishedOperation = s.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -273,14 +280,14 @@ int32 FinishedOperation"""
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.GoingStart.tostring())
+      length = len(self.ApproachingStart)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.ApproachingStart.tostring())
       length = len(self.WaitingStart)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.WaitingStart.tostring())
-      length = len(self.ApproachStart)
-      buff.write(_struct_I.pack(length))
-      pattern = '<%sd'%length
-      buff.write(self.ApproachStart.tostring())
       length = len(self.ServingStart)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -293,14 +300,14 @@ int32 FinishedOperation"""
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.GoingFinish.tostring())
+      length = len(self.ApproachingFinish)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.ApproachingFinish.tostring())
       length = len(self.WaitingFinish)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.WaitingFinish.tostring())
-      length = len(self.ApproachFinish)
-      buff.write(_struct_I.pack(length))
-      pattern = '<%sd'%length
-      buff.write(self.ApproachFinish.tostring())
       length = len(self.ServingFinish)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -309,8 +316,10 @@ int32 FinishedOperation"""
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.DepotFinish.tostring())
-      _x = self.FinishedOperation
-      buff.write(_get_struct_i().pack(_x))
+      length = len(self.FinishedOperation)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%si'%length
+      buff.write(self.FinishedOperation.tostring())
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -350,7 +359,7 @@ int32 FinishedOperation"""
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.WaitingStart = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      self.ApproachingStart = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -358,7 +367,7 @@ int32 FinishedOperation"""
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.ApproachStart = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      self.WaitingStart = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -390,7 +399,7 @@ int32 FinishedOperation"""
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.WaitingFinish = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      self.ApproachingFinish = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -398,7 +407,7 @@ int32 FinishedOperation"""
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.ApproachFinish = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      self.WaitingFinish = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -417,7 +426,12 @@ int32 FinishedOperation"""
       self.DepotFinish = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
-      (self.FinishedOperation,) = _get_struct_i().unpack(str[start:end])
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%si'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.FinishedOperation = numpy.frombuffer(str[start:end], dtype=numpy.int32, count=length)
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill

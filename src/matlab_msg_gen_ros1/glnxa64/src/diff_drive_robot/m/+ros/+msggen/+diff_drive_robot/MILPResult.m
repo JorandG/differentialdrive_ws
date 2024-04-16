@@ -8,9 +8,9 @@ classdef MILPResult < ros.Message
         MessageType = 'diff_drive_robot/MILPResult' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = '68b4bc1a777373ac2cd4b494deeac03a' % The MD5 Checksum of the message definition
-        PropertyList = { 'RobotID' 'Humans' 'GoingStart' 'WaitingStart' 'ApproachStart' 'ServingStart' 'DepotStart' 'GoingFinish' 'WaitingFinish' 'ApproachFinish' 'ServingFinish' 'DepotFinish' 'FinishedOperation' } % List of non-constant message properties
-        ROSPropertyList = { 'RobotID' 'Humans' 'GoingStart' 'WaitingStart' 'ApproachStart' 'ServingStart' 'DepotStart' 'GoingFinish' 'WaitingFinish' 'ApproachFinish' 'ServingFinish' 'DepotFinish' 'FinishedOperation' } % List of non-constant ROS message properties
+        MD5Checksum = '346b3371d221a89a547bcd481eb13161' % The MD5 Checksum of the message definition
+        PropertyList = { 'RobotID' 'Humans' 'GoingStart' 'ApproachingStart' 'WaitingStart' 'ServingStart' 'DepotStart' 'GoingFinish' 'ApproachingFinish' 'WaitingFinish' 'ServingFinish' 'DepotFinish' 'FinishedOperation' } % List of non-constant message properties
+        ROSPropertyList = { 'RobotID' 'Humans' 'GoingStart' 'ApproachingStart' 'WaitingStart' 'ServingStart' 'DepotStart' 'GoingFinish' 'ApproachingFinish' 'WaitingFinish' 'ServingFinish' 'DepotFinish' 'FinishedOperation' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
             '' ...
             '' ...
@@ -32,13 +32,13 @@ classdef MILPResult < ros.Message
         RobotID
         Humans
         GoingStart
+        ApproachingStart
         WaitingStart
-        ApproachStart
         ServingStart
         DepotStart
         GoingFinish
+        ApproachingFinish
         WaitingFinish
-        ApproachFinish
         ServingFinish
         DepotFinish
         FinishedOperation
@@ -72,6 +72,17 @@ classdef MILPResult < ros.Message
             validateattributes(val, validClasses, validAttributes, 'MILPResult', 'GoingStart');
             obj.GoingStart = double(val);
         end
+        function set.ApproachingStart(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'MILPResult', 'ApproachingStart');
+            obj.ApproachingStart = double(val);
+        end
         function set.WaitingStart(obj, val)
             validClasses = {'numeric'};
             if isempty(val)
@@ -82,17 +93,6 @@ classdef MILPResult < ros.Message
             validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'MILPResult', 'WaitingStart');
             obj.WaitingStart = double(val);
-        end
-        function set.ApproachStart(obj, val)
-            validClasses = {'numeric'};
-            if isempty(val)
-                % Allow empty [] input
-                val = double.empty(0, 1);
-            end
-            val = val(:);
-            validAttributes = {'vector'};
-            validateattributes(val, validClasses, validAttributes, 'MILPResult', 'ApproachStart');
-            obj.ApproachStart = double(val);
         end
         function set.ServingStart(obj, val)
             validClasses = {'numeric'};
@@ -127,6 +127,17 @@ classdef MILPResult < ros.Message
             validateattributes(val, validClasses, validAttributes, 'MILPResult', 'GoingFinish');
             obj.GoingFinish = double(val);
         end
+        function set.ApproachingFinish(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'MILPResult', 'ApproachingFinish');
+            obj.ApproachingFinish = double(val);
+        end
         function set.WaitingFinish(obj, val)
             validClasses = {'numeric'};
             if isempty(val)
@@ -137,17 +148,6 @@ classdef MILPResult < ros.Message
             validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'MILPResult', 'WaitingFinish');
             obj.WaitingFinish = double(val);
-        end
-        function set.ApproachFinish(obj, val)
-            validClasses = {'numeric'};
-            if isempty(val)
-                % Allow empty [] input
-                val = double.empty(0, 1);
-            end
-            val = val(:);
-            validAttributes = {'vector'};
-            validateattributes(val, validClasses, validAttributes, 'MILPResult', 'ApproachFinish');
-            obj.ApproachFinish = double(val);
         end
         function set.ServingFinish(obj, val)
             validClasses = {'numeric'};
@@ -173,7 +173,12 @@ classdef MILPResult < ros.Message
         end
         function set.FinishedOperation(obj, val)
             validClasses = {'numeric'};
-            validAttributes = {'nonempty', 'scalar'};
+            if isempty(val)
+                % Allow empty [] input
+                val = int32.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'MILPResult', 'FinishedOperation');
             obj.FinishedOperation = int32(val);
         end

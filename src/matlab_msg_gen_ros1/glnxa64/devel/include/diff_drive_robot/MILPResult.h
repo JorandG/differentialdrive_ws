@@ -27,31 +27,31 @@ struct MILPResult_
     : RobotID(0)
     , Humans()
     , GoingStart()
+    , ApproachingStart()
     , WaitingStart()
-    , ApproachStart()
     , ServingStart()
     , DepotStart()
     , GoingFinish()
+    , ApproachingFinish()
     , WaitingFinish()
-    , ApproachFinish()
     , ServingFinish()
     , DepotFinish()
-    , FinishedOperation(0)  {
+    , FinishedOperation()  {
     }
   MILPResult_(const ContainerAllocator& _alloc)
     : RobotID(0)
     , Humans(_alloc)
     , GoingStart(_alloc)
+    , ApproachingStart(_alloc)
     , WaitingStart(_alloc)
-    , ApproachStart(_alloc)
     , ServingStart(_alloc)
     , DepotStart(_alloc)
     , GoingFinish(_alloc)
+    , ApproachingFinish(_alloc)
     , WaitingFinish(_alloc)
-    , ApproachFinish(_alloc)
     , ServingFinish(_alloc)
     , DepotFinish(_alloc)
-    , FinishedOperation(0)  {
+    , FinishedOperation(_alloc)  {
   (void)_alloc;
     }
 
@@ -66,11 +66,11 @@ struct MILPResult_
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _GoingStart_type;
   _GoingStart_type GoingStart;
 
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ApproachingStart_type;
+  _ApproachingStart_type ApproachingStart;
+
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _WaitingStart_type;
   _WaitingStart_type WaitingStart;
-
-   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ApproachStart_type;
-  _ApproachStart_type ApproachStart;
 
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ServingStart_type;
   _ServingStart_type ServingStart;
@@ -81,11 +81,11 @@ struct MILPResult_
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _GoingFinish_type;
   _GoingFinish_type GoingFinish;
 
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ApproachingFinish_type;
+  _ApproachingFinish_type ApproachingFinish;
+
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _WaitingFinish_type;
   _WaitingFinish_type WaitingFinish;
-
-   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ApproachFinish_type;
-  _ApproachFinish_type ApproachFinish;
 
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _ServingFinish_type;
   _ServingFinish_type ServingFinish;
@@ -93,7 +93,7 @@ struct MILPResult_
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _DepotFinish_type;
   _DepotFinish_type DepotFinish;
 
-   typedef int32_t _FinishedOperation_type;
+   typedef std::vector<int32_t, typename ContainerAllocator::template rebind<int32_t>::other >  _FinishedOperation_type;
   _FinishedOperation_type FinishedOperation;
 
 
@@ -128,13 +128,13 @@ bool operator==(const ::diff_drive_robot::MILPResult_<ContainerAllocator1> & lhs
   return lhs.RobotID == rhs.RobotID &&
     lhs.Humans == rhs.Humans &&
     lhs.GoingStart == rhs.GoingStart &&
+    lhs.ApproachingStart == rhs.ApproachingStart &&
     lhs.WaitingStart == rhs.WaitingStart &&
-    lhs.ApproachStart == rhs.ApproachStart &&
     lhs.ServingStart == rhs.ServingStart &&
     lhs.DepotStart == rhs.DepotStart &&
     lhs.GoingFinish == rhs.GoingFinish &&
+    lhs.ApproachingFinish == rhs.ApproachingFinish &&
     lhs.WaitingFinish == rhs.WaitingFinish &&
-    lhs.ApproachFinish == rhs.ApproachFinish &&
     lhs.ServingFinish == rhs.ServingFinish &&
     lhs.DepotFinish == rhs.DepotFinish &&
     lhs.FinishedOperation == rhs.FinishedOperation;
@@ -194,12 +194,12 @@ struct MD5Sum< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "68b4bc1a777373ac2cd4b494deeac03a";
+    return "346b3371d221a89a547bcd481eb13161";
   }
 
   static const char* value(const ::diff_drive_robot::MILPResult_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x68b4bc1a777373acULL;
-  static const uint64_t static_value2 = 0x2cd4b494deeac03aULL;
+  static const uint64_t static_value1 = 0x346b3371d221a89aULL;
+  static const uint64_t static_value2 = 0x547bcd481eb13161ULL;
 };
 
 template<class ContainerAllocator>
@@ -221,16 +221,16 @@ struct Definition< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
     return "int32 RobotID\n"
 "int32[] Humans\n"
 "float64[] GoingStart\n"
+"float64[] ApproachingStart\n"
 "float64[] WaitingStart \n"
-"float64[] ApproachStart\n"
 "float64[] ServingStart\n"
 "float64[] DepotStart\n"
 "float64[] GoingFinish\n"
+"float64[] ApproachingFinish\n"
 "float64[] WaitingFinish\n"
-"float64[] ApproachFinish\n"
 "float64[] ServingFinish\n"
 "float64[] DepotFinish\n"
-"int32 FinishedOperation\n"
+"int32[] FinishedOperation\n"
 ;
   }
 
@@ -252,13 +252,13 @@ namespace serialization
       stream.next(m.RobotID);
       stream.next(m.Humans);
       stream.next(m.GoingStart);
+      stream.next(m.ApproachingStart);
       stream.next(m.WaitingStart);
-      stream.next(m.ApproachStart);
       stream.next(m.ServingStart);
       stream.next(m.DepotStart);
       stream.next(m.GoingFinish);
+      stream.next(m.ApproachingFinish);
       stream.next(m.WaitingFinish);
-      stream.next(m.ApproachFinish);
       stream.next(m.ServingFinish);
       stream.next(m.DepotFinish);
       stream.next(m.FinishedOperation);
@@ -294,17 +294,17 @@ struct Printer< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
       s << indent << "  GoingStart[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.GoingStart[i]);
     }
+    s << indent << "ApproachingStart[]" << std::endl;
+    for (size_t i = 0; i < v.ApproachingStart.size(); ++i)
+    {
+      s << indent << "  ApproachingStart[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.ApproachingStart[i]);
+    }
     s << indent << "WaitingStart[]" << std::endl;
     for (size_t i = 0; i < v.WaitingStart.size(); ++i)
     {
       s << indent << "  WaitingStart[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.WaitingStart[i]);
-    }
-    s << indent << "ApproachStart[]" << std::endl;
-    for (size_t i = 0; i < v.ApproachStart.size(); ++i)
-    {
-      s << indent << "  ApproachStart[" << i << "]: ";
-      Printer<double>::stream(s, indent + "  ", v.ApproachStart[i]);
     }
     s << indent << "ServingStart[]" << std::endl;
     for (size_t i = 0; i < v.ServingStart.size(); ++i)
@@ -324,17 +324,17 @@ struct Printer< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
       s << indent << "  GoingFinish[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.GoingFinish[i]);
     }
+    s << indent << "ApproachingFinish[]" << std::endl;
+    for (size_t i = 0; i < v.ApproachingFinish.size(); ++i)
+    {
+      s << indent << "  ApproachingFinish[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.ApproachingFinish[i]);
+    }
     s << indent << "WaitingFinish[]" << std::endl;
     for (size_t i = 0; i < v.WaitingFinish.size(); ++i)
     {
       s << indent << "  WaitingFinish[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.WaitingFinish[i]);
-    }
-    s << indent << "ApproachFinish[]" << std::endl;
-    for (size_t i = 0; i < v.ApproachFinish.size(); ++i)
-    {
-      s << indent << "  ApproachFinish[" << i << "]: ";
-      Printer<double>::stream(s, indent + "  ", v.ApproachFinish[i]);
     }
     s << indent << "ServingFinish[]" << std::endl;
     for (size_t i = 0; i < v.ServingFinish.size(); ++i)
@@ -348,8 +348,12 @@ struct Printer< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
       s << indent << "  DepotFinish[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.DepotFinish[i]);
     }
-    s << indent << "FinishedOperation: ";
-    Printer<int32_t>::stream(s, indent + "  ", v.FinishedOperation);
+    s << indent << "FinishedOperation[]" << std::endl;
+    for (size_t i = 0; i < v.FinishedOperation.size(); ++i)
+    {
+      s << indent << "  FinishedOperation[" << i << "]: ";
+      Printer<int32_t>::stream(s, indent + "  ", v.FinishedOperation[i]);
+    }
   }
 };
 

@@ -70,6 +70,17 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
         throw std::invalid_argument("Field 'GoingStart' is wrong type; expected a double.");
     }
     try {
+        //ApproachingStart
+        const matlab::data::TypedArray<double> ApproachingStart_arr = arr["ApproachingStart"];
+        size_t nelem = ApproachingStart_arr.getNumberOfElements();
+        	msg->ApproachingStart.resize(nelem);
+        	std::copy(ApproachingStart_arr.begin(), ApproachingStart_arr.begin()+nelem, msg->ApproachingStart.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'ApproachingStart' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'ApproachingStart' is wrong type; expected a double.");
+    }
+    try {
         //WaitingStart
         const matlab::data::TypedArray<double> WaitingStart_arr = arr["WaitingStart"];
         size_t nelem = WaitingStart_arr.getNumberOfElements();
@@ -79,17 +90,6 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
         throw std::invalid_argument("Field 'WaitingStart' is missing.");
     } catch (matlab::Exception&) {
         throw std::invalid_argument("Field 'WaitingStart' is wrong type; expected a double.");
-    }
-    try {
-        //ApproachStart
-        const matlab::data::TypedArray<double> ApproachStart_arr = arr["ApproachStart"];
-        size_t nelem = ApproachStart_arr.getNumberOfElements();
-        	msg->ApproachStart.resize(nelem);
-        	std::copy(ApproachStart_arr.begin(), ApproachStart_arr.begin()+nelem, msg->ApproachStart.begin());
-    } catch (matlab::data::InvalidFieldNameException&) {
-        throw std::invalid_argument("Field 'ApproachStart' is missing.");
-    } catch (matlab::Exception&) {
-        throw std::invalid_argument("Field 'ApproachStart' is wrong type; expected a double.");
     }
     try {
         //ServingStart
@@ -125,6 +125,17 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
         throw std::invalid_argument("Field 'GoingFinish' is wrong type; expected a double.");
     }
     try {
+        //ApproachingFinish
+        const matlab::data::TypedArray<double> ApproachingFinish_arr = arr["ApproachingFinish"];
+        size_t nelem = ApproachingFinish_arr.getNumberOfElements();
+        	msg->ApproachingFinish.resize(nelem);
+        	std::copy(ApproachingFinish_arr.begin(), ApproachingFinish_arr.begin()+nelem, msg->ApproachingFinish.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'ApproachingFinish' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'ApproachingFinish' is wrong type; expected a double.");
+    }
+    try {
         //WaitingFinish
         const matlab::data::TypedArray<double> WaitingFinish_arr = arr["WaitingFinish"];
         size_t nelem = WaitingFinish_arr.getNumberOfElements();
@@ -134,17 +145,6 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
         throw std::invalid_argument("Field 'WaitingFinish' is missing.");
     } catch (matlab::Exception&) {
         throw std::invalid_argument("Field 'WaitingFinish' is wrong type; expected a double.");
-    }
-    try {
-        //ApproachFinish
-        const matlab::data::TypedArray<double> ApproachFinish_arr = arr["ApproachFinish"];
-        size_t nelem = ApproachFinish_arr.getNumberOfElements();
-        	msg->ApproachFinish.resize(nelem);
-        	std::copy(ApproachFinish_arr.begin(), ApproachFinish_arr.begin()+nelem, msg->ApproachFinish.begin());
-    } catch (matlab::data::InvalidFieldNameException&) {
-        throw std::invalid_argument("Field 'ApproachFinish' is missing.");
-    } catch (matlab::Exception&) {
-        throw std::invalid_argument("Field 'ApproachFinish' is wrong type; expected a double.");
     }
     try {
         //ServingFinish
@@ -171,7 +171,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
     try {
         //FinishedOperation
         const matlab::data::TypedArray<int32_t> FinishedOperation_arr = arr["FinishedOperation"];
-        msg->FinishedOperation = FinishedOperation_arr[0];
+        size_t nelem = FinishedOperation_arr.getNumberOfElements();
+        	msg->FinishedOperation.resize(nelem);
+        	std::copy(FinishedOperation_arr.begin(), FinishedOperation_arr.begin()+nelem, msg->FinishedOperation.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'FinishedOperation' is missing.");
     } catch (matlab::Exception&) {
@@ -181,7 +183,7 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_MILPResult_common::get_arr(MDFactory_T& factory, const diff_drive_robot::MILPResult* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","RobotID","Humans","GoingStart","WaitingStart","ApproachStart","ServingStart","DepotStart","GoingFinish","WaitingFinish","ApproachFinish","ServingFinish","DepotFinish","FinishedOperation"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","RobotID","Humans","GoingStart","ApproachingStart","WaitingStart","ServingStart","DepotStart","GoingFinish","ApproachingFinish","WaitingFinish","ServingFinish","DepotFinish","FinishedOperation"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/MILPResult");
     // RobotID
@@ -193,12 +195,12 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
     // GoingStart
     auto currentElement_GoingStart = (msg + ctr)->GoingStart;
     outArray[ctr]["GoingStart"] = factory.createArray<diff_drive_robot::MILPResult::_GoingStart_type::const_iterator, double>({currentElement_GoingStart.size(),1}, currentElement_GoingStart.begin(), currentElement_GoingStart.end());
+    // ApproachingStart
+    auto currentElement_ApproachingStart = (msg + ctr)->ApproachingStart;
+    outArray[ctr]["ApproachingStart"] = factory.createArray<diff_drive_robot::MILPResult::_ApproachingStart_type::const_iterator, double>({currentElement_ApproachingStart.size(),1}, currentElement_ApproachingStart.begin(), currentElement_ApproachingStart.end());
     // WaitingStart
     auto currentElement_WaitingStart = (msg + ctr)->WaitingStart;
     outArray[ctr]["WaitingStart"] = factory.createArray<diff_drive_robot::MILPResult::_WaitingStart_type::const_iterator, double>({currentElement_WaitingStart.size(),1}, currentElement_WaitingStart.begin(), currentElement_WaitingStart.end());
-    // ApproachStart
-    auto currentElement_ApproachStart = (msg + ctr)->ApproachStart;
-    outArray[ctr]["ApproachStart"] = factory.createArray<diff_drive_robot::MILPResult::_ApproachStart_type::const_iterator, double>({currentElement_ApproachStart.size(),1}, currentElement_ApproachStart.begin(), currentElement_ApproachStart.end());
     // ServingStart
     auto currentElement_ServingStart = (msg + ctr)->ServingStart;
     outArray[ctr]["ServingStart"] = factory.createArray<diff_drive_robot::MILPResult::_ServingStart_type::const_iterator, double>({currentElement_ServingStart.size(),1}, currentElement_ServingStart.begin(), currentElement_ServingStart.end());
@@ -208,12 +210,12 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
     // GoingFinish
     auto currentElement_GoingFinish = (msg + ctr)->GoingFinish;
     outArray[ctr]["GoingFinish"] = factory.createArray<diff_drive_robot::MILPResult::_GoingFinish_type::const_iterator, double>({currentElement_GoingFinish.size(),1}, currentElement_GoingFinish.begin(), currentElement_GoingFinish.end());
+    // ApproachingFinish
+    auto currentElement_ApproachingFinish = (msg + ctr)->ApproachingFinish;
+    outArray[ctr]["ApproachingFinish"] = factory.createArray<diff_drive_robot::MILPResult::_ApproachingFinish_type::const_iterator, double>({currentElement_ApproachingFinish.size(),1}, currentElement_ApproachingFinish.begin(), currentElement_ApproachingFinish.end());
     // WaitingFinish
     auto currentElement_WaitingFinish = (msg + ctr)->WaitingFinish;
     outArray[ctr]["WaitingFinish"] = factory.createArray<diff_drive_robot::MILPResult::_WaitingFinish_type::const_iterator, double>({currentElement_WaitingFinish.size(),1}, currentElement_WaitingFinish.begin(), currentElement_WaitingFinish.end());
-    // ApproachFinish
-    auto currentElement_ApproachFinish = (msg + ctr)->ApproachFinish;
-    outArray[ctr]["ApproachFinish"] = factory.createArray<diff_drive_robot::MILPResult::_ApproachFinish_type::const_iterator, double>({currentElement_ApproachFinish.size(),1}, currentElement_ApproachFinish.begin(), currentElement_ApproachFinish.end());
     // ServingFinish
     auto currentElement_ServingFinish = (msg + ctr)->ServingFinish;
     outArray[ctr]["ServingFinish"] = factory.createArray<diff_drive_robot::MILPResult::_ServingFinish_type::const_iterator, double>({currentElement_ServingFinish.size(),1}, currentElement_ServingFinish.begin(), currentElement_ServingFinish.end());
@@ -222,7 +224,7 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
     outArray[ctr]["DepotFinish"] = factory.createArray<diff_drive_robot::MILPResult::_DepotFinish_type::const_iterator, double>({currentElement_DepotFinish.size(),1}, currentElement_DepotFinish.begin(), currentElement_DepotFinish.end());
     // FinishedOperation
     auto currentElement_FinishedOperation = (msg + ctr)->FinishedOperation;
-    outArray[ctr]["FinishedOperation"] = factory.createScalar(currentElement_FinishedOperation);
+    outArray[ctr]["FinishedOperation"] = factory.createArray<diff_drive_robot::MILPResult::_FinishedOperation_type::const_iterator, int32_t>({currentElement_FinishedOperation.size(),1}, currentElement_FinishedOperation.begin(), currentElement_FinishedOperation.end());
     }
     return std::move(outArray);
   } 

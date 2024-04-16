@@ -1,13 +1,13 @@
 int32 RobotID
 int32[] Humans
 float64[] GoingStart
+float64[] ApproachingStart
 float64[] WaitingStart 
-float64[] ApproachStart
 float64[] ServingStart
 float64[] DepotStart
 float64[] GoingFinish
+float64[] ApproachingFinish
 float64[] WaitingFinish
-float64[] ApproachFinish
 float64[] ServingFinish
 float64[] DepotFinish
-int32 FinishedOperation
+int32[] FinishedOperation
