@@ -169,21 +169,32 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
         throw std::invalid_argument("Field 'DepotFinish' is wrong type; expected a double.");
     }
     try {
-        //FinishedOperation
-        const matlab::data::TypedArray<int32_t> FinishedOperation_arr = arr["FinishedOperation"];
-        size_t nelem = FinishedOperation_arr.getNumberOfElements();
-        	msg->FinishedOperation.resize(nelem);
-        	std::copy(FinishedOperation_arr.begin(), FinishedOperation_arr.begin()+nelem, msg->FinishedOperation.begin());
+        //FinishedFilling
+        const matlab::data::TypedArray<int32_t> FinishedFilling_arr = arr["FinishedFilling"];
+        size_t nelem = FinishedFilling_arr.getNumberOfElements();
+        	msg->FinishedFilling.resize(nelem);
+        	std::copy(FinishedFilling_arr.begin(), FinishedFilling_arr.begin()+nelem, msg->FinishedFilling.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
-        throw std::invalid_argument("Field 'FinishedOperation' is missing.");
+        throw std::invalid_argument("Field 'FinishedFilling' is missing.");
     } catch (matlab::Exception&) {
-        throw std::invalid_argument("Field 'FinishedOperation' is wrong type; expected a int32.");
+        throw std::invalid_argument("Field 'FinishedFilling' is wrong type; expected a int32.");
+    }
+    try {
+        //FinishedService
+        const matlab::data::TypedArray<int32_t> FinishedService_arr = arr["FinishedService"];
+        size_t nelem = FinishedService_arr.getNumberOfElements();
+        	msg->FinishedService.resize(nelem);
+        	std::copy(FinishedService_arr.begin(), FinishedService_arr.begin()+nelem, msg->FinishedService.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'FinishedService' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'FinishedService' is wrong type; expected a int32.");
     }
   }
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_MILPResult_common::get_arr(MDFactory_T& factory, const diff_drive_robot::MILPResult* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","RobotID","Humans","GoingStart","ApproachingStart","WaitingStart","ServingStart","DepotStart","GoingFinish","ApproachingFinish","WaitingFinish","ServingFinish","DepotFinish","FinishedOperation"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","RobotID","Humans","GoingStart","ApproachingStart","WaitingStart","ServingStart","DepotStart","GoingFinish","ApproachingFinish","WaitingFinish","ServingFinish","DepotFinish","FinishedFilling","FinishedService"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/MILPResult");
     // RobotID
@@ -222,9 +233,12 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
     // DepotFinish
     auto currentElement_DepotFinish = (msg + ctr)->DepotFinish;
     outArray[ctr]["DepotFinish"] = factory.createArray<diff_drive_robot::MILPResult::_DepotFinish_type::const_iterator, double>({currentElement_DepotFinish.size(),1}, currentElement_DepotFinish.begin(), currentElement_DepotFinish.end());
-    // FinishedOperation
-    auto currentElement_FinishedOperation = (msg + ctr)->FinishedOperation;
-    outArray[ctr]["FinishedOperation"] = factory.createArray<diff_drive_robot::MILPResult::_FinishedOperation_type::const_iterator, int32_t>({currentElement_FinishedOperation.size(),1}, currentElement_FinishedOperation.begin(), currentElement_FinishedOperation.end());
+    // FinishedFilling
+    auto currentElement_FinishedFilling = (msg + ctr)->FinishedFilling;
+    outArray[ctr]["FinishedFilling"] = factory.createArray<diff_drive_robot::MILPResult::_FinishedFilling_type::const_iterator, int32_t>({currentElement_FinishedFilling.size(),1}, currentElement_FinishedFilling.begin(), currentElement_FinishedFilling.end());
+    // FinishedService
+    auto currentElement_FinishedService = (msg + ctr)->FinishedService;
+    outArray[ctr]["FinishedService"] = factory.createArray<diff_drive_robot::MILPResult::_FinishedService_type::const_iterator, int32_t>({currentElement_FinishedService.size(),1}, currentElement_FinishedService.begin(), currentElement_FinishedService.end());
     }
     return std::move(outArray);
   } 

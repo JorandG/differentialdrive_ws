@@ -36,7 +36,8 @@ struct MILPResult_
     , WaitingFinish()
     , ServingFinish()
     , DepotFinish()
-    , FinishedOperation()  {
+    , FinishedFilling()
+    , FinishedService()  {
     }
   MILPResult_(const ContainerAllocator& _alloc)
     : RobotID(0)
@@ -51,7 +52,8 @@ struct MILPResult_
     , WaitingFinish(_alloc)
     , ServingFinish(_alloc)
     , DepotFinish(_alloc)
-    , FinishedOperation(_alloc)  {
+    , FinishedFilling(_alloc)
+    , FinishedService(_alloc)  {
   (void)_alloc;
     }
 
@@ -93,8 +95,11 @@ struct MILPResult_
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _DepotFinish_type;
   _DepotFinish_type DepotFinish;
 
-   typedef std::vector<int32_t, typename ContainerAllocator::template rebind<int32_t>::other >  _FinishedOperation_type;
-  _FinishedOperation_type FinishedOperation;
+   typedef std::vector<int32_t, typename ContainerAllocator::template rebind<int32_t>::other >  _FinishedFilling_type;
+  _FinishedFilling_type FinishedFilling;
+
+   typedef std::vector<int32_t, typename ContainerAllocator::template rebind<int32_t>::other >  _FinishedService_type;
+  _FinishedService_type FinishedService;
 
 
 
@@ -137,7 +142,8 @@ bool operator==(const ::diff_drive_robot::MILPResult_<ContainerAllocator1> & lhs
     lhs.WaitingFinish == rhs.WaitingFinish &&
     lhs.ServingFinish == rhs.ServingFinish &&
     lhs.DepotFinish == rhs.DepotFinish &&
-    lhs.FinishedOperation == rhs.FinishedOperation;
+    lhs.FinishedFilling == rhs.FinishedFilling &&
+    lhs.FinishedService == rhs.FinishedService;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -194,12 +200,12 @@ struct MD5Sum< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "346b3371d221a89a547bcd481eb13161";
+    return "fd8dfb9081b18be68467dd19f671fb0d";
   }
 
   static const char* value(const ::diff_drive_robot::MILPResult_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x346b3371d221a89aULL;
-  static const uint64_t static_value2 = 0x547bcd481eb13161ULL;
+  static const uint64_t static_value1 = 0xfd8dfb9081b18be6ULL;
+  static const uint64_t static_value2 = 0x8467dd19f671fb0dULL;
 };
 
 template<class ContainerAllocator>
@@ -230,7 +236,8 @@ struct Definition< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
 "float64[] WaitingFinish\n"
 "float64[] ServingFinish\n"
 "float64[] DepotFinish\n"
-"int32[] FinishedOperation\n"
+"int32[] FinishedFilling\n"
+"int32[] FinishedService\n"
 ;
   }
 
@@ -261,7 +268,8 @@ namespace serialization
       stream.next(m.WaitingFinish);
       stream.next(m.ServingFinish);
       stream.next(m.DepotFinish);
-      stream.next(m.FinishedOperation);
+      stream.next(m.FinishedFilling);
+      stream.next(m.FinishedService);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -348,11 +356,17 @@ struct Printer< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
       s << indent << "  DepotFinish[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.DepotFinish[i]);
     }
-    s << indent << "FinishedOperation[]" << std::endl;
-    for (size_t i = 0; i < v.FinishedOperation.size(); ++i)
+    s << indent << "FinishedFilling[]" << std::endl;
+    for (size_t i = 0; i < v.FinishedFilling.size(); ++i)
     {
-      s << indent << "  FinishedOperation[" << i << "]: ";
-      Printer<int32_t>::stream(s, indent + "  ", v.FinishedOperation[i]);
+      s << indent << "  FinishedFilling[" << i << "]: ";
+      Printer<int32_t>::stream(s, indent + "  ", v.FinishedFilling[i]);
+    }
+    s << indent << "FinishedService[]" << std::endl;
+    for (size_t i = 0; i < v.FinishedService.size(); ++i)
+    {
+      s << indent << "  FinishedService[" << i << "]: ";
+      Printer<int32_t>::stream(s, indent + "  ", v.FinishedService[i]);
     }
   }
 };

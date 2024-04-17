@@ -10,4 +10,5 @@ float64[] ApproachingFinish
 float64[] WaitingFinish
 float64[] ServingFinish
 float64[] DepotFinish
-int32[] FinishedOperation
+int32[] FinishedFilling
+int32[] FinishedService
