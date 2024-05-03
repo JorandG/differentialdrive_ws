@@ -18,7 +18,7 @@ function sendRobotTaskUpdates(robotID, ReAll, X1, MILPDataPub, MILPData, idx_goi
     % Outputs:
     %    none
 
-    global humanData num_agents
+    global humanData num_agents;
 
     % Identify tasks assigned to this robot
     index = find(X1(:, robotID) > 0.1);
@@ -54,7 +54,7 @@ function sendRobotTaskUpdates(robotID, ReAll, X1, MILPDataPub, MILPData, idx_goi
     MILPData{robotID}.DepotFinish = endtime(4*num_filling_boxes+1:5*num_filling_boxes);
 
     if humanData{robotID}.ConfirmServing == 1 
-        MILPData{robotID}.FinishedService(currentHumanTask) = 1;        
+        MILPData{robotID}.FinishedServing(currentHumanTask) = 1;
     end
     if humanData{robotID}.ConfirmFilling == 1 
         MILPData{robotID}.FinishedFilling(currentHumanTask) = 1;
@@ -62,5 +62,4 @@ function sendRobotTaskUpdates(robotID, ReAll, X1, MILPDataPub, MILPData, idx_goi
 
     % Send the updated data to the corresponding ROS topic
     send(MILPDataPub{robotID}, MILPData{robotID});
-    
 end

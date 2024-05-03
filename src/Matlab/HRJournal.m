@@ -5,9 +5,9 @@ addpath('~/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m')
 savepath
 
 clear all;
-close all
+close all;
 
-global humanTime_fillingPrev timingData TimingSub MILPData MILPDataPub sizeFinishFilling msgTime pubTime pub msg humanSub humanData Ph human num_farming_robot tasknum tasknum1 num_robots initialTime num_filling_boxes idx_going_tasks idx_depot_tasks idx_waiting_tasks idx_services_tasks dist  num_humans VelRob HumWait HumTimeList num_service_tasks num_tasks num_depot_tasks service_time num_agents humanTime_filling humanTime_filling1 WeightHumanwaiting WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+global approaching_time waiting_time humanTime_serving humanTime_fillingPrev timingData TimingSub MILPData MILPDataPub sizeFinishFilling msgTime pubTime pub msg humanSub humanData Ph human num_farming_robot tasknum tasknum1 num_robots initialTime num_filling_boxes idx_going_tasks idx_depot_tasks idx_waiting_tasks idx_services_tasks dist  num_humans VelRob HumWait HumTimeList num_service_tasks num_tasks num_depot_tasks service_time num_agents humanTime_filling humanTime_filling1 WeightHumanwaiting WeightEnergyProximity WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
 
 num_humans = 2;
 num_agents = num_humans;
@@ -18,6 +18,8 @@ humanData = cell(num_humans, 1);
 pub = cell(num_humans, 1);
 humanSub = cell(num_humans, 1);
 sizeFinishFilling = 1;
+waiting_time = 5.0;
+approaching_time = 5.0;
 home = 1;
 sim = 0;
 
@@ -66,9 +68,11 @@ for h=1:num_humans
     humanData{h}.StartFilling = [0.0, 167.0, 334.0];%, 486.0];
     humanData{h}.FinishFilling = [150.0, 317.0, 484.0];%, 636];
     humanData{h}.TimeFilling = ones(1, num_filling_boxes)*150;
-    humanData{h}.TimeServing = ones(1, num_filling_boxes)*7.0;
-    humanData{h}.StartServing = 0.0;
-    humanData{h}.FinishServing = 0.0;
+    humanData{h}.TimeServing = [7.0, 7.0, 7.0, 7.0];
+    humanData{h}.StartServing = humanData{h}.FinishFilling + waiting_time + approaching_time;
+    humanData{h}.FinishServing = humanData{h}.StartServing + 7.0;
+    humanData{h}.ConfirmServing == 0;
+    humanData{h}.ConfirmFilling == 0;
     humanData{h}.Task = 1;
     send(pub{h}, humanData{h});
 end 
@@ -115,8 +119,9 @@ M = 1000000;
 vel_min = ones(num_robots,1)*0.05; % min velocity for the robots
 vel_max = ones(num_robots,1)*0.2; % max velocity for the robots
 % Weights for objective function
-WeightHumanwaiting = 1;
+WeightHumanwaiting = 2;
 WeightEnergyPicking = 1;
+WeightEnergyProximity = 1;
 WeightMakespan = 1;
 std_dev = 140;
 inv_vel_min = 1./vel_min;
@@ -129,7 +134,7 @@ idx_depot_tasks = num_service_tasks*3+1:num_service_tasks*4;
 
 % Positions
 probot = [-1, -0.5; 0, 0.5];
-position_hum = [2, 3; 1, 2];
+position_hum = [12, 3; 10, 2; 11, 5; 8, 7];%[2, 3; 1, 2];
 
 ptasks = repmat(position_hum.', 1, num_filling_boxes);
 [dist, service_time] = computeDist(num_tasks, num_robots, position_hum, ptasks, num_service_tasks, probot, idx_going_tasks, service_time);
@@ -141,6 +146,7 @@ idx_to_ignore_r = [];
 first_allocation = 0;
 ReAll = 0;
 humanTime_filling = ones(1, num_agents*num_filling_boxes)*150; %Find the first paramerters randomly for the allocation
+humanTime_serving = ones(1, num_agents*num_filling_boxes)*7.0;
 humanTime_fillingPrev = humanTime_filling;
 
 drawnow
@@ -235,7 +241,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
 end
 
 function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
-    global  FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+    global humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
     ReAll1 = ReAll
     num_phases = 5;
     duration = ReAll.makespan;
@@ -243,7 +249,6 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
     waitingTime = [];
     first_allocation = 0;
     confirmModif = 0;
-    newDatas = 0;
     i = 0;
     FirstSendMILPResults = 1;
 
@@ -334,30 +339,36 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                 %% Sends ROS topic for the robots for the initialization
                 if FirstSendMILPResults == 1
                     sendRobotTaskUpdates(v, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
-                    FirstSendMILPResults = 0;
+                end
+                    
+                if humanData{u}.ConfirmFilling == 1
+                    sendRobotTaskUpdates(v, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
+                    humanData{u}.ConfirmFilling = 0
+                    send(pub{u}, humanData{u});
                 end
 
-                if humanData{u}.Confirm == 1 
+                if humanData{u}.ConfirmServing == 1 
+                   
                     %% ROS topic for the robots
-                    sendRobotTaskUpdates(v, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
-
-                    humanData{u}.Confirm = 0;
-                    newDatas = 1;
+                    sendRobotTaskUpdates(v, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task) 
+                    humanData{u}.ConfirmServing = 0
+                    send(pub{u}, humanData{u});
                     timeReall = timingData;
-                    difference = abs(timeReall - humanData{u}.FinishFilling(humanData{u}.Task)); %used for the updateschedule function
-                    humanData{u}.FinishFilling(humanData{u}.Task) = timeReall;
+                    difference = (humanData{u}.FinishFilling(humanData{u}.Task) - humanData{u}.StartFilling(humanData{u}.Task)) - human{u}.TimeHumFilling(humanData{u}.Task) %abs(timeReall - humanData{u}.FinishFilling(humanData{u}.Task)); %used for the updateschedule function
+                    %humanData{u}.FinishFilling(humanData{u}.Task) = timeReall;
 
                     for h=1:num_agents
                         humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
+                        humanTime_serving(h:num_humans:end) = humanData{h}.FinishServing - humanData{h}.StartServing;
                         ReAll.timeFh(h:num_humans:end) = humanData{h}.FinishFilling; 
                         ReAll.timeSh(h:num_humans:end) = humanData{h}.StartFilling;
                     end    
                     send(pub{u}, humanData{u});
 
-                    for h=1:num_agents
-                        humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
-                        ReAll.timeFh(h:num_humans:end) = humanData{h}.FinishFilling; 
-                    end
+                    % for h=1:num_agents
+                    %     humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
+                    %     ReAll.timeFh(h:num_humans:end) = humanData{h}.FinishFilling; 
+                    % end
 
                     l=0;
                     for l=1:num_service_tasks
@@ -388,6 +399,9 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                             humanData{u}.Task = humanData{u}.Task + 1;
                         end
                         send(pub{u}, humanData{u});
+                        for c=1:num_robots
+                            sendRobotTaskUpdates(c, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
+                        end
                     end
 
                     if humanData{u}.Task < 2
@@ -395,13 +409,16 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         first_allocation = 2
                         % Need to run updateSchedule before Reallocation
                         ReAll = updateSchedule(ReAll, ReAll1, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
-                        %ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll);                        
+                        ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll);                        
                         humanTime_fillingPrev = humanTime_filling;
                         % Send new timings on the topic
                         humanData{u}.FinishFilling = ReAll.timeFh(u:2:end);
                         humanData{u}.StartFilling = ReAll.timeSh(u:2:end);
                         humanData{u}.Task = humanData{u}.Task + 1;
-                        send(pub{u}, humanData{u});    
+                        send(pub{u}, humanData{u});
+                        for c=1:num_robots
+                            sendRobotTaskUpdates(c, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
+                        end                    
                     end
 
                     display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
@@ -414,6 +431,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                 end
             end
         end
+        FirstSendMILPResults = 0;
         valuetime = timingData;
         disp(['valuetime : ', num2str(valuetime)]);            
     end

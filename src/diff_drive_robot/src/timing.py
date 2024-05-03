@@ -9,13 +9,13 @@ def publish_timer():
     timer_pub = rospy.Publisher('/Timing', Float64, queue_size=10)
     
     # Set the rate of time update to 1Hz
-    rate = rospy.Rate(50)
+    rate = rospy.Rate(100)
     
     # Initialize the timer
     timer = 0.0
     
     # Time increment per tick, based on the update rate (5Hz => 0.2 seconds per update)
-    time_increment = 0.1
+    time_increment = 0.015
     
     while not rospy.is_shutdown():
         # Publish the current value of the timer

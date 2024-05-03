@@ -136,13 +136,22 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
         throw std::invalid_argument("Field 'TimeServing' is wrong type; expected a double.");
     }
     try {
-        //Confirm
-        const matlab::data::TypedArray<int32_t> Confirm_arr = arr["Confirm"];
-        msg->Confirm = Confirm_arr[0];
+        //ConfirmServing
+        const matlab::data::TypedArray<int32_t> ConfirmServing_arr = arr["ConfirmServing"];
+        msg->ConfirmServing = ConfirmServing_arr[0];
     } catch (matlab::data::InvalidFieldNameException&) {
-        throw std::invalid_argument("Field 'Confirm' is missing.");
+        throw std::invalid_argument("Field 'ConfirmServing' is missing.");
     } catch (matlab::Exception&) {
-        throw std::invalid_argument("Field 'Confirm' is wrong type; expected a int32.");
+        throw std::invalid_argument("Field 'ConfirmServing' is wrong type; expected a int32.");
+    }
+    try {
+        //ConfirmFilling
+        const matlab::data::TypedArray<int32_t> ConfirmFilling_arr = arr["ConfirmFilling"];
+        msg->ConfirmFilling = ConfirmFilling_arr[0];
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'ConfirmFilling' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'ConfirmFilling' is wrong type; expected a int32.");
     }
     try {
         //Task
@@ -157,7 +166,7 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_HumanRobotInteraction_common::get_arr(MDFactory_T& factory, const diff_drive_robot::HumanRobotInteraction* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotVelocity","WaitingTime","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","Confirm","Task"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotVelocity","WaitingTime","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/HumanRobotInteraction");
     // HumanID
@@ -187,9 +196,12 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     // TimeServing
     auto currentElement_TimeServing = (msg + ctr)->TimeServing;
     outArray[ctr]["TimeServing"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_TimeServing_type::const_iterator, double>({currentElement_TimeServing.size(),1}, currentElement_TimeServing.begin(), currentElement_TimeServing.end());
-    // Confirm
-    auto currentElement_Confirm = (msg + ctr)->Confirm;
-    outArray[ctr]["Confirm"] = factory.createScalar(currentElement_Confirm);
+    // ConfirmServing
+    auto currentElement_ConfirmServing = (msg + ctr)->ConfirmServing;
+    outArray[ctr]["ConfirmServing"] = factory.createScalar(currentElement_ConfirmServing);
+    // ConfirmFilling
+    auto currentElement_ConfirmFilling = (msg + ctr)->ConfirmFilling;
+    outArray[ctr]["ConfirmFilling"] = factory.createScalar(currentElement_ConfirmFilling);
     // Task
     auto currentElement_Task = (msg + ctr)->Task;
     outArray[ctr]["Task"] = factory.createScalar(currentElement_Task);

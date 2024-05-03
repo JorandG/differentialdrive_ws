@@ -7,5 +7,6 @@ float64[] StartServing
 float64[] FinishServing
 float64[] TimeFilling
 float64[] TimeServing
-int32 Confirm
+int32 ConfirmServing
+int32 ConfirmFilling
 int32 Task

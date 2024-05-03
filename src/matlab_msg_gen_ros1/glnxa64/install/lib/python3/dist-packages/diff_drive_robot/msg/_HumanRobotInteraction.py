@@ -8,7 +8,7 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "de174b2c964b25d7c321b35769a1829f"
+  _md5sum = "665a48f5f4d3a5b38b3a8382ea21c2a2"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
@@ -20,11 +20,12 @@ float64[] StartServing
 float64[] FinishServing
 float64[] TimeFilling
 float64[] TimeServing
-int32 Confirm
+int32 ConfirmServing
+int32 ConfirmFilling
 int32 Task
 """
-  __slots__ = ['HumanID','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','Confirm','Task']
-  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32','int32']
+  __slots__ = ['HumanID','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task']
+  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32','int32','int32']
 
   def __init__(self, *args, **kwds):
     """
@@ -34,7 +35,7 @@ int32 Task
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,Confirm,Task
+       HumanID,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -61,8 +62,10 @@ int32 Task
         self.TimeFilling = []
       if self.TimeServing is None:
         self.TimeServing = []
-      if self.Confirm is None:
-        self.Confirm = 0
+      if self.ConfirmServing is None:
+        self.ConfirmServing = 0
+      if self.ConfirmFilling is None:
+        self.ConfirmFilling = 0
       if self.Task is None:
         self.Task = 0
     else:
@@ -75,7 +78,8 @@ int32 Task
       self.FinishServing = []
       self.TimeFilling = []
       self.TimeServing = []
-      self.Confirm = 0
+      self.ConfirmServing = 0
+      self.ConfirmFilling = 0
       self.Task = 0
 
   def _get_types(self):
@@ -125,7 +129,7 @@ int32 Task
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.TimeServing))
       _x = self
-      buff.write(_get_struct_2i().pack(_x.Confirm, _x.Task))
+      buff.write(_get_struct_3i().pack(_x.ConfirmServing, _x.ConfirmFilling, _x.Task))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -207,8 +211,8 @@ int32 Task
       self.TimeServing = s.unpack(str[start:end])
       _x = self
       start = end
-      end += 8
-      (_x.Confirm, _x.Task,) = _get_struct_2i().unpack(str[start:end])
+      end += 12
+      (_x.ConfirmServing, _x.ConfirmFilling, _x.Task,) = _get_struct_3i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -256,7 +260,7 @@ int32 Task
       pattern = '<%sd'%length
       buff.write(self.TimeServing.tostring())
       _x = self
-      buff.write(_get_struct_2i().pack(_x.Confirm, _x.Task))
+      buff.write(_get_struct_3i().pack(_x.ConfirmServing, _x.ConfirmFilling, _x.Task))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -339,8 +343,8 @@ int32 Task
       self.TimeServing = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       _x = self
       start = end
-      end += 8
-      (_x.Confirm, _x.Task,) = _get_struct_2i().unpack(str[start:end])
+      end += 12
+      (_x.ConfirmServing, _x.ConfirmFilling, _x.Task,) = _get_struct_3i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -349,12 +353,12 @@ _struct_I = genpy.struct_I
 def _get_struct_I():
     global _struct_I
     return _struct_I
-_struct_2i = None
-def _get_struct_2i():
-    global _struct_2i
-    if _struct_2i is None:
-        _struct_2i = struct.Struct("<2i")
-    return _struct_2i
+_struct_3i = None
+def _get_struct_3i():
+    global _struct_3i
+    if _struct_3i is None:
+        _struct_3i = struct.Struct("<3i")
+    return _struct_3i
 _struct_i = None
 def _get_struct_i():
     global _struct_i

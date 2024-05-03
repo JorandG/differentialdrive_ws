@@ -33,7 +33,8 @@ struct HumanRobotInteraction_
     , FinishServing()
     , TimeFilling()
     , TimeServing()
-    , Confirm(0)
+    , ConfirmServing(0)
+    , ConfirmFilling(0)
     , Task(0)  {
     }
   HumanRobotInteraction_(const ContainerAllocator& _alloc)
@@ -46,7 +47,8 @@ struct HumanRobotInteraction_
     , FinishServing(_alloc)
     , TimeFilling(_alloc)
     , TimeServing(_alloc)
-    , Confirm(0)
+    , ConfirmServing(0)
+    , ConfirmFilling(0)
     , Task(0)  {
   (void)_alloc;
     }
@@ -80,8 +82,11 @@ struct HumanRobotInteraction_
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _TimeServing_type;
   _TimeServing_type TimeServing;
 
-   typedef int32_t _Confirm_type;
-  _Confirm_type Confirm;
+   typedef int32_t _ConfirmServing_type;
+  _ConfirmServing_type ConfirmServing;
+
+   typedef int32_t _ConfirmFilling_type;
+  _ConfirmFilling_type ConfirmFilling;
 
    typedef int32_t _Task_type;
   _Task_type Task;
@@ -124,7 +129,8 @@ bool operator==(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAlloca
     lhs.FinishServing == rhs.FinishServing &&
     lhs.TimeFilling == rhs.TimeFilling &&
     lhs.TimeServing == rhs.TimeServing &&
-    lhs.Confirm == rhs.Confirm &&
+    lhs.ConfirmServing == rhs.ConfirmServing &&
+    lhs.ConfirmFilling == rhs.ConfirmFilling &&
     lhs.Task == rhs.Task;
 }
 
@@ -182,12 +188,12 @@ struct MD5Sum< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "de174b2c964b25d7c321b35769a1829f";
+    return "665a48f5f4d3a5b38b3a8382ea21c2a2";
   }
 
   static const char* value(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0xde174b2c964b25d7ULL;
-  static const uint64_t static_value2 = 0xc321b35769a1829fULL;
+  static const uint64_t static_value1 = 0x665a48f5f4d3a5b3ULL;
+  static const uint64_t static_value2 = 0x8b3a8382ea21c2a2ULL;
 };
 
 template<class ContainerAllocator>
@@ -215,7 +221,8 @@ struct Definition< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator
 "float64[] FinishServing\n"
 "float64[] TimeFilling\n"
 "float64[] TimeServing\n"
-"int32 Confirm\n"
+"int32 ConfirmServing\n"
+"int32 ConfirmFilling\n"
 "int32 Task\n"
 ;
   }
@@ -244,7 +251,8 @@ namespace serialization
       stream.next(m.FinishServing);
       stream.next(m.TimeFilling);
       stream.next(m.TimeServing);
-      stream.next(m.Confirm);
+      stream.next(m.ConfirmServing);
+      stream.next(m.ConfirmFilling);
       stream.next(m.Task);
     }
 
@@ -314,8 +322,10 @@ struct Printer< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
       s << indent << "  TimeServing[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.TimeServing[i]);
     }
-    s << indent << "Confirm: ";
-    Printer<int32_t>::stream(s, indent + "  ", v.Confirm);
+    s << indent << "ConfirmServing: ";
+    Printer<int32_t>::stream(s, indent + "  ", v.ConfirmServing);
+    s << indent << "ConfirmFilling: ";
+    Printer<int32_t>::stream(s, indent + "  ", v.ConfirmFilling);
     s << indent << "Task: ";
     Printer<int32_t>::stream(s, indent + "  ", v.Task);
   }

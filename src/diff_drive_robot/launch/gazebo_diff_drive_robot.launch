@@ -21,7 +21,7 @@
 
   <!-- Robot 1 -->
   <group ns="robot1">
-    <param name="robot_description" command="$(find xacro)/xacro '$(find diff_drive_robot)/urdf/diff_drive_robot.urdf'" />
+    <param name="robot_description" command="$(find xacro)/xacro '$(find diff_drive_robot)/urdf/diff_drive_robot_blue.urdf'" />
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen">
       <param name="publish_frequency" type="double" value="50.0" />
       <param name="tf_prefix" value="robot1" />
@@ -31,11 +31,31 @@
 
   <!-- Robot 2 -->
   <group ns="robot2">
-    <param name="robot_description" command="$(find xacro)/xacro '$(find diff_drive_robot)/urdf/diff_drive_robot.urdf'" />
+    <param name="robot_description" command="$(find xacro)/xacro '$(find diff_drive_robot)/urdf/diff_drive_robot_red.urdf'" />
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen">
       <param name="publish_frequency" type="double" value="50.0" />
       <param name="tf_prefix" value="robot2" />
     </node>
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model diff_drive_robot2 -x $(arg robot2_pos_x) -y $(arg robot2_pos_y) -z $(arg robot2_pos_z) -Y $(arg robot2_yaw) -param robot_description" />
   </group>
+
+  <!-- human 1 -->
+  <arg name="human_1" default="human_1"/>
+
+  <node name="spawn_$(arg human_1)" pkg="gazebo_ros" type="spawn_model"
+      args="-file $(find diff_drive_robot)/model/model_blue.sdf -sdf
+              -model $(arg human_1)
+              -x 12 -y 3 -z 0 -Y 1"
+      respawn="false" output="screen">
+  </node>
+
+  <!-- human 2 -->
+  <arg name="human_2" default="human_2"/>
+
+  <node name="spawn_$(arg human_2)" pkg="gazebo_ros" type="spawn_model"
+      args="-file $(find diff_drive_robot)/model/model_red.sdf -sdf
+              -model $(arg human_2)
+              -x 10 -y 2 -z 0 -Y 1"
+      respawn="false" output="screen">
+  </node>
 </launch>

@@ -8,10 +8,11 @@ classdef HumanRobotInteraction < ros.Message
         MessageType = 'diff_drive_robot/HumanRobotInteraction' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = 'de174b2c964b25d7c321b35769a1829f' % The MD5 Checksum of the message definition
-        PropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'Confirm' 'Task' } % List of non-constant message properties
-        ROSPropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'Confirm' 'Task' } % List of non-constant ROS message properties
+        MD5Checksum = '665a48f5f4d3a5b38b3a8382ea21c2a2' % The MD5 Checksum of the message definition
+        PropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' } % List of non-constant message properties
+        ROSPropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
+            '' ...
             '' ...
             '' ...
             '' ...
@@ -36,7 +37,8 @@ classdef HumanRobotInteraction < ros.Message
         FinishServing
         TimeFilling
         TimeServing
-        Confirm
+        ConfirmServing
+        ConfirmFilling
         Task
     end
     methods
@@ -134,11 +136,17 @@ classdef HumanRobotInteraction < ros.Message
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'TimeServing');
             obj.TimeServing = double(val);
         end
-        function set.Confirm(obj, val)
+        function set.ConfirmServing(obj, val)
             validClasses = {'numeric'};
             validAttributes = {'nonempty', 'scalar'};
-            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'Confirm');
-            obj.Confirm = int32(val);
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'ConfirmServing');
+            obj.ConfirmServing = int32(val);
+        end
+        function set.ConfirmFilling(obj, val)
+            validClasses = {'numeric'};
+            validAttributes = {'nonempty', 'scalar'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'ConfirmFilling');
+            obj.ConfirmFilling = int32(val);
         end
         function set.Task(obj, val)
             validClasses = {'numeric'};

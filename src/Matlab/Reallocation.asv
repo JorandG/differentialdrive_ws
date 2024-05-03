@@ -44,7 +44,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
 
     %% Problem definition
     prob = optimproblem;
-    prob.Objective =  WeightHumanwaiting*(humanwaiting)+WeightEnergyPicking*velocitypicking+WeightMakespan*normamakespan; %+WeightEnergyDepositing*(num_tasks*(1/min(vel_min))-sum(invprod,'all'));
+    prob.Objective =  WeightHumanwaiting*(humanwaiting)+WeightEnergyPicking*velocitypicking+WeightEnergyProximity*velocitypicking+WeightMakespan*normamakespan; %+WeightEnergyDepositing*(num_tasks*(1/min(vel_min))-sum(invprod,'all'));
 
     %% Constraints
     prob.Constraints.makespanbound =  makespan >= timeF;

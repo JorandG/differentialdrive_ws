@@ -148,21 +148,22 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                 All.timeF(serv) = All.timeS(serv) + serv_time(curr_hum);%service_time1(hum_slow);
     
                 All.timeS(dep) = All.timeF(serv);%All.timeS(dep) + deltar; %depot
-                All.timeF(dep) = All.timeS(dep) + nonzeros(dist1(dep,:).*X(dep,:))/max(vel_max);%update final time of depot
+                All.timeF(dep) = All.timeF(dep) + deltar;%update final time of depot
             else
                 All.timeF(curr_hum) = All.timeFh(curr_hum); %+ service_time1(hum_slow); %update final time of going
-                All.timeS(app) = All.timeS(app) + deltar; %approaching
-                All.timeF(app) = All.timeF(app) + deltar;
-    
-                All.timeS(wait) = All.timeF(app); %All.timeS(wait) + deltar; %waiting
-                All.timeF(wait) = All.timeS(wait) + waiting_time; %All.timeF(wait) + deltar;
-    
-                All.timeS(serv) = All.timeF(wait); %serving
-                All.timeF(serv) = All.timeS(serv) + serv_time(curr_hum);%service_time1(hum_slow);
-    
-                All.timeS(dep) = All.timeF(serv);%All.timeS(dep) + deltar; %depot
-                All.timeF(dep) = All.timeF(dep) + deltar;%update final time of depot
             end
+
+            All.timeS(app) = All.timeS(app) + deltar; %approaching
+            All.timeF(app) = All.timeF(app) + deltar;
+
+            All.timeS(wait) = All.timeF(app); %All.timeS(wait) + deltar; %waiting
+            All.timeF(wait) = All.timeS(wait) + waiting_time; %All.timeF(wait) + deltar;
+
+            All.timeS(serv) = All.timeF(wait); %serving
+            All.timeF(serv) = All.timeS(serv) + serv_time(curr_hum);%service_time1(hum_slow);
+
+            All.timeS(dep) = All.timeF(serv);%All.timeS(dep) + deltar; %depot
+            All.timeF(dep) = All.timeF(dep) + deltar;%update final time of depot
         end
 
     end
