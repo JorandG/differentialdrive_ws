@@ -1,7 +1,7 @@
 <sdf version="1.6">
     <model name="my_cylinder">
         <static>true</static>
-        <pose>1 1 0 0 0 0</pose> <!-- Initial position and orientation -->
+        <pose>0 0 0 0 0 0</pose> <!-- Initial position and orientation -->
         <link name="link">
             <visual name="visual">
                 <geometry>

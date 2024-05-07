@@ -249,7 +249,7 @@ while ros.internal.Global.isNodeActive
                     disp(['[Robot-', num2str(i), ']: A New Goal has been allocated!']);
                     % ---------------------------------------------------------------------------- %
                 else
-                    % -------------------------- Ongoing Activity State -------------------------- %
+                    % -------------------------- Ongoing Activity State -------------------------- %s
                     robot{i}.ongoing_activity.completed = 1;
                     % ---------------------------------------------------------------------------- %
 

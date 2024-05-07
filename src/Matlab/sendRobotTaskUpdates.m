@@ -1,4 +1,4 @@
-function sendRobotTaskUpdates(robotID, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, currentHumanTask)
+function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, currentHumanTask)
 
 % sendRobotTaskUpdates - Update and send task information for a specific robot
     %
@@ -53,10 +53,10 @@ function sendRobotTaskUpdates(robotID, ReAll, X1, MILPDataPub, MILPData, idx_goi
     MILPData{robotID}.ServingFinish = endtime(3*num_filling_boxes+1:4*num_filling_boxes);
     MILPData{robotID}.DepotFinish = endtime(4*num_filling_boxes+1:5*num_filling_boxes);
 
-    if humanData{robotID}.ConfirmServing == 1 
+    if humanData{humanID}.ConfirmServing == 1 %&& MILPData{robotID}.Humans(currentHumanTask) == humanID
         MILPData{robotID}.FinishedService(currentHumanTask) = 1;        
     end
-    if humanData{robotID}.ConfirmFilling == 1 
+    if humanData{humanID}.ConfirmFilling == 1 %&& MILPData{robotID}.Humans(currentHumanTask) == humanID
         MILPData{robotID}.FinishedFilling(currentHumanTask) = 1;
     end
 
