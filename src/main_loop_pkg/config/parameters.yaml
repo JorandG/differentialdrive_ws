@@ -1,0 +1,41 @@
+simulation: false
+phases:
+  going_phase_coefficient: 0.4 # The final position at the end of the Going Phase will be equal to: human_x_cord,0.4*human_y_cord
+  approaching_phase_coefficient: 0.8 # The final position at the end of the Approaching Phase will be equal to: human_x_cord,0.8*human_y_cord
+  serving_phase_phase_coefficient: 0.3 # The time spent for reaching the Serving position from the Waiting position will be equal to: 0.3*[End-Start]
+
+humans:
+  position:
+    - [2, 3]
+    - [1, 2]
+
+robots:
+  controller:
+    b: 0.05
+    distance_threshold: 0.06
+    obstacle_avoidance_enabled: true
+    obstacle_avoidance_threshold: 1
+    obstacle_avoidance_gain: 1.5  
+    obstacle_avoidance_eta: 3
+    k_1: 0.2
+    k_2: 0.2
+    k_3: 1.0
+    max_linear_velocity: 0.25
+    max_angular_velocity: 1.0
+  home_position:
+    - [-1, -0.5]
+    - [0, 0.5]
+  topics:
+    MILP_results:
+      - "/MILPResults1"
+      - "/MILPResults2"
+    odometry:
+      - "/vrpn_client_node/Turtlebot1/pose" #Simulation: /robot1/odom - Real: /vrpn_client_node/Turtlebot1/pose
+      - "/vrpn_client_node/Turtlebot3/pose" #Simulation: /robot2/odom - Real: /vrpn_client_node/Turtlebot3/pose
+    velocities:
+      - "/nuc1/cmd_vel_mux/input/teleop" #Simulation: /robot1/cmd_vel - Real: /nuc1/cmd_vel_mux/input/teleop
+      - "/nuc3/cmd_vel_mux/input/teleop" #Simulation: /robot2/cmd_vel - Real: /nuc3/cmd_vel_mux/input/teleop
+
+timer:
+  external: true
+  topic: "/Timing"

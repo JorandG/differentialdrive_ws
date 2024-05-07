@@ -1,0 +1,5 @@
+<launch>    
+    <rosparam command="load" file="$(find main_loop_pkg)/config/parameters.yaml"/>
+    <node pkg="main_loop_pkg" type="main_loop_node" name="main_loop_node" output="screen"/>
+    
+</launch>
