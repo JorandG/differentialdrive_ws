@@ -1,4 +1,5 @@
 int32 HumanID
+float64[] RobotProximity
 float64[] RobotVelocity
 float64[] WaitingTime
 float64[] StartFilling

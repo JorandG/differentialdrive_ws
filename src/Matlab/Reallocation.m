@@ -103,18 +103,21 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         prob.Constraints.duration4 = invprod(idx_going_tasks_consider,:) <= X1(idx_going_tasks_consider,:).*repmat((inv_vel_min)', length(idx_going_tasks_consider),1);
         prob.Constraints.duration5 = invprod(idx_depot_tasks_consider,:) >= X1(idx_depot_tasks_consider,:).*repmat((inv_vel_max)', length(idx_going_tasks_consider),1);
         prob.Constraints.duration6 = invprod(idx_depot_tasks_consider,:) <= X1(idx_depot_tasks_consider,:).*repmat((inv_vel_min)', length(idx_going_tasks_consider),1);
+        
+        prob.Constraints.duration7 = invprod(idx_approaching_tasks_consider,:) >= X1(idx_approaching_tasks_consider,:).*repmat((inv_vel_max)', length(idx_going_tasks_consider),1);
+        prob.Constraints.duration8 = invprod(idx_approaching_tasks_consider,:) <= X1(idx_approaching_tasks_consider,:).*repmat((inv_vel_min)', length(idx_going_tasks_consider),1);
 
-        prob.Constraints.duration8 = invprod(idx_to_ignore_r,:) == ReAll.invprod(idx_to_ignore_r,:);
+        prob.Constraints.duration11 = invprod(idx_to_ignore_r,:) == ReAll.invprod(idx_to_ignore_r,:);
 
         prob.Constraints.timeF_tasks_to_ignore = timeF(idx_to_ignore_r) == ReAll.timeF(idx_to_ignore_r);
         prob.Constraints.timeS_tasks_to_ignore = timeS(idx_to_ignore_r) == ReAll.timeS(idx_to_ignore_r);
         prob.Constraints.X_tasks_to_ignore = X1(idx_to_ignore_r,:) == X2(idx_to_ignore_r,:);
 
-        prob.Constraints.approaching_time = timeS(idx_approaching_tasks_consider) == timeF(idx_going_tasks_consider); %waiting for human
-        prob.Constraints.approaching_time1 = timeF(idx_approaching_tasks_consider) == timeS(idx_approaching_tasks_consider) + approaching_time; %invprod(idx_approaching_tasks_consider,:)/l_approaching;%(timeSh(num_humans+1:length(idx_waiting_tasks_consider))-timeF(idx_services_tasks_consider(1:length(idx_waiting_tasks_consider)-num_humans)))/(max(dist(:))/min(vel_min) + serv_time)
+        prob.Constraints.approaching_time = timeS(idx_approaching_tasks_consider) == timeF(idx_going_tasks_consider); %approaching human
+        prob.Constraints.approaching_time1 = timeF(idx_approaching_tasks_consider) == timeF(idx_going_tasks_consider) + max_invprod(idx_approaching_tasks_consider)'*distance_proximity; %invprod(idx_approaching_tasks_consider,:)/l_approaching;%(timeSh(num_humans+1:length(idx_waiting_tasks_consider))-timeF(idx_services_tasks_consider(1:length(idx_waiting_tasks_consider)-num_humans)))/(max(dist(:))/min(vel_min) + serv_time)
 
         prob.Constraints.waiting_time = timeS(idx_waiting_tasks_consider) == timeF(idx_approaching_tasks_consider); %waiting for human
-        prob.Constraints.waiting_time1 = timeF(idx_waiting_tasks_consider) == timeS(idx_waiting_tasks_consider) + waiting_time;%(timeSh(num_humans+1:length(idx_waiting_tasks_consider))-timeF(idx_services_tasks_consider(1:length(idx_waiting_tasks_consider)-num_humans)))/(max(dist(:))/min(vel_min) + 7);
+        prob.Constraints.waiting_time1 = timeF(idx_waiting_tasks_consider) == timeS(idx_waiting_tasks_consider) + (timeF(idx_approaching_tasks_consider)-timeS(idx_services_tasks_consider))%waiting_time;%(timeSh(num_humans+1:length(idx_waiting_tasks_consider))-timeF(idx_services_tasks_consider(1:length(idx_waiting_tasks_consider)-num_humans)))/(max(dist(:))/min(vel_min) + 7);
 
         prob.Constraints.services_time = timeS(idx_services_tasks_consider) == timeF(idx_waiting_tasks_consider); %time to make the service to the human
         prob.Constraints.services_time2 = timeF(idx_services_tasks_consider) == timeS(idx_services_tasks_consider) + serv_time(idx_going_tasks_consider); %time to make the service to the human using idx going because we can't exceed num_taks
@@ -141,10 +144,8 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         prob.Constraints.duration5 = invprod(idx_depot_tasks,:) >= X1(idx_depot_tasks,:).*repmat((inv_vel_max)', num_tasks,1);
         prob.Constraints.duration6 = invprod(idx_depot_tasks,:) <= X1(idx_depot_tasks,:).*repmat((inv_vel_min)', num_tasks,1);
 
-        prob.Constraints.duration7 = invprod(idx_approaching_tasks,:) >= X1(idx_going_tasks,:).*repmat((inv_vel_max)', num_tasks,1);
-        prob.Constraints.duration8 = invprod(idx_approaching_tasks,:) <= X1(idx_going_tasks,:).*repmat((inv_vel_min)', num_tasks,1);
-        prob.Constraints.duration9 = invprod(idx_approaching_tasks,:) >= X1(idx_going_tasks,:).*repmat((inv_vel_max)', num_tasks,1);
-        prob.Constraints.duration10 = invprod(idx_approaching_tasks,:) <= X1(idx_going_tasks,:).*repmat((inv_vel_min)', num_tasks,1);
+        prob.Constraints.duration7 = invprod(idx_approaching_tasks,:) >= X1(idx_approaching_tasks,:).*repmat((inv_vel_max)', num_tasks,1);
+        prob.Constraints.duration8 = invprod(idx_approaching_tasks,:) <= X1(idx_approaching_tasks,:).*repmat((inv_vel_min)', num_tasks,1);
 
         prob.Constraints.approaching_time01 = timeF(idx_approaching_tasks(1:num_humans)) == timeF(idx_going_tasks(1:num_humans)) + max_invprod(idx_approaching_tasks(1:num_humans))'*distance_proximity;
         prob.Constraints.approaching_time02 = timeS(idx_approaching_tasks(1:num_humans)) == timeF(idx_going_tasks(1:num_humans));

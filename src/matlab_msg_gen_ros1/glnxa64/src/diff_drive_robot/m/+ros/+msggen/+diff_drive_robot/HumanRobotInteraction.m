@@ -8,10 +8,11 @@ classdef HumanRobotInteraction < ros.Message
         MessageType = 'diff_drive_robot/HumanRobotInteraction' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = '665a48f5f4d3a5b38b3a8382ea21c2a2' % The MD5 Checksum of the message definition
-        PropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' } % List of non-constant message properties
-        ROSPropertyList = { 'HumanID' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' } % List of non-constant ROS message properties
+        MD5Checksum = '19589e0ccab95c851b0b1217f75f5d02' % The MD5 Checksum of the message definition
+        PropertyList = { 'HumanID' 'RobotProximity' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' } % List of non-constant message properties
+        ROSPropertyList = { 'HumanID' 'RobotProximity' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
+            '' ...
             '' ...
             '' ...
             '' ...
@@ -29,6 +30,7 @@ classdef HumanRobotInteraction < ros.Message
     end
     properties
         HumanID
+        RobotProximity
         RobotVelocity
         WaitingTime
         StartFilling
@@ -47,6 +49,17 @@ classdef HumanRobotInteraction < ros.Message
             validAttributes = {'nonempty', 'scalar'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'HumanID');
             obj.HumanID = int32(val);
+        end
+        function set.RobotProximity(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'RobotProximity');
+            obj.RobotProximity = double(val);
         end
         function set.RobotVelocity(obj, val)
             validClasses = {'numeric'};

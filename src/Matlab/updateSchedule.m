@@ -8,13 +8,6 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
     curr_hum_slow = false;
 
     X = repmat(All.X,num_phases,1); 
-    for u=1:num_agents
-        count = u;
-        for v=1:num_filling_boxes
-            service_time1(count) = human{u}.TimeFinishServing(v);
-            count = count + num_agents;
-        end
-    end
     All1 = All;
     dist1 = dist;
     dist1 = repmat(dist1,num_phases,1);
