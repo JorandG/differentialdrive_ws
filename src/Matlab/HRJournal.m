@@ -64,9 +64,9 @@ for h=1:num_humans
     pub{h} = rospublisher(sprintf("/human_robot_interaction%d", h), 'diff_drive_robot/HumanRobotInteraction');
     humanData{h} = rosmessage(pub{h});
     humanData{h}.HumanID = h;
-    humanData{h}.RobotProximity = repmat(2, 1, num_filling_boxes); %Initialized with 2 meters
+    humanData{h}.RobotWaitingDistance = repmat(2, 1, num_filling_boxes); %Initialized with 2 meters
     humanData{h}.RobotVelocity = repmat(0.1, 1, num_filling_boxes); %Initialized with 0.1m/s
-    humanData{h}.WaitingTime = 0;
+    humanData{h}.WaitingTime = repmat(1, 1, num_filling_boxes); %Initialized with 1, it's the weight mapping to the Objective Function directly
     for i = 1:num_filling_boxes, humanData{h}.StartFilling(i) = sum([0, repmat([initialTime + approaching_time + serving_time], 1, i-1)]); end
     for i = 1:num_filling_boxes, humanData{h}.FinishFilling(i) = sum([initialTime, repmat([initialTime + approaching_time + serving_time], 1, i-1)]); end
     humanData{h}.TimeFilling = ones(1, num_filling_boxes)*initialTime;
@@ -99,7 +99,6 @@ WeightEnergyPicking = 1;
 WeightEnergyProximity = 2;
 WeightEnergyDepositing = 1;
 WeightMakespan = 10;
-std_dev = 140;
 inv_vel_min = 1./vel_min;
 inv_vel_max = 1./vel_max;
 
@@ -138,10 +137,14 @@ command = 'source /home/jorand/differentialdrive_ws/devel/setup.bash && rosrun d
 [status, cmdout] = system(command, '-echo'); % Starting new timer
 TimingSub = rossubscriber('/Timing', 'std_msgs/Float64');
 timingData = receive(TimingSub, 1).Data
+
+%% Launching Humans' apps
 for hu=1:num_humans
     HumanID = hu;
     hum1(HumanID); %human app
 end
+
+%% Launching Simulation
 simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
 
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)

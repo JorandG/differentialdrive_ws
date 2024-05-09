@@ -8,11 +8,11 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "19589e0ccab95c851b0b1217f75f5d02"
+  _md5sum = "589867c3463a850edaa91a5e6493674c"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
-float64[] RobotProximity
+float64[] RobotWaitingDistance
 float64[] RobotVelocity
 float64[] WaitingTime
 float64[] StartFilling
@@ -25,7 +25,7 @@ int32 ConfirmServing
 int32 ConfirmFilling
 int32 Task
 """
-  __slots__ = ['HumanID','RobotProximity','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task']
+  __slots__ = ['HumanID','RobotWaitingDistance','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task']
   _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32','int32','int32']
 
   def __init__(self, *args, **kwds):
@@ -36,7 +36,7 @@ int32 Task
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,RobotProximity,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task
+       HumanID,RobotWaitingDistance,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -47,8 +47,8 @@ int32 Task
       # message fields cannot be None, assign default values for those that are
       if self.HumanID is None:
         self.HumanID = 0
-      if self.RobotProximity is None:
-        self.RobotProximity = []
+      if self.RobotWaitingDistance is None:
+        self.RobotWaitingDistance = []
       if self.RobotVelocity is None:
         self.RobotVelocity = []
       if self.WaitingTime is None:
@@ -73,7 +73,7 @@ int32 Task
         self.Task = 0
     else:
       self.HumanID = 0
-      self.RobotProximity = []
+      self.RobotWaitingDistance = []
       self.RobotVelocity = []
       self.WaitingTime = []
       self.StartFilling = []
@@ -100,10 +100,10 @@ int32 Task
     try:
       _x = self.HumanID
       buff.write(_get_struct_i().pack(_x))
-      length = len(self.RobotProximity)
+      length = len(self.RobotWaitingDistance)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
-      buff.write(struct.Struct(pattern).pack(*self.RobotProximity))
+      buff.write(struct.Struct(pattern).pack(*self.RobotWaitingDistance))
       length = len(self.RobotVelocity)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -160,7 +160,7 @@ int32 Task
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.RobotProximity = s.unpack(str[start:end])
+      self.RobotWaitingDistance = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -243,10 +243,10 @@ int32 Task
     try:
       _x = self.HumanID
       buff.write(_get_struct_i().pack(_x))
-      length = len(self.RobotProximity)
+      length = len(self.RobotWaitingDistance)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
-      buff.write(self.RobotProximity.tostring())
+      buff.write(self.RobotWaitingDistance.tostring())
       length = len(self.RobotVelocity)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -304,7 +304,7 @@ int32 Task
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.RobotProximity = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      self.RobotWaitingDistance = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])

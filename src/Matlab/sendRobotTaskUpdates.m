@@ -53,15 +53,12 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
     MILPData{robotID}.ServingFinish = endtime(3*num_filling_boxes+1:4*num_filling_boxes);
     MILPData{robotID}.DepotFinish = endtime(4*num_filling_boxes+1:5*num_filling_boxes);
 
-    if humanData{humanID}.ConfirmServing == 1 
-        if MILPData{robotID}.Humans(currentHumanTask) == humanID
+    if humanData{humanID}.ConfirmServing == 1 && MILPData{robotID}.Humans(currentHumanTask) == humanID
             MILPData{robotID}.FinishedService(currentHumanTask) = 1;  
-        end
     end
-    if humanData{humanID}.ConfirmFilling == 1 
-        if MILPData{robotID}.Humans(currentHumanTask) == humanID
+    
+    if humanData{humanID}.ConfirmFilling == 1 && MILPData{robotID}.Humans(currentHumanTask) == humanID
             MILPData{robotID}.FinishedFilling(currentHumanTask) = 1;
-        end
     end
 
     % Send the updated data to the corresponding ROS topic
