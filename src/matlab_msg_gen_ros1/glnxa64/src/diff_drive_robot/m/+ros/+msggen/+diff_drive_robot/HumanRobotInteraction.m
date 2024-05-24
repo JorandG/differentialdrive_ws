@@ -8,10 +8,13 @@ classdef HumanRobotInteraction < ros.Message
         MessageType = 'diff_drive_robot/HumanRobotInteraction' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = '589867c3463a850edaa91a5e6493674c' % The MD5 Checksum of the message definition
-        PropertyList = { 'HumanID' 'RobotWaitingDistance' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' } % List of non-constant message properties
-        ROSPropertyList = { 'HumanID' 'RobotWaitingDistance' 'RobotVelocity' 'WaitingTime' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' } % List of non-constant ROS message properties
+        MD5Checksum = '8b0d76829ca619dc5634eb42ed8a3bfd' % The MD5 Checksum of the message definition
+        PropertyList = { 'HumanID' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' } % List of non-constant message properties
+        ROSPropertyList = { 'HumanID' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
+            '' ...
+            '' ...
+            '' ...
             '' ...
             '' ...
             '' ...
@@ -31,8 +34,10 @@ classdef HumanRobotInteraction < ros.Message
     properties
         HumanID
         RobotWaitingDistance
-        RobotVelocity
+        RobotVelocityProximity
+        RobotVelocityProximityWeight
         WaitingTime
+        WaitingTimeWeight
         StartFilling
         FinishFilling
         StartServing
@@ -42,6 +47,7 @@ classdef HumanRobotInteraction < ros.Message
         ConfirmServing
         ConfirmFilling
         Task
+        TaskFilling
     end
     methods
         function set.HumanID(obj, val)
@@ -61,7 +67,7 @@ classdef HumanRobotInteraction < ros.Message
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'RobotWaitingDistance');
             obj.RobotWaitingDistance = double(val);
         end
-        function set.RobotVelocity(obj, val)
+        function set.RobotVelocityProximity(obj, val)
             validClasses = {'numeric'};
             if isempty(val)
                 % Allow empty [] input
@@ -69,8 +75,19 @@ classdef HumanRobotInteraction < ros.Message
             end
             val = val(:);
             validAttributes = {'vector'};
-            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'RobotVelocity');
-            obj.RobotVelocity = double(val);
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'RobotVelocityProximity');
+            obj.RobotVelocityProximity = double(val);
+        end
+        function set.RobotVelocityProximityWeight(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'RobotVelocityProximityWeight');
+            obj.RobotVelocityProximityWeight = double(val);
         end
         function set.WaitingTime(obj, val)
             validClasses = {'numeric'};
@@ -82,6 +99,17 @@ classdef HumanRobotInteraction < ros.Message
             validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'WaitingTime');
             obj.WaitingTime = double(val);
+        end
+        function set.WaitingTimeWeight(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'WaitingTimeWeight');
+            obj.WaitingTimeWeight = double(val);
         end
         function set.StartFilling(obj, val)
             validClasses = {'numeric'};
@@ -151,13 +179,23 @@ classdef HumanRobotInteraction < ros.Message
         end
         function set.ConfirmServing(obj, val)
             validClasses = {'numeric'};
-            validAttributes = {'nonempty', 'scalar'};
+            if isempty(val)
+                % Allow empty [] input
+                val = int32.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'ConfirmServing');
             obj.ConfirmServing = int32(val);
         end
         function set.ConfirmFilling(obj, val)
             validClasses = {'numeric'};
-            validAttributes = {'nonempty', 'scalar'};
+            if isempty(val)
+                % Allow empty [] input
+                val = int32.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'ConfirmFilling');
             obj.ConfirmFilling = int32(val);
         end
@@ -166,6 +204,12 @@ classdef HumanRobotInteraction < ros.Message
             validAttributes = {'nonempty', 'scalar'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'Task');
             obj.Task = int32(val);
+        end
+        function set.TaskFilling(obj, val)
+            validClasses = {'numeric'};
+            validAttributes = {'nonempty', 'scalar'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'TaskFilling');
+            obj.TaskFilling = int32(val);
         end
     end
     methods (Static, Access = {?matlab.unittest.TestCase, ?ros.Message})

@@ -1,10 +1,10 @@
-function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev)
-    global humanTime_serving difference humanTime_fillingPrev timeReall num_tasks num_robots num_agents human num_filling_boxes num_phases 
+function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev)
+    global waiting_time humanTime_serving difference difference1 humanTime_fillingPrev timeReall num_tasks num_robots num_agents human num_filling_boxes num_phases idx_approaching_tasks num_humans
 
     service_time1 = [];
     serv_time = humanTime_serving;
-    waiting_time = 5;
-    approaching_time = 5;
+    waiting_time = zeros(1,num_filling_boxes*num_humans);
+    approaching_time = All.timeF(idx_approaching_tasks) - All.timeS(idx_approaching_tasks);
     curr_hum_slow = false;
 
     X = repmat(All.X,num_phases,1); 
@@ -15,6 +15,10 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
     %Shifting human timings (to do before updating robot times)
     for curr_hum=1:num_tasks
         if All.timeFh(curr_hum)==timeReall
+            difference1
+            if difference1 > 0
+                waiting_time(curr_hum) = abs(difference1)
+            end
             %human slower
             if humanTime_filling(curr_hum) > humanTime_fillingPrev(curr_hum)
                 disp('slower')
@@ -22,16 +26,22 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                 hum_slow = curr_hum
                 checkShift = true;
                 %Shifts human timings for slower human
-                for s=curr_hum+num_agents:num_agents:num_tasks
-                    difference
-                    All.timeSh(s) = All.timeSh(s) + abs(difference) + serv_time + waiting_time + approaching_time;
-                    difference = abs(All.timeFh(s) - (All.timeSh(s) + humanTime_filling(curr_hum)));
+                for s=curr_hum:num_tasks
+                    if s > 2
+                        if waiting_time(s)~=0
+                            All.timeSh(s) = All.timeSh(s) + serv_time(s) + waiting_time(s) + approaching_time(s);
+                        else
+                            All.timeSh(s) = All.timeSh(s) + difference + serv_time(s) + approaching_time(s);
+                        end
+                    end
+                    difference = abs(All.timeFh(s) - (All.timeSh(s) + humanTime_filling(curr_hum)))
                     All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum);
                 end
             end
             %Shifts human timings for faster human
             for s=curr_hum+num_agents:num_agents:num_tasks
-                All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum) + serv_time + waiting_time + approaching_time;
+                All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum);
+                %All.timeFh(s) = All.timeSh(s) + 150 + serv_time(s) + approaching_time(s);
             end
         end
     end
@@ -58,13 +68,13 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                     All.timeF(curr_hum) = All.timeFh(curr_hum); %+ service_time1(curr_hum); %update final time of going
 
                     All.timeS(app)=All.timeF(curr_hum); %approaching
-                    All.timeF(app)=All.timeS(app)+approaching_time;
+                    All.timeF(app)=All.timeS(app)+approaching_time(curr_hum);
 
                     All.timeS(wait)=All.timeF(app); %waiting
-                    All.timeF(wait)=All.timeS(wait)+waiting_time;
+                    All.timeF(wait)=All.timeS(wait)+waiting_time(curr_hum);
 
                     All.timeS(serv)=All.timeF(wait); %serving
-                    All.timeF(serv)=All.timeS(serv)+serv_time;%service_time1(hum_slow);
+                    All.timeF(serv)=All.timeS(serv)+serv_time(curr_hum);%service_time1(hum_slow);
 
                     All.timeS(dep)=All.timeF(serv); %depot
                     All.timeF(dep)=All.timeS(dep)+nonzeros(dist1(dep,:).*X(dep,:))/max(vel_max);%update final time of depot
@@ -76,13 +86,13 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
             %     All.timeF(curr_hum) = All.timeFh(curr_hum); %+ service_time1(curr_hum); %update final time of picking
             % 
             %     All.timeS(app)=All.timeF(curr_hum); %approaching
-            %     All.timeF(app)=All.timeS(app)+approaching_time;
+            %     All.timeF(app)=All.timeS(app)+approaching_time(curr_hum);
             % 
             %     All.timeS(wait)=All.timeF(app); %waiting
-            %     All.timeF(wait)=All.timeS(wait)+waiting_time;
+            %     All.timeF(wait)=All.timeS(wait)+waiting_time(curr_hum);
             % 
             %     All.timeS(serv)=All.timeF(wait); %serving
-            %     All.timeF(serv)=All.timeS(serv)+serv_time;%service_time(dep);
+            %     All.timeF(serv)=All.timeS(serv)+serv_time(curr_hum);%service_time(dep);
             % 
             %     All.timeS(dep)=All.timeF(serv); %depot
             %     All.timeF(dep)=All.timeS(dep)+(nonzeros(All.invprod(dep,:))*nonzeros(dist1(dep,:).*X(dep,:)));%update final time of depot
@@ -133,9 +143,10 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                 All.timeS(curr_hum) = All1.timeS(curr_hum);
                 All.timeF(curr_hum) = All1.timeF(curr_hum);
                 All.timeS(app) = All.timeF(curr_hum)
-                All.timeF(app) = All.timeS(app) + approaching_time
+                All.timeF(app) = All.timeS(app) + approaching_time(curr_hum)
+                
                 All.timeS(wait) = All.timeF(app); %All.timeS(wait) + deltar; %waiting
-                All.timeF(wait) = All.timeS(wait) + waiting_time; %All.timeF(wait) + deltar;
+                All.timeF(wait) = All.timeS(wait) + waiting_time(curr_hum); %All.timeF(wait) + deltar;
     
                 All.timeS(serv) = All.timeF(wait); %serving
                 All.timeF(serv) = All.timeS(serv) + serv_time(curr_hum);%service_time1(hum_slow);
@@ -148,7 +159,7 @@ function AllUpdated = updateSchedule(All, Alloc, humanTime_filling, dist, vel_mi
                 All.timeF(app) = All.timeF(app) + deltar;
     
                 All.timeS(wait) = All.timeF(app); %All.timeS(wait) + deltar; %waiting
-                All.timeF(wait) = All.timeS(wait) + waiting_time; %All.timeF(wait) + deltar;
+                All.timeF(wait) = All.timeS(wait) + waiting_time(curr_hum); %All.timeF(wait) + deltar;
     
                 All.timeS(serv) = All.timeF(wait); %serving
                 All.timeF(serv) = All.timeS(serv) + serv_time(curr_hum);%service_time1(hum_slow);

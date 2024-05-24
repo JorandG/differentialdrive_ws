@@ -59,15 +59,26 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
         throw std::invalid_argument("Field 'RobotWaitingDistance' is wrong type; expected a double.");
     }
     try {
-        //RobotVelocity
-        const matlab::data::TypedArray<double> RobotVelocity_arr = arr["RobotVelocity"];
-        size_t nelem = RobotVelocity_arr.getNumberOfElements();
-        	msg->RobotVelocity.resize(nelem);
-        	std::copy(RobotVelocity_arr.begin(), RobotVelocity_arr.begin()+nelem, msg->RobotVelocity.begin());
+        //RobotVelocityProximity
+        const matlab::data::TypedArray<double> RobotVelocityProximity_arr = arr["RobotVelocityProximity"];
+        size_t nelem = RobotVelocityProximity_arr.getNumberOfElements();
+        	msg->RobotVelocityProximity.resize(nelem);
+        	std::copy(RobotVelocityProximity_arr.begin(), RobotVelocityProximity_arr.begin()+nelem, msg->RobotVelocityProximity.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
-        throw std::invalid_argument("Field 'RobotVelocity' is missing.");
+        throw std::invalid_argument("Field 'RobotVelocityProximity' is missing.");
     } catch (matlab::Exception&) {
-        throw std::invalid_argument("Field 'RobotVelocity' is wrong type; expected a double.");
+        throw std::invalid_argument("Field 'RobotVelocityProximity' is wrong type; expected a double.");
+    }
+    try {
+        //RobotVelocityProximityWeight
+        const matlab::data::TypedArray<double> RobotVelocityProximityWeight_arr = arr["RobotVelocityProximityWeight"];
+        size_t nelem = RobotVelocityProximityWeight_arr.getNumberOfElements();
+        	msg->RobotVelocityProximityWeight.resize(nelem);
+        	std::copy(RobotVelocityProximityWeight_arr.begin(), RobotVelocityProximityWeight_arr.begin()+nelem, msg->RobotVelocityProximityWeight.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'RobotVelocityProximityWeight' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'RobotVelocityProximityWeight' is wrong type; expected a double.");
     }
     try {
         //WaitingTime
@@ -79,6 +90,17 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
         throw std::invalid_argument("Field 'WaitingTime' is missing.");
     } catch (matlab::Exception&) {
         throw std::invalid_argument("Field 'WaitingTime' is wrong type; expected a double.");
+    }
+    try {
+        //WaitingTimeWeight
+        const matlab::data::TypedArray<double> WaitingTimeWeight_arr = arr["WaitingTimeWeight"];
+        size_t nelem = WaitingTimeWeight_arr.getNumberOfElements();
+        	msg->WaitingTimeWeight.resize(nelem);
+        	std::copy(WaitingTimeWeight_arr.begin(), WaitingTimeWeight_arr.begin()+nelem, msg->WaitingTimeWeight.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'WaitingTimeWeight' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'WaitingTimeWeight' is wrong type; expected a double.");
     }
     try {
         //StartFilling
@@ -149,7 +171,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     try {
         //ConfirmServing
         const matlab::data::TypedArray<int32_t> ConfirmServing_arr = arr["ConfirmServing"];
-        msg->ConfirmServing = ConfirmServing_arr[0];
+        size_t nelem = ConfirmServing_arr.getNumberOfElements();
+        	msg->ConfirmServing.resize(nelem);
+        	std::copy(ConfirmServing_arr.begin(), ConfirmServing_arr.begin()+nelem, msg->ConfirmServing.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'ConfirmServing' is missing.");
     } catch (matlab::Exception&) {
@@ -158,7 +182,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     try {
         //ConfirmFilling
         const matlab::data::TypedArray<int32_t> ConfirmFilling_arr = arr["ConfirmFilling"];
-        msg->ConfirmFilling = ConfirmFilling_arr[0];
+        size_t nelem = ConfirmFilling_arr.getNumberOfElements();
+        	msg->ConfirmFilling.resize(nelem);
+        	std::copy(ConfirmFilling_arr.begin(), ConfirmFilling_arr.begin()+nelem, msg->ConfirmFilling.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
         throw std::invalid_argument("Field 'ConfirmFilling' is missing.");
     } catch (matlab::Exception&) {
@@ -173,11 +199,20 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     } catch (matlab::Exception&) {
         throw std::invalid_argument("Field 'Task' is wrong type; expected a int32.");
     }
+    try {
+        //TaskFilling
+        const matlab::data::TypedArray<int32_t> TaskFilling_arr = arr["TaskFilling"];
+        msg->TaskFilling = TaskFilling_arr[0];
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'TaskFilling' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'TaskFilling' is wrong type; expected a int32.");
+    }
   }
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_HumanRobotInteraction_common::get_arr(MDFactory_T& factory, const diff_drive_robot::HumanRobotInteraction* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotWaitingDistance","RobotVelocity","WaitingTime","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotWaitingDistance","RobotVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/HumanRobotInteraction");
     // HumanID
@@ -186,12 +221,18 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     // RobotWaitingDistance
     auto currentElement_RobotWaitingDistance = (msg + ctr)->RobotWaitingDistance;
     outArray[ctr]["RobotWaitingDistance"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotWaitingDistance_type::const_iterator, double>({currentElement_RobotWaitingDistance.size(),1}, currentElement_RobotWaitingDistance.begin(), currentElement_RobotWaitingDistance.end());
-    // RobotVelocity
-    auto currentElement_RobotVelocity = (msg + ctr)->RobotVelocity;
-    outArray[ctr]["RobotVelocity"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotVelocity_type::const_iterator, double>({currentElement_RobotVelocity.size(),1}, currentElement_RobotVelocity.begin(), currentElement_RobotVelocity.end());
+    // RobotVelocityProximity
+    auto currentElement_RobotVelocityProximity = (msg + ctr)->RobotVelocityProximity;
+    outArray[ctr]["RobotVelocityProximity"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotVelocityProximity_type::const_iterator, double>({currentElement_RobotVelocityProximity.size(),1}, currentElement_RobotVelocityProximity.begin(), currentElement_RobotVelocityProximity.end());
+    // RobotVelocityProximityWeight
+    auto currentElement_RobotVelocityProximityWeight = (msg + ctr)->RobotVelocityProximityWeight;
+    outArray[ctr]["RobotVelocityProximityWeight"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotVelocityProximityWeight_type::const_iterator, double>({currentElement_RobotVelocityProximityWeight.size(),1}, currentElement_RobotVelocityProximityWeight.begin(), currentElement_RobotVelocityProximityWeight.end());
     // WaitingTime
     auto currentElement_WaitingTime = (msg + ctr)->WaitingTime;
     outArray[ctr]["WaitingTime"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_WaitingTime_type::const_iterator, double>({currentElement_WaitingTime.size(),1}, currentElement_WaitingTime.begin(), currentElement_WaitingTime.end());
+    // WaitingTimeWeight
+    auto currentElement_WaitingTimeWeight = (msg + ctr)->WaitingTimeWeight;
+    outArray[ctr]["WaitingTimeWeight"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_WaitingTimeWeight_type::const_iterator, double>({currentElement_WaitingTimeWeight.size(),1}, currentElement_WaitingTimeWeight.begin(), currentElement_WaitingTimeWeight.end());
     // StartFilling
     auto currentElement_StartFilling = (msg + ctr)->StartFilling;
     outArray[ctr]["StartFilling"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_StartFilling_type::const_iterator, double>({currentElement_StartFilling.size(),1}, currentElement_StartFilling.begin(), currentElement_StartFilling.end());
@@ -212,13 +253,16 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     outArray[ctr]["TimeServing"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_TimeServing_type::const_iterator, double>({currentElement_TimeServing.size(),1}, currentElement_TimeServing.begin(), currentElement_TimeServing.end());
     // ConfirmServing
     auto currentElement_ConfirmServing = (msg + ctr)->ConfirmServing;
-    outArray[ctr]["ConfirmServing"] = factory.createScalar(currentElement_ConfirmServing);
+    outArray[ctr]["ConfirmServing"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_ConfirmServing_type::const_iterator, int32_t>({currentElement_ConfirmServing.size(),1}, currentElement_ConfirmServing.begin(), currentElement_ConfirmServing.end());
     // ConfirmFilling
     auto currentElement_ConfirmFilling = (msg + ctr)->ConfirmFilling;
-    outArray[ctr]["ConfirmFilling"] = factory.createScalar(currentElement_ConfirmFilling);
+    outArray[ctr]["ConfirmFilling"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_ConfirmFilling_type::const_iterator, int32_t>({currentElement_ConfirmFilling.size(),1}, currentElement_ConfirmFilling.begin(), currentElement_ConfirmFilling.end());
     // Task
     auto currentElement_Task = (msg + ctr)->Task;
     outArray[ctr]["Task"] = factory.createScalar(currentElement_Task);
+    // TaskFilling
+    auto currentElement_TaskFilling = (msg + ctr)->TaskFilling;
+    outArray[ctr]["TaskFilling"] = factory.createScalar(currentElement_TaskFilling);
     }
     return std::move(outArray);
   } 

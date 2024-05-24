@@ -1,0 +1,149 @@
+[0/1] Re-running CMake...
+-- Using CATKIN_DEVEL_PREFIX: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel
+-- Using CMAKE_PREFIX_PATH: /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1;/usr/local/MATLAB/R2023a/toolbox/ros/mlroscpp/custom_messages;/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install
+-- This workspace overlays: /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1;/usr/local/MATLAB/R2023a/toolbox/ros/mlroscpp/custom_messages;/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install
+-- Using PYTHON_EXECUTABLE: /home/jorand/.matlab/R2023a/ros1/glnxa64/venv/bin/python3
+-- Using Debian Python package layout
+-- Using empy: /home/jorand/.matlab/R2023a/ros1/glnxa64/venv/lib/python3.9/site-packages/em.py
+-- Using CATKIN_ENABLE_TESTING: off
+-- catkin 0.8.10
+-- BUILD_SHARED_LIBS is on
+-- BUILD_SHARED_LIBS is on
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- ~~  traversing 1 packages in topological order:
+-- ~~  - diff_drive_robot
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- +++ processing catkin package: 'diff_drive_robot'
+-- ==> add_subdirectory(diff_drive_robot)
+CMake Warning at /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/genmsg/cmake/genmsg-extras.cmake:49 (message):
+  Unknown message generator specified in ROS_LANG_DISABLE: geneus
+Call Stack (most recent call first):
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/genmsg/cmake/genmsgConfig.cmake:222 (include)
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/gencpp/cmake/gencppConfig.cmake:197 (find_package)
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/message_generation/cmake/message_generationConfig.cmake:197 (find_package)
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/catkin/cmake/catkinConfig.cmake:76 (find_package)
+  diff_drive_robot/CMakeLists.txt:20 (find_package)
+
+
+CMake Warning at /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/genmsg/cmake/genmsg-extras.cmake:49 (message):
+  Unknown message generator specified in ROS_LANG_DISABLE: genlisp
+Call Stack (most recent call first):
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/genmsg/cmake/genmsgConfig.cmake:222 (include)
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/gencpp/cmake/gencppConfig.cmake:197 (find_package)
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/message_generation/cmake/message_generationConfig.cmake:197 (find_package)
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/catkin/cmake/catkinConfig.cmake:76 (find_package)
+  diff_drive_robot/CMakeLists.txt:20 (find_package)
+
+
+CMake Warning at /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/genmsg/cmake/genmsg-extras.cmake:49 (message):
+  Unknown message generator specified in ROS_LANG_DISABLE: gennodejs
+Call Stack (most recent call first):
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/genmsg/cmake/genmsgConfig.cmake:222 (include)
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/gencpp/cmake/gencppConfig.cmake:197 (find_package)
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/message_generation/cmake/message_generationConfig.cmake:197 (find_package)
+  /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/catkin/cmake/catkinConfig.cmake:76 (find_package)
+  diff_drive_robot/CMakeLists.txt:20 (find_package)
+
+
+-- Using these message generators: gencpp;genpy
+-- diff_drive_robot: 3 messages, 0 services
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build
+ninja: no work to do.
+[1/9] cd /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot && /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/catkin_generated/env_cached.sh /home/jorand/.matlab/R2023a/ros1/glnxa64/venv/bin/python3 /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py diff_drive_robot /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/TimeMessage.msg
+[2/9] cd /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot && /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/catkin_generated/env_cached.sh /home/jorand/.matlab/R2023a/ros1/glnxa64/venv/bin/python3 /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py diff_drive_robot /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/HumanRobotInteraction.msg
+[3/9] cd /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/diff_drive_robot && /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build/catkin_generated/env_cached.sh /home/jorand/.matlab/R2023a/ros1/glnxa64/venv/bin/python3 /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py diff_drive_robot /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/msg/MILPResult.msg
+[4/9] Generating Python from MSG diff_drive_robot/HumanRobotInteraction
+[5/9] Generating Python msg __init__.py for diff_drive_robot
+[6/9] Generating C++ code from diff_drive_robot/HumanRobotInteraction.msg
+[7/9] Building CXX object diff_drive_robot/CMakeFiles/diff_drive_robot_matlab.dir/src/diff_drive_robot_HumanRobotInteraction_message.cpp.o
+In file included from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/smart_ptr/detail/sp_thread_sleep.hpp:22,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/smart_ptr/detail/yield_k.hpp:23,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/smart_ptr/detail/spinlock_gcc_atomic.hpp:14,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/smart_ptr/detail/spinlock.hpp:42,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/smart_ptr/detail/spinlock_pool.hpp:25,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/smart_ptr/shared_ptr.hpp:65,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/shared_ptr.hpp:53,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/date_time/time_clock.hpp:53,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/date_time/posix_time/posix_time_types.hpp:46,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/date_time/posix_time/time_formatters.hpp:52,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/date_time/posix_time/posix_time.hpp:60,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/date_time/local_time/local_time.hpp:47,
+                 from /usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/date_time.hpp:51,
+                 from /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src/diff_drive_robot/src/diff_drive_robot_HumanRobotInteraction_message.cpp:3:
+/usr/local/MATLAB/R2023a/sys/ros1/glnxa64/ros1/boost/include/boost/bind.hpp:72:1: note: #pragma message: The practice of declaring the Bind placeholders (_1, _2, ...) in the global namespace is deprecated. Please use <boost/bind/bind.hpp> + using namespace mwboost::placeholders, or define BOOST_BIND_GLOBAL_PLACEHOLDERS to retain the current behavior.
+   72 | BOOST_PRAGMA_MESSAGE(
+      | ^~~~~~~~~~~~~~~~~~~~
+[8/9] Linking CXX shared library /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/libdiff_drive_robot_matlab.so
+[8/9] Install the project...
+-- Install configuration: "Release"
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/_setup_util.py
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/env.sh
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/setup.bash
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/local_setup.bash
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/setup.sh
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/local_setup.sh
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/setup.zsh
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/local_setup.zsh
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/.rosinstall
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/share/diff_drive_robot/msg/HumanRobotInteraction.msg
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/share/diff_drive_robot/msg/MILPResult.msg
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/share/diff_drive_robot/msg/TimeMessage.msg
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/share/diff_drive_robot/cmake/diff_drive_robot-msg-paths.cmake
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/include/diff_drive_robot
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/include/diff_drive_robot/HumanRobotInteraction.h
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/include/diff_drive_robot/TimeMessage.h
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/include/diff_drive_robot/MILPResult.h
+Listing '/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages/diff_drive_robot'...
+Listing '/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages/diff_drive_robot/msg'...
+Compiling '/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages/diff_drive_robot/msg/_HumanRobotInteraction.py'...
+Compiling '/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel/lib/python3/dist-packages/diff_drive_robot/msg/__init__.py'...
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg/_MILPResult.py
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg/_TimeMessage.py
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg/_HumanRobotInteraction.py
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg/__pycache__
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg/__pycache__/_TimeMessage.cpython-39.pyc
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg/__pycache__/__init__.cpython-39.pyc
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg/__pycache__/_HumanRobotInteraction.cpython-39.pyc
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg/__pycache__/_MILPResult.cpython-39.pyc
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/msg/__init__.py
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/__pycache__
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/__pycache__/__init__.cpython-39.pyc
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/python3/dist-packages/diff_drive_robot/__init__.py
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/pkgconfig/diff_drive_robot.pc
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/share/diff_drive_robot/cmake/diff_drive_robot-msg-extras.cmake
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/share/diff_drive_robot/cmake/diff_drive_robotConfig.cmake
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/share/diff_drive_robot/cmake/diff_drive_robotConfig-version.cmake
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/share/diff_drive_robot/package.xml
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/include
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/include/diff_drive_robot
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/include/diff_drive_robot/visibility_control.h
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/lib/libdiff_drive_robot_matlab.so
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m/
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+internal
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+internal/+ros
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+internal/+ros/+custommessages
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+internal/+ros/+custommessages/+diff_drive_robot
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+internal/+ros/+custommessages/+diff_drive_robot/mILPResult.m
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+internal/+ros/+custommessages/+diff_drive_robot/humanRobotInteraction.m
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+internal/+ros/+custommessages/+diff_drive_robot/timeMessage.m
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+msggen
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+msggen/+diff_drive_robot
+-- Installing: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+msggen/+diff_drive_robot/HumanRobotInteraction.m
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+msggen/+diff_drive_robot/MILPResult.m
+-- Up-to-date: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install/m//+ros/+msggen/+diff_drive_robot/TimeMessage.m
+Base path: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64
+Source space: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/src
+Build space: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build
+Devel space: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/devel
+Install space: /home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/install
+####
+#### Running command: "ninja build.ninja" in "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build"
+####
+####
+#### Running command: "ninja install install -j12 -l12" in "/home/jorand/differentialdrive_ws/src/matlab_msg_gen_ros1/glnxa64/build"
+####

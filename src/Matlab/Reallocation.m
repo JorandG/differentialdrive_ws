@@ -1,5 +1,5 @@
 function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, ReAll)
-    global humanTime_serving waiting_time approaching_time humanData msgTime pubTime Ph idx_going_tasks idx_approaching_tasks idx_depot_tasks idx_waiting_tasks idx_services_tasks dist HumMaxVelRobot num_humans num_farming_robot num_agents human humanTime_filling1 WeightHumanwaiting WeightEnergyDepositing WeightEnergyProximity WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation num_phases
+    global Prox humanTime_serving waiting_time approaching_time humanData msgTime pubTime Ph idx_going_tasks idx_approaching_tasks idx_depot_tasks idx_waiting_tasks idx_services_tasks dist HumMaxVelRobot num_humans num_farming_robot num_agents human humanTime_filling1 WeightHumanwaiting WeightEnergyDepositing WeightEnergyProximity WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation num_phases
 
     serv_time = humanTime_serving;
     num_phases = 5;
@@ -16,6 +16,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
 
     humanwaiting = 0.0;
     humanproximity = 0.0;
+    velocityproximityduration = 0.0;
 
     %% Optimization variables
 
@@ -30,49 +31,79 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     timeFh = optimvar('timeFh', [1 num_service_tasks] ,'LowerBound', 0);
     makespan = optimvar('makespan','LowerBound',0);%overall duration
     velocitygoing = optimvar('velocitygoing','LowerBound',0); %velocity of robot for picking
-    velocityproximity = optimvar('velocityproximity','LowerBound',0); %velocity of robot for proximity phase
+    velocityproximity = optimvar('velocityproximity', [num_tasks, num_robots] ,'LowerBound', 0); %optimvar('velocityproximity','LowerBound',0); %velocity of robot for proximity phase
+    velocityproximity1 = optimvar('velocityproximity1','LowerBound',0); %velocity of robot for proximity phase
     velocitydepositing = optimvar('velocitydepositing','LowerBound',0); %velocity of robot for proximity phase
     
     max_invprod = optimvar('max_invprod', [num_tasks*num_phases], 'LowerBound', 0); %maximum of the invprod velocity
-
 
     v_min = min(vel_min);
     v_max = max(vel_max);
     normavel = (v_min*v_max)/((v_max-v_min)*num_tasks);
     normawait = 1/(num_agents*num_filling_boxes*(max(dist, [], 'all')/v_min));
     normamakespan = (makespan/(num_service_tasks*(2*max(dist, [], 'all')/v_min)+max(max(service_time(1:num_agents*num_filling_boxes,:))+max(max(service_time(1:num_agents*num_filling_boxes,:))))));
-    Ph = [3, 2, 1];
-
-    baseProx = [1, 10]; %coeff for the proximity phase for each human, a higher value decrease the duration of the phase and so speed up the robot
+    %Ph = [3, 2, 1];
+    baseProx = [];
+    WaitWeight = [];
+    for h=1:num_humans
+        baseProx = [baseProx, humanData{h}.RobotVelocityProximityWeight(humanData{h}.Task)]; %coeff for the proximity phase for each human, a higher value decrease the duration of the phase and so speed up the robot
+        WaitWeight = [WaitWeight, humanData{h}.WaitingTimeWeight(humanData{h}.Task)]; % Weight for waiting, should replace Ph
+    end
+    %baseProx = [1, 3, 1];
     colProx = baseProx.'; 
-    Prox = repmat(colProx, 1, num_humans); 
-    Prox = repmat(Prox, num_filling_boxes, 1);   
+    Prox = repmat(colProx, 1, num_robots); 
+    Prox = repmat(Prox, num_filling_boxes, 1);
+    Prox = 1./Prox
+    WaitWeight;
+    % baseProx = [1, 10];
+    % Prox = repmat(baseProx, 1, num_filling_boxes)
 
 
     for i=1:num_agents
-        humanwaiting1 = Ph(i)*(sum(timeSh(num_agents+i:num_agents:num_service_tasks) - timeFh(i:num_agents:num_service_tasks-num_agents) + timeSh(i))); %app.alphaWeight(i)*
+        humanwaiting1 = WaitWeight(i)*(sum(timeSh(num_agents+i:num_agents:num_service_tasks) - timeFh(i:num_agents:num_service_tasks-num_agents) + timeSh(i))); %app.alphaWeight(i)*
         humanwaiting = humanwaiting + humanwaiting1;
     end
 
+
+
+    %velocityproximityduration = sum(sum( ((1/min(vel_min))*X) - ((invprod(idx_approaching_tasks,:)).*Prox) )); %sum(sum((((1/min(vel_min))*X - (invprod(idx_approaching_tasks,:)).*Prox))))*normavel; %sum((timeF(idx_approaching_tasks)- timeS(idx_approaching_tasks)).*Prox);
+    velocitydepositingduration = sum(sum(((1/min(vel_min))*X-(invprod(idx_depot_tasks,:)))))*normavel;
+    velocitygoingduration = sum(sum((1/min(vel_min))*X-(invprod(idx_going_tasks,:))))*normavel;
     %% Problem definition
     prob = optimproblem;
-    prob.Objective =  WeightHumanwaiting*(humanwaiting)+WeightEnergyPicking*velocitygoing+WeightEnergyProximity*velocityproximity+WeightEnergyDepositing*velocitydepositing+WeightMakespan*normamakespan; %+WeightEnergyDepositing*(num_tasks*(1/min(vel_min))-sum(invprod,'all'));
+    prob.Objective =  WeightHumanwaiting*(humanwaiting)+WeightEnergyPicking*velocitygoingduration+WeightEnergyDepositing*velocitydepositingduration+WeightMakespan*normamakespan+WeightEnergyProximity*velocityproximity1;% %+WeightEnergyDepositing*(num_tasks*(1/min(vel_min))-sum(invprod,'all'));
 
     %% Constraints
+    prob.Constraints.maxInvProd1 = max_invprod >= invprod(:,1) + invprod(:,2);
+    prob.Constraints.maxInvProd12 = max_invprod <= invprod(:,1) + invprod(:,2);
+    prob.Constraints.maxInvProd3 = sum( ((1/min(vel_min))) - ((max_invprod(idx_approaching_tasks,:)).*Prox(:,1)) ) >= 0;
+
     prob.Constraints.makespanbound =  makespan >= timeF;
-    prob.Constraints.velocitygoingduration = velocitygoing == (num_tasks*(1/min(vel_min))-sum(invprod(idx_going_tasks,:)))*normavel;
-    prob.Constraints.velocitydepositingduration = velocitydepositing == (num_tasks*(1/min(vel_min))-sum(invprod(idx_depot_tasks,:)))*normavel;
-    prob.Constraints.velocityproximityduration = velocityproximity == (num_tasks*(1/min(vel_min))-sum(invprod(idx_approaching_tasks,:).*Prox))*normavel;
+    %prob.Constraints.velocitygoingduration = velocitygoing == (sum(invprod(idx_going_tasks,:)/(max(vel_max) - min(vel_min))) - min(vel_min)/(max(vel_max) - min(vel_min)))*normavel; %(num_tasks*(1/min(vel_min))-sum(invprod(idx_going_tasks,:)))*normavel;
+    %prob.Constraints.velocitydepositingduration = velocitydepositing == sum((1/min(vel_min))-invprod(idx_depot_tasks,:));%/(max(vel_max) - min(vel_min))) - min(vel_min)/(max(vel_max) - min(vel_min)))*normavel;
+    %prob.Constraints.velocityproximityduration = velocityproximity == sum(sum( ((invprod(idx_approaching_tasks,:)).*Prox) - ((1/min(vel_min))*X) )); %sum(sum(((1/min(vel_min))*X-(invprod(idx_approaching_tasks,:)).*1./Prox)));%/(max(vel_max) - min(vel_min))) - min(vel_min)/(max(vel_max) - min(vel_min)))*normavel; % sum((timeF(idx_approaching_tasks)- timeS(idx_approaching_tasks)).*Prox)
     
-    prob.Constraints.maxInvProd1 = max_invprod >= invprod(:, 1);
-    prob.Constraints.maxInvProd2 = max_invprod >= invprod(:, 2);
+    prob.Constraints.velocityproximityduration11 = velocityproximity == ((1/min(vel_min))*X) - ((invprod(idx_approaching_tasks,:)).*Prox); %sum(sum( ((invprod(idx_approaching_tasks,:).*Prox - (1/min(vel_min))*X)) ))
+    prob.Constraints.velocityproximityduration12 = velocityproximity1 == sum( sum( velocityproximity) );
+    %prob.Constraints.velocityproximityduration123 = velocityproximity1 == velocityproximityduration;
+    %prob.Constraints.velocityproximityduration133 = velocityproximity1 >= 0;
+
+    % for i=1:num_tasks
+    %     constraint_name = ['velocityproximityduration' num2str(i)];
+    %     constraint_name1 = ['velocityproximitydura' num2str(i)];
+    %     testsum = ( ((1/min(vel_min)) * X(i,:))  - (invprod(idx_approaching_tasks(i),:).* Prox(i,:)) );
+    %     velocityproximity(i);
+    %     prob.Constraints.(constraint_name1) = velocityproximity(i) == testsum; 
+    %     %prob.Constraints.(constraint_name) = velocityproximity(i) >= 0;
+    % end
+    prob.Constraints.velocityproximityduration12 = velocityproximity1 == sum( sum( velocityproximity) );
 
     idx_tasks = [idx_going_tasks, idx_approaching_tasks, idx_waiting_tasks, idx_services_tasks, idx_depot_tasks];
     X1 = repmat(X,num_phases,1);
 
     if first_allocation == 2
         X2 = repmat(ReAll.X,num_phases,1);
-        %humanTime_filling = ReAll.timeFh - ReAll.timeSh
+        humanTime_filling = ReAll.timeFh - ReAll.timeSh;
         idx_going_tasks_consider = idx_to_consider_r;
         idx_approaching_tasks_consider = idx_going_tasks_consider + num_service_tasks;
         idx_waiting_tasks_consider = idx_approaching_tasks_consider + num_service_tasks;
@@ -117,7 +148,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         prob.Constraints.approaching_time1 = timeF(idx_approaching_tasks_consider) == timeF(idx_going_tasks_consider) + max_invprod(idx_approaching_tasks_consider)'*distance_proximity; %invprod(idx_approaching_tasks_consider,:)/l_approaching;%(timeSh(num_humans+1:length(idx_waiting_tasks_consider))-timeF(idx_services_tasks_consider(1:length(idx_waiting_tasks_consider)-num_humans)))/(max(dist(:))/min(vel_min) + serv_time)
 
         prob.Constraints.waiting_time = timeS(idx_waiting_tasks_consider) == timeF(idx_approaching_tasks_consider); %waiting for human
-        prob.Constraints.waiting_time1 = timeF(idx_waiting_tasks_consider) == timeS(idx_waiting_tasks_consider) + (timeF(idx_approaching_tasks_consider)-timeS(idx_services_tasks_consider))%waiting_time;%(timeSh(num_humans+1:length(idx_waiting_tasks_consider))-timeF(idx_services_tasks_consider(1:length(idx_waiting_tasks_consider)-num_humans)))/(max(dist(:))/min(vel_min) + 7);
+        prob.Constraints.waiting_time1 = timeF(idx_waiting_tasks_consider) == timeS(idx_waiting_tasks_consider) + 0.0;%(timeF(idx_approaching_tasks_consider)-timeS(idx_services_tasks_consider))%waiting_time;%(timeSh(num_humans+1:length(idx_waiting_tasks_consider))-timeF(idx_services_tasks_consider(1:length(idx_waiting_tasks_consider)-num_humans)))/(max(dist(:))/min(vel_min) + 7);
 
         prob.Constraints.services_time = timeS(idx_services_tasks_consider) == timeF(idx_waiting_tasks_consider); %time to make the service to the human
         prob.Constraints.services_time2 = timeF(idx_services_tasks_consider) == timeS(idx_services_tasks_consider) + serv_time(idx_going_tasks_consider); %time to make the service to the human using idx going because we can't exceed num_taks

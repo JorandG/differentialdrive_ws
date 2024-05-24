@@ -8,25 +8,28 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "589867c3463a850edaa91a5e6493674c"
+  _md5sum = "8b0d76829ca619dc5634eb42ed8a3bfd"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
 float64[] RobotWaitingDistance
-float64[] RobotVelocity
+float64[] RobotVelocityProximity
+float64[] RobotVelocityProximityWeight
 float64[] WaitingTime
+float64[] WaitingTimeWeight
 float64[] StartFilling
 float64[] FinishFilling
 float64[] StartServing
 float64[] FinishServing
 float64[] TimeFilling
 float64[] TimeServing
-int32 ConfirmServing
-int32 ConfirmFilling
+int32[] ConfirmServing
+int32[] ConfirmFilling
 int32 Task
+int32 TaskFilling
 """
-  __slots__ = ['HumanID','RobotWaitingDistance','RobotVelocity','WaitingTime','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task']
-  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32','int32','int32']
+  __slots__ = ['HumanID','RobotWaitingDistance','RobotVelocityProximity','RobotVelocityProximityWeight','WaitingTime','WaitingTimeWeight','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task','TaskFilling']
+  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','int32','int32']
 
   def __init__(self, *args, **kwds):
     """
@@ -36,7 +39,7 @@ int32 Task
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,RobotWaitingDistance,RobotVelocity,WaitingTime,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task
+       HumanID,RobotWaitingDistance,RobotVelocityProximity,RobotVelocityProximityWeight,WaitingTime,WaitingTimeWeight,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task,TaskFilling
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -49,10 +52,14 @@ int32 Task
         self.HumanID = 0
       if self.RobotWaitingDistance is None:
         self.RobotWaitingDistance = []
-      if self.RobotVelocity is None:
-        self.RobotVelocity = []
+      if self.RobotVelocityProximity is None:
+        self.RobotVelocityProximity = []
+      if self.RobotVelocityProximityWeight is None:
+        self.RobotVelocityProximityWeight = []
       if self.WaitingTime is None:
         self.WaitingTime = []
+      if self.WaitingTimeWeight is None:
+        self.WaitingTimeWeight = []
       if self.StartFilling is None:
         self.StartFilling = []
       if self.FinishFilling is None:
@@ -66,25 +73,30 @@ int32 Task
       if self.TimeServing is None:
         self.TimeServing = []
       if self.ConfirmServing is None:
-        self.ConfirmServing = 0
+        self.ConfirmServing = []
       if self.ConfirmFilling is None:
-        self.ConfirmFilling = 0
+        self.ConfirmFilling = []
       if self.Task is None:
         self.Task = 0
+      if self.TaskFilling is None:
+        self.TaskFilling = 0
     else:
       self.HumanID = 0
       self.RobotWaitingDistance = []
-      self.RobotVelocity = []
+      self.RobotVelocityProximity = []
+      self.RobotVelocityProximityWeight = []
       self.WaitingTime = []
+      self.WaitingTimeWeight = []
       self.StartFilling = []
       self.FinishFilling = []
       self.StartServing = []
       self.FinishServing = []
       self.TimeFilling = []
       self.TimeServing = []
-      self.ConfirmServing = 0
-      self.ConfirmFilling = 0
+      self.ConfirmServing = []
+      self.ConfirmFilling = []
       self.Task = 0
+      self.TaskFilling = 0
 
   def _get_types(self):
     """
@@ -104,14 +116,22 @@ int32 Task
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.RobotWaitingDistance))
-      length = len(self.RobotVelocity)
+      length = len(self.RobotVelocityProximity)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
-      buff.write(struct.Struct(pattern).pack(*self.RobotVelocity))
+      buff.write(struct.Struct(pattern).pack(*self.RobotVelocityProximity))
+      length = len(self.RobotVelocityProximityWeight)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.RobotVelocityProximityWeight))
       length = len(self.WaitingTime)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.WaitingTime))
+      length = len(self.WaitingTimeWeight)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.WaitingTimeWeight))
       length = len(self.StartFilling)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -136,8 +156,16 @@ int32 Task
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.TimeServing))
+      length = len(self.ConfirmServing)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%si'%length
+      buff.write(struct.Struct(pattern).pack(*self.ConfirmServing))
+      length = len(self.ConfirmFilling)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%si'%length
+      buff.write(struct.Struct(pattern).pack(*self.ConfirmFilling))
       _x = self
-      buff.write(_get_struct_3i().pack(_x.ConfirmServing, _x.ConfirmFilling, _x.Task))
+      buff.write(_get_struct_2i().pack(_x.Task, _x.TaskFilling))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -168,7 +196,15 @@ int32 Task
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.RobotVelocity = s.unpack(str[start:end])
+      self.RobotVelocityProximity = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.RobotVelocityProximityWeight = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -177,6 +213,14 @@ int32 Task
       s = struct.Struct(pattern)
       end += s.size
       self.WaitingTime = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.WaitingTimeWeight = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -225,10 +269,26 @@ int32 Task
       s = struct.Struct(pattern)
       end += s.size
       self.TimeServing = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%si'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.ConfirmServing = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%si'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.ConfirmFilling = s.unpack(str[start:end])
       _x = self
       start = end
-      end += 12
-      (_x.ConfirmServing, _x.ConfirmFilling, _x.Task,) = _get_struct_3i().unpack(str[start:end])
+      end += 8
+      (_x.Task, _x.TaskFilling,) = _get_struct_2i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -247,14 +307,22 @@ int32 Task
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.RobotWaitingDistance.tostring())
-      length = len(self.RobotVelocity)
+      length = len(self.RobotVelocityProximity)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
-      buff.write(self.RobotVelocity.tostring())
+      buff.write(self.RobotVelocityProximity.tostring())
+      length = len(self.RobotVelocityProximityWeight)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.RobotVelocityProximityWeight.tostring())
       length = len(self.WaitingTime)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.WaitingTime.tostring())
+      length = len(self.WaitingTimeWeight)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.WaitingTimeWeight.tostring())
       length = len(self.StartFilling)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -279,8 +347,16 @@ int32 Task
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.TimeServing.tostring())
+      length = len(self.ConfirmServing)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%si'%length
+      buff.write(self.ConfirmServing.tostring())
+      length = len(self.ConfirmFilling)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%si'%length
+      buff.write(self.ConfirmFilling.tostring())
       _x = self
-      buff.write(_get_struct_3i().pack(_x.ConfirmServing, _x.ConfirmFilling, _x.Task))
+      buff.write(_get_struct_2i().pack(_x.Task, _x.TaskFilling))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -312,7 +388,15 @@ int32 Task
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.RobotVelocity = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      self.RobotVelocityProximity = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.RobotVelocityProximityWeight = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -321,6 +405,14 @@ int32 Task
       s = struct.Struct(pattern)
       end += s.size
       self.WaitingTime = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.WaitingTimeWeight = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -369,10 +461,26 @@ int32 Task
       s = struct.Struct(pattern)
       end += s.size
       self.TimeServing = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%si'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.ConfirmServing = numpy.frombuffer(str[start:end], dtype=numpy.int32, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%si'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.ConfirmFilling = numpy.frombuffer(str[start:end], dtype=numpy.int32, count=length)
       _x = self
       start = end
-      end += 12
-      (_x.ConfirmServing, _x.ConfirmFilling, _x.Task,) = _get_struct_3i().unpack(str[start:end])
+      end += 8
+      (_x.Task, _x.TaskFilling,) = _get_struct_2i().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -381,12 +489,12 @@ _struct_I = genpy.struct_I
 def _get_struct_I():
     global _struct_I
     return _struct_I
-_struct_3i = None
-def _get_struct_3i():
-    global _struct_3i
-    if _struct_3i is None:
-        _struct_3i = struct.Struct("<3i")
-    return _struct_3i
+_struct_2i = None
+def _get_struct_2i():
+    global _struct_2i
+    if _struct_2i is None:
+        _struct_2i = struct.Struct("<2i")
+    return _struct_2i
 _struct_i = None
 def _get_struct_i():
     global _struct_i
