@@ -70,6 +70,28 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
         throw std::invalid_argument("Field 'RobotVelocityProximity' is wrong type; expected a double.");
     }
     try {
+        //RobotMinVelocityProximity
+        const matlab::data::TypedArray<double> RobotMinVelocityProximity_arr = arr["RobotMinVelocityProximity"];
+        size_t nelem = RobotMinVelocityProximity_arr.getNumberOfElements();
+        	msg->RobotMinVelocityProximity.resize(nelem);
+        	std::copy(RobotMinVelocityProximity_arr.begin(), RobotMinVelocityProximity_arr.begin()+nelem, msg->RobotMinVelocityProximity.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'RobotMinVelocityProximity' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'RobotMinVelocityProximity' is wrong type; expected a double.");
+    }
+    try {
+        //RobotMaxVelocityProximity
+        const matlab::data::TypedArray<double> RobotMaxVelocityProximity_arr = arr["RobotMaxVelocityProximity"];
+        size_t nelem = RobotMaxVelocityProximity_arr.getNumberOfElements();
+        	msg->RobotMaxVelocityProximity.resize(nelem);
+        	std::copy(RobotMaxVelocityProximity_arr.begin(), RobotMaxVelocityProximity_arr.begin()+nelem, msg->RobotMaxVelocityProximity.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'RobotMaxVelocityProximity' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'RobotMaxVelocityProximity' is wrong type; expected a double.");
+    }
+    try {
         //RobotVelocityProximityWeight
         const matlab::data::TypedArray<double> RobotVelocityProximityWeight_arr = arr["RobotVelocityProximityWeight"];
         size_t nelem = RobotVelocityProximityWeight_arr.getNumberOfElements();
@@ -212,7 +234,7 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_HumanRobotInteraction_common::get_arr(MDFactory_T& factory, const diff_drive_robot::HumanRobotInteraction* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotWaitingDistance","RobotVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotWaitingDistance","RobotVelocityProximity","RobotMinVelocityProximity","RobotMaxVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/HumanRobotInteraction");
     // HumanID
@@ -224,6 +246,12 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     // RobotVelocityProximity
     auto currentElement_RobotVelocityProximity = (msg + ctr)->RobotVelocityProximity;
     outArray[ctr]["RobotVelocityProximity"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotVelocityProximity_type::const_iterator, double>({currentElement_RobotVelocityProximity.size(),1}, currentElement_RobotVelocityProximity.begin(), currentElement_RobotVelocityProximity.end());
+    // RobotMinVelocityProximity
+    auto currentElement_RobotMinVelocityProximity = (msg + ctr)->RobotMinVelocityProximity;
+    outArray[ctr]["RobotMinVelocityProximity"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotMinVelocityProximity_type::const_iterator, double>({currentElement_RobotMinVelocityProximity.size(),1}, currentElement_RobotMinVelocityProximity.begin(), currentElement_RobotMinVelocityProximity.end());
+    // RobotMaxVelocityProximity
+    auto currentElement_RobotMaxVelocityProximity = (msg + ctr)->RobotMaxVelocityProximity;
+    outArray[ctr]["RobotMaxVelocityProximity"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotMaxVelocityProximity_type::const_iterator, double>({currentElement_RobotMaxVelocityProximity.size(),1}, currentElement_RobotMaxVelocityProximity.begin(), currentElement_RobotMaxVelocityProximity.end());
     // RobotVelocityProximityWeight
     auto currentElement_RobotVelocityProximityWeight = (msg + ctr)->RobotVelocityProximityWeight;
     outArray[ctr]["RobotVelocityProximityWeight"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotVelocityProximityWeight_type::const_iterator, double>({currentElement_RobotVelocityProximityWeight.size(),1}, currentElement_RobotVelocityProximityWeight.begin(), currentElement_RobotVelocityProximityWeight.end());

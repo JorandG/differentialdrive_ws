@@ -124,7 +124,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         prob.Constraints.duration8 = invprod(idx_approaching_tasks_consider,:) <= X1(idx_approaching_tasks_consider,:).*inv_vel_min_prox(idx_going_tasks_consider,:);
 
         prob.Constraints.duration11 = invprod(idx_to_ignore_r,:) == ReAll.invprod(idx_to_ignore_r,:);
-        prob.Constraints.maxInvProd3 = sum( ((1/min(vel_min))) - ((max_invprod(idx_approaching_tasks_consider,:)).*Prox(idx_going_tasks_consider,1)) ) >= 0;
+        prob.Constraints.maxInvProd3 = sum( ((1/min(vel_min))) - ((max_invprod(idx_approaching_tasks,:)).*Prox(:,1)) ) >= 0;
 
         prob.Constraints.timeF_tasks_to_ignore = timeF(idx_to_ignore_r) == ReAll.timeF(idx_to_ignore_r);
         prob.Constraints.timeS_tasks_to_ignore = timeS(idx_to_ignore_r) == ReAll.timeS(idx_to_ignore_r);

@@ -500,17 +500,18 @@ global num_filling_boxes
 %y is the factor, influencing how much the change between the current and previous feedback affects the weight,
 %X_t−1 is the feedback at time t−1.
 alpha = 0.75;
-gamma = 0.2;
+gamma = 0;
+
+happiness = 0.0
 
     for h=1:num_humans
-        %humanData{h}.happiness = 0.0
         if humanData{h}.Task > num_filling_boxes
             humanData{h}.Task = num_filling_boxes;
         end
-        % for t=1:humanData{h}.Task
-        %     humanData{h}.happiness = humanData{h}.happiness + humanData{h}.RobotVelocityProximity(t);
-        % end
-        % humanData{h}.hapiness = humanData{h}.hapiness/humanData{h}.Task
+        for t=1:humanData{h}.Task
+            humanData{h}.happiness = humanData{h}.happiness + humanData{h}.RobotVelocityProximity(t);
+        end
+        hapiness = 
         %Velocity for the proximity phase 
         Xtp = humanData{h}.RobotVelocityProximity(humanData{h}.Task);
         Wtp = humanData{h}.RobotVelocityProximityWeight(humanData{h}.Task);
@@ -527,8 +528,8 @@ gamma = 0.2;
             Wt1v = humanData{h}.WaitingTimeWeight(humanData{h}.Task - 1); %Wt−1
             Xt1v = humanData{h}.WaitingTime(humanData{h}.Task-1); %Xt−1
 
-            Wtp = alpha*Xtp + (1 - alpha)*Wt1p %+ gamma*(Xtp - Xt1p)
-            Wtv = alpha*Xtv + (1 - alpha)*Wt1v + gamma*happiness%*(Xtv - Xt1v)
+            Wtp = alpha*Xtp + (1 - alpha)*Wt1p + gamma*(Xtp - Xt1p)
+            Wtv = alpha*Xtv + (1 - alpha)*Wt1v + gamma*(Xtv - Xt1v)
 
             %humanData{h}.RobotVelocityProximityWeight(humanData{h}.Task) = alpha * humanData{h}.RobotVelocityProximity(humanData{h}.Task) + (1 - alpha)*humanData{h}.RobotVelocityProximityWeight(humanData{h}.Task - 1)- 1 + gamma*(humanData{h}.RobotVelocityProximity(humanData{h}.Task) - humanData{h}.RobotVelocityProximity(humanData{h}.Task-1));
             

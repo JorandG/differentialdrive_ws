@@ -8,12 +8,14 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "8b0d76829ca619dc5634eb42ed8a3bfd"
+  _md5sum = "57cfebb0e2a7d533881351d9686be0c2"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
 float64[] RobotWaitingDistance
 float64[] RobotVelocityProximity
+float64[] RobotMinVelocityProximity
+float64[] RobotMaxVelocityProximity
 float64[] RobotVelocityProximityWeight
 float64[] WaitingTime
 float64[] WaitingTimeWeight
@@ -28,8 +30,8 @@ int32[] ConfirmFilling
 int32 Task
 int32 TaskFilling
 """
-  __slots__ = ['HumanID','RobotWaitingDistance','RobotVelocityProximity','RobotVelocityProximityWeight','WaitingTime','WaitingTimeWeight','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task','TaskFilling']
-  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','int32','int32']
+  __slots__ = ['HumanID','RobotWaitingDistance','RobotVelocityProximity','RobotMinVelocityProximity','RobotMaxVelocityProximity','RobotVelocityProximityWeight','WaitingTime','WaitingTimeWeight','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task','TaskFilling']
+  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','int32','int32']
 
   def __init__(self, *args, **kwds):
     """
@@ -39,7 +41,7 @@ int32 TaskFilling
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,RobotWaitingDistance,RobotVelocityProximity,RobotVelocityProximityWeight,WaitingTime,WaitingTimeWeight,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task,TaskFilling
+       HumanID,RobotWaitingDistance,RobotVelocityProximity,RobotMinVelocityProximity,RobotMaxVelocityProximity,RobotVelocityProximityWeight,WaitingTime,WaitingTimeWeight,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task,TaskFilling
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -54,6 +56,10 @@ int32 TaskFilling
         self.RobotWaitingDistance = []
       if self.RobotVelocityProximity is None:
         self.RobotVelocityProximity = []
+      if self.RobotMinVelocityProximity is None:
+        self.RobotMinVelocityProximity = []
+      if self.RobotMaxVelocityProximity is None:
+        self.RobotMaxVelocityProximity = []
       if self.RobotVelocityProximityWeight is None:
         self.RobotVelocityProximityWeight = []
       if self.WaitingTime is None:
@@ -84,6 +90,8 @@ int32 TaskFilling
       self.HumanID = 0
       self.RobotWaitingDistance = []
       self.RobotVelocityProximity = []
+      self.RobotMinVelocityProximity = []
+      self.RobotMaxVelocityProximity = []
       self.RobotVelocityProximityWeight = []
       self.WaitingTime = []
       self.WaitingTimeWeight = []
@@ -120,6 +128,14 @@ int32 TaskFilling
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.RobotVelocityProximity))
+      length = len(self.RobotMinVelocityProximity)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.RobotMinVelocityProximity))
+      length = len(self.RobotMaxVelocityProximity)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.RobotMaxVelocityProximity))
       length = len(self.RobotVelocityProximityWeight)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -197,6 +213,22 @@ int32 TaskFilling
       s = struct.Struct(pattern)
       end += s.size
       self.RobotVelocityProximity = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.RobotMinVelocityProximity = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.RobotMaxVelocityProximity = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -311,6 +343,14 @@ int32 TaskFilling
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.RobotVelocityProximity.tostring())
+      length = len(self.RobotMinVelocityProximity)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.RobotMinVelocityProximity.tostring())
+      length = len(self.RobotMaxVelocityProximity)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.RobotMaxVelocityProximity.tostring())
       length = len(self.RobotVelocityProximityWeight)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -389,6 +429,22 @@ int32 TaskFilling
       s = struct.Struct(pattern)
       end += s.size
       self.RobotVelocityProximity = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.RobotMinVelocityProximity = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.RobotMaxVelocityProximity = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])

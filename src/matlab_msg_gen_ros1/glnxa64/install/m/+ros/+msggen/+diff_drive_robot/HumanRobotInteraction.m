@@ -8,10 +8,12 @@ classdef HumanRobotInteraction < ros.Message
         MessageType = 'diff_drive_robot/HumanRobotInteraction' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = '8b0d76829ca619dc5634eb42ed8a3bfd' % The MD5 Checksum of the message definition
-        PropertyList = { 'HumanID' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' } % List of non-constant message properties
-        ROSPropertyList = { 'HumanID' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' } % List of non-constant ROS message properties
+        MD5Checksum = '57cfebb0e2a7d533881351d9686be0c2' % The MD5 Checksum of the message definition
+        PropertyList = { 'HumanID' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' } % List of non-constant message properties
+        ROSPropertyList = { 'HumanID' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
+            '' ...
+            '' ...
             '' ...
             '' ...
             '' ...
@@ -35,6 +37,8 @@ classdef HumanRobotInteraction < ros.Message
         HumanID
         RobotWaitingDistance
         RobotVelocityProximity
+        RobotMinVelocityProximity
+        RobotMaxVelocityProximity
         RobotVelocityProximityWeight
         WaitingTime
         WaitingTimeWeight
@@ -77,6 +81,28 @@ classdef HumanRobotInteraction < ros.Message
             validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'RobotVelocityProximity');
             obj.RobotVelocityProximity = double(val);
+        end
+        function set.RobotMinVelocityProximity(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'RobotMinVelocityProximity');
+            obj.RobotMinVelocityProximity = double(val);
+        end
+        function set.RobotMaxVelocityProximity(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'RobotMaxVelocityProximity');
+            obj.RobotMaxVelocityProximity = double(val);
         end
         function set.RobotVelocityProximityWeight(obj, val)
             validClasses = {'numeric'};

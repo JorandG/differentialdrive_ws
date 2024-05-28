@@ -27,6 +27,8 @@ struct HumanRobotInteraction_
     : HumanID(0)
     , RobotWaitingDistance()
     , RobotVelocityProximity()
+    , RobotMinVelocityProximity()
+    , RobotMaxVelocityProximity()
     , RobotVelocityProximityWeight()
     , WaitingTime()
     , WaitingTimeWeight()
@@ -45,6 +47,8 @@ struct HumanRobotInteraction_
     : HumanID(0)
     , RobotWaitingDistance(_alloc)
     , RobotVelocityProximity(_alloc)
+    , RobotMinVelocityProximity(_alloc)
+    , RobotMaxVelocityProximity(_alloc)
     , RobotVelocityProximityWeight(_alloc)
     , WaitingTime(_alloc)
     , WaitingTimeWeight(_alloc)
@@ -71,6 +75,12 @@ struct HumanRobotInteraction_
 
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _RobotVelocityProximity_type;
   _RobotVelocityProximity_type RobotVelocityProximity;
+
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _RobotMinVelocityProximity_type;
+  _RobotMinVelocityProximity_type RobotMinVelocityProximity;
+
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _RobotMaxVelocityProximity_type;
+  _RobotMaxVelocityProximity_type RobotMaxVelocityProximity;
 
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _RobotVelocityProximityWeight_type;
   _RobotVelocityProximityWeight_type RobotVelocityProximityWeight;
@@ -143,6 +153,8 @@ bool operator==(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAlloca
   return lhs.HumanID == rhs.HumanID &&
     lhs.RobotWaitingDistance == rhs.RobotWaitingDistance &&
     lhs.RobotVelocityProximity == rhs.RobotVelocityProximity &&
+    lhs.RobotMinVelocityProximity == rhs.RobotMinVelocityProximity &&
+    lhs.RobotMaxVelocityProximity == rhs.RobotMaxVelocityProximity &&
     lhs.RobotVelocityProximityWeight == rhs.RobotVelocityProximityWeight &&
     lhs.WaitingTime == rhs.WaitingTime &&
     lhs.WaitingTimeWeight == rhs.WaitingTimeWeight &&
@@ -212,12 +224,12 @@ struct MD5Sum< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "8b0d76829ca619dc5634eb42ed8a3bfd";
+    return "57cfebb0e2a7d533881351d9686be0c2";
   }
 
   static const char* value(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x8b0d76829ca619dcULL;
-  static const uint64_t static_value2 = 0x5634eb42ed8a3bfdULL;
+  static const uint64_t static_value1 = 0x57cfebb0e2a7d533ULL;
+  static const uint64_t static_value2 = 0x881351d9686be0c2ULL;
 };
 
 template<class ContainerAllocator>
@@ -239,6 +251,8 @@ struct Definition< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator
     return "int32 HumanID\n"
 "float64[] RobotWaitingDistance\n"
 "float64[] RobotVelocityProximity\n"
+"float64[] RobotMinVelocityProximity\n"
+"float64[] RobotMaxVelocityProximity\n"
 "float64[] RobotVelocityProximityWeight\n"
 "float64[] WaitingTime\n"
 "float64[] WaitingTimeWeight\n"
@@ -273,6 +287,8 @@ namespace serialization
       stream.next(m.HumanID);
       stream.next(m.RobotWaitingDistance);
       stream.next(m.RobotVelocityProximity);
+      stream.next(m.RobotMinVelocityProximity);
+      stream.next(m.RobotMaxVelocityProximity);
       stream.next(m.RobotVelocityProximityWeight);
       stream.next(m.WaitingTime);
       stream.next(m.WaitingTimeWeight);
@@ -317,6 +333,18 @@ struct Printer< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
     {
       s << indent << "  RobotVelocityProximity[" << i << "]: ";
       Printer<double>::stream(s, indent + "  ", v.RobotVelocityProximity[i]);
+    }
+    s << indent << "RobotMinVelocityProximity[]" << std::endl;
+    for (size_t i = 0; i < v.RobotMinVelocityProximity.size(); ++i)
+    {
+      s << indent << "  RobotMinVelocityProximity[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.RobotMinVelocityProximity[i]);
+    }
+    s << indent << "RobotMaxVelocityProximity[]" << std::endl;
+    for (size_t i = 0; i < v.RobotMaxVelocityProximity.size(); ++i)
+    {
+      s << indent << "  RobotMaxVelocityProximity[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.RobotMaxVelocityProximity[i]);
     }
     s << indent << "RobotVelocityProximityWeight[]" << std::endl;
     for (size_t i = 0; i < v.RobotVelocityProximityWeight.size(); ++i)
