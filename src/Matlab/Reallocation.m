@@ -1,5 +1,5 @@
 function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll)
-    global inv_vel_min_prox inv_vel_max_prox Prox humanTime_serving waiting_time approaching_time humanData msgTime pubTime Ph idx_going_tasks idx_approaching_tasks idx_depot_tasks idx_waiting_tasks idx_services_tasks dist HumMaxVelRobot num_humans num_farming_robot num_agents human humanTime_filling1 WeightHumanwaiting WeightEnergyDepositing WeightEnergyProximity WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation num_phases
+    global ProxPrev inv_vel_min_prox inv_vel_max_prox Prox humanTime_serving waiting_time approaching_time humanData msgTime pubTime Ph idx_going_tasks idx_approaching_tasks idx_depot_tasks idx_waiting_tasks idx_services_tasks dist HumMaxVelRobot num_humans num_farming_robot num_agents human humanTime_filling1 WeightHumanwaiting WeightEnergyDepositing WeightEnergyProximity WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation num_phases
 
     serv_time = humanTime_serving;
     num_phases = 5;
@@ -60,7 +60,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     colProx = baseProx.'; 
     Prox = repmat(colProx, 1, num_robots); 
     Prox = repmat(Prox, num_filling_boxes, 1);
-    Prox == 1./Prox;
+    Prox = 1./Prox
 
     for i=1:num_agents
         humanwaiting1 = WaitWeight(i)*(sum(timeSh(num_agents+i:num_agents:num_service_tasks) - timeFh(i:num_agents:num_service_tasks-num_agents) + timeSh(i))); %app.alphaWeight(i)*
@@ -79,8 +79,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     %prob.Constraints.maxInvProd3 = sum( ((1/min(vel_min))) - ((max_invprod(idx_approaching_tasks,:)).*Prox(:,1)) ) >= 0;
 
     prob.Constraints.makespanbound =  makespan >= timeF;
-    prob.Constraints.velocityproximityduration11 = velocityproximity == ((1/min(vel_min))*X) - ((invprod(idx_approaching_tasks,:)).*Prox); %sum(sum( ((invprod(idx_approaching_tasks,:).*Prox - (1/min(vel_min))*X)) ))
-    prob.Constraints.velocityproximityduration12 = velocityproximity1 == sum( sum( velocityproximity) );
+
 
     idx_tasks = [idx_going_tasks, idx_approaching_tasks, idx_waiting_tasks, idx_services_tasks, idx_depot_tasks];
     X1 = repmat(X,num_phases,1);
@@ -102,7 +101,9 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         idx_services_tasks_ignore = idx_waiting_tasks_ignore + num_service_tasks;
         idx_depot_tasks_ignore = idx_services_tasks_ignore + num_service_tasks;
         idx_to_ignore_r = [idx_going_tasks_ignore, idx_approaching_tasks_ignore, idx_waiting_tasks_ignore, idx_services_tasks_ignore, idx_depot_tasks_ignore];
-                
+        prob.Constraints.velocityproximityduration11 = velocityproximity(idx_going_tasks_consider,:) == ((inv_vel_min_prox(idx_going_tasks_consider,:)).*X2(idx_going_tasks_consider,:)) - ((invprod(idx_approaching_tasks_consider,:)).*Prox(idx_going_tasks_consider,:)); %sum(sum( ((invprod(idx_approaching_tasks,:).*Prox - (1/min(vel_min))*X)) ))
+        prob.Constraints.velocityproximityduration12 = velocityproximity1 == sum( sum( velocityproximity) );
+
         %% Tasks duration
         dist = repmat(dist,num_phases,1);
         invdist = invprod(idx_tasks,:).*dist(idx_tasks,:);
@@ -124,7 +125,8 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         prob.Constraints.duration8 = invprod(idx_approaching_tasks_consider,:) <= X1(idx_approaching_tasks_consider,:).*inv_vel_min_prox(idx_going_tasks_consider,:);
 
         prob.Constraints.duration11 = invprod(idx_to_ignore_r,:) == ReAll.invprod(idx_to_ignore_r,:);
-        prob.Constraints.maxInvProd3 = sum( ((1/min(vel_min))) - ((max_invprod(idx_approaching_tasks_consider,:)).*Prox(idx_going_tasks_consider,1)) ) >= 0;
+        prob.Constraints.duration12 = max_invprod(idx_to_ignore_r,:) == ReAll.max_invprod(idx_to_ignore_r,:);
+        prob.Constraints.maxInvProd3 = sum( (inv_vel_min_prox(idx_going_tasks_consider,1)) - ((max_invprod(idx_approaching_tasks_consider,:)).*Prox(idx_going_tasks_consider,1)) ) >= 0;
 
         prob.Constraints.timeF_tasks_to_ignore = timeF(idx_to_ignore_r) == ReAll.timeF(idx_to_ignore_r);
         prob.Constraints.timeS_tasks_to_ignore = timeS(idx_to_ignore_r) == ReAll.timeS(idx_to_ignore_r);
@@ -145,6 +147,9 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         prob.Constraints.humanduration5 = timeFh(idx_to_consider_h) == timeSh(idx_to_consider_h) + humanTime_filling(idx_to_consider_h);
 
     elseif first_allocation == 0
+        prob.Constraints.velocityproximityduration11 = velocityproximity == ((1/min(vel_min))*X) - ((invprod(idx_approaching_tasks,:)).*Prox); %sum(sum( ((invprod(idx_approaching_tasks,:).*Prox - (1/min(vel_min))*X)) ))
+        prob.Constraints.velocityproximityduration12 = velocityproximity1 == sum( sum( velocityproximity) );
+        
         % Tasks duration
         invdist = invprod.*repmat(dist,num_phases,1);
         for r=1:num_robots

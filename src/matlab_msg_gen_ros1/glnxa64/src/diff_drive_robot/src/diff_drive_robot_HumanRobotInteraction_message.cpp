@@ -230,11 +230,22 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     } catch (matlab::Exception&) {
         throw std::invalid_argument("Field 'TaskFilling' is wrong type; expected a int32.");
     }
+    try {
+        //Happiness
+        const matlab::data::TypedArray<double> Happiness_arr = arr["Happiness"];
+        size_t nelem = Happiness_arr.getNumberOfElements();
+        	msg->Happiness.resize(nelem);
+        	std::copy(Happiness_arr.begin(), Happiness_arr.begin()+nelem, msg->Happiness.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'Happiness' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'Happiness' is wrong type; expected a double.");
+    }
   }
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_HumanRobotInteraction_common::get_arr(MDFactory_T& factory, const diff_drive_robot::HumanRobotInteraction* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotWaitingDistance","RobotVelocityProximity","RobotMinVelocityProximity","RobotMaxVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotWaitingDistance","RobotVelocityProximity","RobotMinVelocityProximity","RobotMaxVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling","Happiness"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/HumanRobotInteraction");
     // HumanID
@@ -291,6 +302,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     // TaskFilling
     auto currentElement_TaskFilling = (msg + ctr)->TaskFilling;
     outArray[ctr]["TaskFilling"] = factory.createScalar(currentElement_TaskFilling);
+    // Happiness
+    auto currentElement_Happiness = (msg + ctr)->Happiness;
+    outArray[ctr]["Happiness"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_Happiness_type::const_iterator, double>({currentElement_Happiness.size(),1}, currentElement_Happiness.begin(), currentElement_Happiness.end());
     }
     return std::move(outArray);
   } 

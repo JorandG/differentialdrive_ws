@@ -41,7 +41,8 @@ struct HumanRobotInteraction_
     , ConfirmServing()
     , ConfirmFilling()
     , Task(0)
-    , TaskFilling(0)  {
+    , TaskFilling(0)
+    , Happiness()  {
     }
   HumanRobotInteraction_(const ContainerAllocator& _alloc)
     : HumanID(0)
@@ -61,7 +62,8 @@ struct HumanRobotInteraction_
     , ConfirmServing(_alloc)
     , ConfirmFilling(_alloc)
     , Task(0)
-    , TaskFilling(0)  {
+    , TaskFilling(0)
+    , Happiness(_alloc)  {
   (void)_alloc;
     }
 
@@ -121,6 +123,9 @@ struct HumanRobotInteraction_
    typedef int32_t _TaskFilling_type;
   _TaskFilling_type TaskFilling;
 
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _Happiness_type;
+  _Happiness_type Happiness;
+
 
 
 
@@ -167,7 +172,8 @@ bool operator==(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAlloca
     lhs.ConfirmServing == rhs.ConfirmServing &&
     lhs.ConfirmFilling == rhs.ConfirmFilling &&
     lhs.Task == rhs.Task &&
-    lhs.TaskFilling == rhs.TaskFilling;
+    lhs.TaskFilling == rhs.TaskFilling &&
+    lhs.Happiness == rhs.Happiness;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -224,12 +230,12 @@ struct MD5Sum< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "57cfebb0e2a7d533881351d9686be0c2";
+    return "1c7fbf19ef72cd1f3cbe11945ef5dfb0";
   }
 
   static const char* value(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x57cfebb0e2a7d533ULL;
-  static const uint64_t static_value2 = 0x881351d9686be0c2ULL;
+  static const uint64_t static_value1 = 0x1c7fbf19ef72cd1fULL;
+  static const uint64_t static_value2 = 0x3cbe11945ef5dfb0ULL;
 };
 
 template<class ContainerAllocator>
@@ -266,6 +272,7 @@ struct Definition< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator
 "int32[] ConfirmFilling\n"
 "int32 Task\n"
 "int32 TaskFilling\n"
+"float64[] Happiness\n"
 ;
   }
 
@@ -302,6 +309,7 @@ namespace serialization
       stream.next(m.ConfirmFilling);
       stream.next(m.Task);
       stream.next(m.TaskFilling);
+      stream.next(m.Happiness);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -416,6 +424,12 @@ struct Printer< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
     Printer<int32_t>::stream(s, indent + "  ", v.Task);
     s << indent << "TaskFilling: ";
     Printer<int32_t>::stream(s, indent + "  ", v.TaskFilling);
+    s << indent << "Happiness[]" << std::endl;
+    for (size_t i = 0; i < v.Happiness.size(); ++i)
+    {
+      s << indent << "  Happiness[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.Happiness[i]);
+    }
   }
 };
 

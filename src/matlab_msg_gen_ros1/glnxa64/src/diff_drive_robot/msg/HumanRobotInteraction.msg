@@ -16,3 +16,4 @@ int32[] ConfirmServing
 int32[] ConfirmFilling
 int32 Task
 int32 TaskFilling
+float64[] Happiness
