@@ -48,6 +48,17 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
         throw std::invalid_argument("Field 'HumanID' is wrong type; expected a int32.");
     }
     try {
+        //Robots
+        const matlab::data::TypedArray<double> Robots_arr = arr["Robots"];
+        size_t nelem = Robots_arr.getNumberOfElements();
+        	msg->Robots.resize(nelem);
+        	std::copy(Robots_arr.begin(), Robots_arr.begin()+nelem, msg->Robots.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'Robots' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'Robots' is wrong type; expected a double.");
+    }
+    try {
         //RobotWaitingDistance
         const matlab::data::TypedArray<double> RobotWaitingDistance_arr = arr["RobotWaitingDistance"];
         size_t nelem = RobotWaitingDistance_arr.getNumberOfElements();
@@ -245,12 +256,15 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_HumanRobotInteraction_common::get_arr(MDFactory_T& factory, const diff_drive_robot::HumanRobotInteraction* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","RobotWaitingDistance","RobotVelocityProximity","RobotMinVelocityProximity","RobotMaxVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling","Happiness"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","Robots","RobotWaitingDistance","RobotVelocityProximity","RobotMinVelocityProximity","RobotMaxVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling","Happiness"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/HumanRobotInteraction");
     // HumanID
     auto currentElement_HumanID = (msg + ctr)->HumanID;
     outArray[ctr]["HumanID"] = factory.createScalar(currentElement_HumanID);
+    // Robots
+    auto currentElement_Robots = (msg + ctr)->Robots;
+    outArray[ctr]["Robots"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_Robots_type::const_iterator, double>({currentElement_Robots.size(),1}, currentElement_Robots.begin(), currentElement_Robots.end());
     // RobotWaitingDistance
     auto currentElement_RobotWaitingDistance = (msg + ctr)->RobotWaitingDistance;
     outArray[ctr]["RobotWaitingDistance"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_RobotWaitingDistance_type::const_iterator, double>({currentElement_RobotWaitingDistance.size(),1}, currentElement_RobotWaitingDistance.begin(), currentElement_RobotWaitingDistance.end());

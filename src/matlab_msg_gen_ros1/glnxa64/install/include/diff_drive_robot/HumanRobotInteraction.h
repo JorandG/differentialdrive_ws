@@ -25,6 +25,7 @@ struct HumanRobotInteraction_
 
   HumanRobotInteraction_()
     : HumanID(0)
+    , Robots()
     , RobotWaitingDistance()
     , RobotVelocityProximity()
     , RobotMinVelocityProximity()
@@ -46,6 +47,7 @@ struct HumanRobotInteraction_
     }
   HumanRobotInteraction_(const ContainerAllocator& _alloc)
     : HumanID(0)
+    , Robots(_alloc)
     , RobotWaitingDistance(_alloc)
     , RobotVelocityProximity(_alloc)
     , RobotMinVelocityProximity(_alloc)
@@ -71,6 +73,9 @@ struct HumanRobotInteraction_
 
    typedef int32_t _HumanID_type;
   _HumanID_type HumanID;
+
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _Robots_type;
+  _Robots_type Robots;
 
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _RobotWaitingDistance_type;
   _RobotWaitingDistance_type RobotWaitingDistance;
@@ -156,6 +161,7 @@ template<typename ContainerAllocator1, typename ContainerAllocator2>
 bool operator==(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator1> & lhs, const ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator2> & rhs)
 {
   return lhs.HumanID == rhs.HumanID &&
+    lhs.Robots == rhs.Robots &&
     lhs.RobotWaitingDistance == rhs.RobotWaitingDistance &&
     lhs.RobotVelocityProximity == rhs.RobotVelocityProximity &&
     lhs.RobotMinVelocityProximity == rhs.RobotMinVelocityProximity &&
@@ -230,12 +236,12 @@ struct MD5Sum< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "1c7fbf19ef72cd1f3cbe11945ef5dfb0";
+    return "81b2515a21db4e38742fa3f5e558216c";
   }
 
   static const char* value(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x1c7fbf19ef72cd1fULL;
-  static const uint64_t static_value2 = 0x3cbe11945ef5dfb0ULL;
+  static const uint64_t static_value1 = 0x81b2515a21db4e38ULL;
+  static const uint64_t static_value2 = 0x742fa3f5e558216cULL;
 };
 
 template<class ContainerAllocator>
@@ -255,6 +261,7 @@ struct Definition< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator
   static const char* value()
   {
     return "int32 HumanID\n"
+"float64[] Robots\n"
 "float64[] RobotWaitingDistance\n"
 "float64[] RobotVelocityProximity\n"
 "float64[] RobotMinVelocityProximity\n"
@@ -292,6 +299,7 @@ namespace serialization
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
       stream.next(m.HumanID);
+      stream.next(m.Robots);
       stream.next(m.RobotWaitingDistance);
       stream.next(m.RobotVelocityProximity);
       stream.next(m.RobotMinVelocityProximity);
@@ -330,6 +338,12 @@ struct Printer< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
   {
     s << indent << "HumanID: ";
     Printer<int32_t>::stream(s, indent + "  ", v.HumanID);
+    s << indent << "Robots[]" << std::endl;
+    for (size_t i = 0; i < v.Robots.size(); ++i)
+    {
+      s << indent << "  Robots[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.Robots[i]);
+    }
     s << indent << "RobotWaitingDistance[]" << std::endl;
     for (size_t i = 0; i < v.RobotWaitingDistance.size(); ++i)
     {

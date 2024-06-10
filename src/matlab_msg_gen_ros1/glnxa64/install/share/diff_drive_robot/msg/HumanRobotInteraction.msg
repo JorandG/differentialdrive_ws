@@ -1,4 +1,5 @@
 int32 HumanID
+float64[] Robots
 float64[] RobotWaitingDistance
 float64[] RobotVelocityProximity
 float64[] RobotMinVelocityProximity

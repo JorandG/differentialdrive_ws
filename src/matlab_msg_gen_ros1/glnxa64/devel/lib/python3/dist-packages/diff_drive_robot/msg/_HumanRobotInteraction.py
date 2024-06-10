@@ -8,10 +8,11 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "1c7fbf19ef72cd1f3cbe11945ef5dfb0"
+  _md5sum = "81b2515a21db4e38742fa3f5e558216c"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
+float64[] Robots
 float64[] RobotWaitingDistance
 float64[] RobotVelocityProximity
 float64[] RobotMinVelocityProximity
@@ -31,8 +32,8 @@ int32 Task
 int32 TaskFilling
 float64[] Happiness
 """
-  __slots__ = ['HumanID','RobotWaitingDistance','RobotVelocityProximity','RobotMinVelocityProximity','RobotMaxVelocityProximity','RobotVelocityProximityWeight','WaitingTime','WaitingTimeWeight','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task','TaskFilling','Happiness']
-  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','int32','int32','float64[]']
+  __slots__ = ['HumanID','Robots','RobotWaitingDistance','RobotVelocityProximity','RobotMinVelocityProximity','RobotMaxVelocityProximity','RobotVelocityProximityWeight','WaitingTime','WaitingTimeWeight','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task','TaskFilling','Happiness']
+  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','int32','int32','float64[]']
 
   def __init__(self, *args, **kwds):
     """
@@ -42,7 +43,7 @@ float64[] Happiness
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,RobotWaitingDistance,RobotVelocityProximity,RobotMinVelocityProximity,RobotMaxVelocityProximity,RobotVelocityProximityWeight,WaitingTime,WaitingTimeWeight,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task,TaskFilling,Happiness
+       HumanID,Robots,RobotWaitingDistance,RobotVelocityProximity,RobotMinVelocityProximity,RobotMaxVelocityProximity,RobotVelocityProximityWeight,WaitingTime,WaitingTimeWeight,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task,TaskFilling,Happiness
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -53,6 +54,8 @@ float64[] Happiness
       # message fields cannot be None, assign default values for those that are
       if self.HumanID is None:
         self.HumanID = 0
+      if self.Robots is None:
+        self.Robots = []
       if self.RobotWaitingDistance is None:
         self.RobotWaitingDistance = []
       if self.RobotVelocityProximity is None:
@@ -91,6 +94,7 @@ float64[] Happiness
         self.Happiness = []
     else:
       self.HumanID = 0
+      self.Robots = []
       self.RobotWaitingDistance = []
       self.RobotVelocityProximity = []
       self.RobotMinVelocityProximity = []
@@ -124,6 +128,10 @@ float64[] Happiness
     try:
       _x = self.HumanID
       buff.write(_get_struct_i().pack(_x))
+      length = len(self.Robots)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.Robots))
       length = len(self.RobotWaitingDistance)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -205,6 +213,14 @@ float64[] Happiness
       start = end
       end += 4
       (self.HumanID,) = _get_struct_i().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.Robots = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -351,6 +367,10 @@ float64[] Happiness
     try:
       _x = self.HumanID
       buff.write(_get_struct_i().pack(_x))
+      length = len(self.Robots)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.Robots.tostring())
       length = len(self.RobotWaitingDistance)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -433,6 +453,14 @@ float64[] Happiness
       start = end
       end += 4
       (self.HumanID,) = _get_struct_i().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.Robots = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])

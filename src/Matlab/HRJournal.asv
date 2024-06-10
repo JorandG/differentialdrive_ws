@@ -417,8 +417,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         disp('update schedule two');
                         first_allocation = 2
                         %% Updating velocities boundaries
-
-                         if ReAll.max_invprod(u + humanData{u}.Task) == 1/max(vel_max) && humanData{u}.RobotVelocityProximity(humanData{u}.Task) < 0.6
+                        if ReAll.max_invprod(u+humanData{u}.Task+num_tasks) == 1/max(vel_max) && humanData{u}.RobotVelocityProximity(humanData{u}.Task) < 0.6
                             if humanData{u}.RobotVelocityProximity(humanData{u}.Task) == 0.3 
                                 mu = 0.1
                             elseif humanData{u}.RobotVelocityProximity(humanData{u}.Task) == 0.4
@@ -427,35 +426,36 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
 
                             %Next Task
                             task = humanData{u}.Task
-                            if 1/((1+mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > max(vel_max(humanData{u}.Robots(task)))
+                            if (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task) > 1/max(vel_max(humanData{u}.Robots(task)))
                                 humanData{u}.RobotMaxVelocityProximity(task) = (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task) 
                             else
                                 humanData{u}.RobotMaxVelocityProximity(task) = max(vel_max(humanData{u}.Robots(task)))
                             end
 
-                            if 1/((1+mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)) > max(vel_max(humanData{u}.Robots(task)))
+                            if (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task) > 1/max(vel_max(humanData{u}.Robots(task)))
                                 humanData{u}.RobotMinVelocityProximity(task) = (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)
                             else
-                                humanData{u}.RobotMinVelocityProximity(task) = 0.9*max(vel_max(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
+                                humanData{u}.RobotMinVelocityProximity(task) = max(vel_max(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
                             end
 
                             %Subsequent Tasks
                             for task = humanData{u}.Task+1:num_filling_boxes 
-                                if 1/((1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > max(vel_max(humanData{u}.Robots(task)))
+                                if 1/((1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < max(vel_max(humanData{u}.Robots(task)))
                                     humanData{u}.RobotMaxVelocityProximity(task) = (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task) 
                                 else
                                     humanData{u}.RobotMaxVelocityProximity(task) = max(vel_max(humanData{u}.Robots(task)))
                                 end
 
-                                if 1/((1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)) > max(vel_max(humanData{u}.Robots(task)))
+                                if 1/((1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)) < max(vel_max(humanData{u}.Robots(task)))
                                     humanData{u}.RobotMinVelocityProximity(task) = (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)
                                 else
-                                    humanData{u}.RobotMinVelocityProximity(task) = 0.9*max(vel_max(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
+                                    humanData{u}.RobotMinVelocityProximity(task) = max(vel_max(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
+
                                 end
                             end
                         end
 
-                        if ReAll.max_invprod(u + humanData{u}.Task) == 1/min(vel_min) && humanData{u}.RobotVelocityProximity(humanData{u}.Task) > 0.6
+                        if ReAll.max_invprod(u+humanData{u}.Task+num_tasks) == 1/min(vel_min) && humanData{u}.RobotVelocityProximity(humanData{u}.Task) > 0.6
                             if humanData{u}.RobotVelocityProximity(humanData{u}.Task) == 0.7
                                     mu = 0.1                  
                             elseif humanData{u}.RobotVelocityProximity(humanData{u}.Task) == 1.0
@@ -464,30 +464,30 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
 
                             %Next Task
                             task = humanData{u}.Task
-                            if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < min(vel_min(humanData{u}.Robots(task)))
+                            if 1/((1-Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > min(vel_min(humanData{u}.Robots(task)))
                                 humanData{u}.RobotMinVelocityProximity(task) = (1-Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)
                             else
-                                humanData{u}.RobotMinVelocityProximity(task) = 1/min(vel_min(humanData{u}.Robots(task)))
+                                humanData{u}.RobotMinVelocityProximity(task) = min(vel_min(humanData{u}.Robots(task)))
                             end
 
-                            if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < min(vel_max(humanData{u}.Robots(task)))
+                            if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > min(vel_max(humanData{u}.Robots(task)))
                                 humanData{u}.RobotMaxVelocityProximity(task) = (1-Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)
                             else
-                                humanData{u}.RobotMaxVelocityProximity(task) = 0.9*1/min(vel_min(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
+                                humanData{u}.RobotMaxVelocityProximity(task) = min(vel_min(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
                             end
 
                             %Subsequent Tasks
                             for task = humanData{u}.Task+1:num_filling_boxes 
-                                if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < min(vel_min(humanData{u}.Robots(task)))
+                                if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > min(vel_min(humanData{u}.Robots(task)))
                                     humanData{u}.RobotMinVelocityProximity(task) = (1-Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)
                                 else
-                                    humanData{u}.RobotMinVelocityProximity(task) = 1/min(vel_min(humanData{u}.Robots(task)))
+                                    humanData{u}.RobotMinVelocityProximity(task) = min(vel_min(humanData{u}.Robots(task)))
                                 end
 
-                                if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < min(vel_max(humanData{u}.Robots(task)))
+                                if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > min(vel_max(humanData{u}.Robots(task)))
                                     humanData{u}.RobotMaxVelocityProximity(task) = (1-Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)
                                 else
-                                    humanData{u}.RobotMaxVelocityProximity(task) = 0.9*1/min(vel_min(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
+                                    humanData{u}.RobotMaxVelocityProximity(task) = min(vel_min(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
                                 end
                             end
                         end
@@ -546,30 +546,30 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
 
                             %Next Task
                             task = humanData{u}.Task
-                            if 1/((1+mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > max(vel_max(humanData{u}.Robots(task)))
+                            if 1/((1+mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < max(vel_max(humanData{u}.Robots(task)))
                                 humanData{u}.RobotMaxVelocityProximity(task) = (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task) 
                             else
                                 humanData{u}.RobotMaxVelocityProximity(task) = max(vel_max(humanData{u}.Robots(task)))
                             end
 
-                            if 1/((1+mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)) > max(vel_max(humanData{u}.Robots(task)))
+                            if 1/((1+mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)) < max(vel_max(humanData{u}.Robots(task)))
                                 humanData{u}.RobotMinVelocityProximity(task) = (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)
                             else
-                                humanData{u}.RobotMinVelocityProximity(task) = 0.9*max(vel_max(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
+                                humanData{u}.RobotMinVelocityProximity(task) = max(vel_max(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
                             end
 
                             %Subsequent Tasks
                             for task = humanData{u}.Task+1:num_filling_boxes 
-                                if 1/((1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > max(vel_max(humanData{u}.Robots(task)))
+                                if 1/((1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < max(vel_max(humanData{u}.Robots(task)))
                                     humanData{u}.RobotMaxVelocityProximity(task) = (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task) 
                                 else
-                                    humanData{u}.RobotMaxVelocityProximity(task) = 0.9*max(vel_max(humanData{u}.Robots(task)))
+                                    humanData{u}.RobotMaxVelocityProximity(task) = max(vel_max(humanData{u}.Robots(task)))
                                 end
 
                                 if 1/((1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)) > max(vel_max(humanData{u}.Robots(task)))
                                     humanData{u}.RobotMinVelocityProximity(task) = (1+Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)
                                 else
-                                    humanData{u}.RobotMinVelocityProximity(task) = 0.9*max(vel_max(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
+                                    humanData{u}.RobotMinVelocityProximity(task) = max(vel_max(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
                                 end
                             end
                         end
@@ -580,7 +580,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                             elseif humanData{u}.RobotVelocityProximity(humanData{u}.Task) == 1.0
                                     mu = 0.05
                             end
-
+                            
                             %Next Task
                             task = humanData{u}.Task
                             if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < min(vel_min(humanData{u}.Robots(task)))
@@ -592,21 +592,21 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                             if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < min(vel_max(humanData{u}.Robots(task)))
                                 humanData{u}.RobotMaxVelocityProximity(task) = (1-Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)
                             else
-                                humanData{u}.RobotMaxVelocityProximity(task) = 0.9*1/min(vel_min(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
+                                humanData{u}.RobotMaxVelocityProximity(task) = 1/min(vel_min(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
                             end
 
                             %Subsequent Tasks
                             for task = humanData{u}.Task+1:num_filling_boxes 
-                                if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > min(vel_min(humanData{u}.Robots(task)))
+                                if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < min(vel_min(humanData{u}.Robots(task)))
                                     humanData{u}.RobotMinVelocityProximity(task) = (1-Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMinVelocityProximity(task)
                                 else
                                     humanData{u}.RobotMinVelocityProximity(task) = 1/min(vel_min(humanData{u}.Robots(task)))
                                 end
 
-                                if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) > min(vel_max(humanData{u}.Robots(task)))
+                                if 1/((1-mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)) < min(vel_max(humanData{u}.Robots(task)))
                                     humanData{u}.RobotMaxVelocityProximity(task) = (1-Reduction*mu*chi(humanData{u}.Robots(task)))*humanData{u}.RobotMaxVelocityProximity(task)
                                 else
-                                    humanData{u}.RobotMaxVelocityProximity(task) = 0.9*1/min(vel_min(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
+                                    humanData{u}.RobotMaxVelocityProximity(task) = 1/min(vel_min(humanData{u}.Robots(task))) %Check here if not too restrictive for the MILP
                                 end
                             end
                         end
@@ -731,3 +731,43 @@ theta = 0.75;
     %end
     
 end
+
+function humanData = updateVelocities(humanData, ReAll, vel_max, vel_min, num_filling_boxes)
+    % Update velocities boundaries for each humanData entry
+    for u = 1:length(humanData)
+        % Calculate task and num_tasks for current user
+        task = humanData{u}.Task;
+        num_tasks = length(humanData);
+
+        %% Update velocities boundaries based on max_invprod and vel_max
+        if ReAll.max_invprod(u + task + num_tasks) <= 1 / max(vel_max)
+            if humanData{u}.RobotMaxVelocityProximity(task) > 1 / 0.25
+                if humanData{u}.RobotVelocityProximity(task) == 0.25 
+                    mu = 0.2;
+                elseif humanData{u}.RobotVelocityProximity(task) == 0.5
+                    mu = 0.1;
+                end
+                for t = task:num_filling_boxes
+                    humanData{u}.RobotMinVelocityProximity(t) = (1 - mu) * humanData{u}.RobotMinVelocityProximity(t);
+                    humanData{u}.RobotMaxVelocityProximity(t) = (1 - mu) * humanData{u}.RobotMaxVelocityProximity(t);
+                end
+            end
+        end
+
+        %% Update velocities boundaries based on max_invprod and vel_min
+        if ReAll.max_invprod(u + task + num_tasks) >= 1 / min(vel_min)
+            if humanData{u}.RobotMinVelocityProximity(task) < 1 / 0.02
+                if humanData{u}.RobotVelocityProximity(task) == 0.7
+                    mu = 0.2;
+                elseif humanData{u}.RobotVelocityProximity(task) == 1.0
+                    mu = 0.1;
+                end
+                for t = task:num_filling_boxes
+                    humanData{u}.RobotMinVelocityProximity(t) = (1 + mu) * humanData{u}.RobotMinVelocityProximity(t);
+                    humanData{u}.RobotMaxVelocityProximity(t) = (1 + mu) * humanData{u}.RobotMaxVelocityProximity(t);
+                end
+            end
+        end
+    end
+end
+
