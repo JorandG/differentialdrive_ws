@@ -1,13 +1,14 @@
 simulation: true
+
 phases:
   going_phase_coefficient: 0.4 # The final position at the end of the Going Phase will be equal to: human_x_cord,0.4*human_y_cord
   approaching_phase_coefficient: 0.8 # The final position at the end of the Approaching Phase will be equal to: human_x_cord,0.8*human_y_cord
-  serving_phase_phase_coefficient: 0.3 # The time spent for reaching the Serving position from the Waiting position will be equal to: 0.3*[End-Start]
+  serving_phase_phase_coefficient: 0.5 # The time spent for reaching the Serving position from the Waiting position will be equal to: 0.3*[End-Start]
 
 humans:
   position:
-    - [12, 3]
-    - [10, 2]
+    - [2, 3]
+    - [1, 2]
 
 robots:
   controller:
@@ -37,5 +38,5 @@ robots:
       - "/robot2/cmd_vel" #Simulation: /robot2/cmd_vel - Real: /nuc3/cmd_vel_mux/input/teleop
 
 timer:
-  external: true
+  external: false
   topic: "/Timing"

@@ -120,7 +120,10 @@ struct goalStruct
 struct phaseStruct
 {
     /* --------------------------------- Fields --------------------------------- */
+    std::string name;
     int type; // 0 - Moving phase (Forward Motion with L-path), 1 - Moving phase (Backward Motion with L-path), 2 - Moving phase (Motion with Linear Path), -1 - Waiting / Serving phase
+    double startTime;
+    double endTime;
     double allocated_time;
     Eigen::Vector3d desired_configuration;
     std::pair<bool,bool> switch_condition;
@@ -132,6 +135,7 @@ struct activityStruct
 {
     /* --------------------------------- Fields --------------------------------- */
     double nominal_start_time;
+    double start_time;
     activityStates state = activityStates::NOT_STARTED_YET;
     std::vector<phaseStruct> phase;
     /* -------------------------------------------------------------------------- */
@@ -168,6 +172,7 @@ class RobotControllerClass
 
     controllerStruct robot_controller;
 
+    bool ongoing_activity_;
     int ongoing_activity_ID;
     int ongoing_phase_ID;
 
@@ -192,8 +197,7 @@ class RobotControllerClass
     /* -------------------------------------------------------------------------- */
 
     /* ------------------------------ Update/Reset ------------------------------ */
-    void update_robot_parameters(double t);
-    void update_robot_activities_vector(activityStruct activity_); // NOT USED ANYMORE
+    void update_robot_parameters(const double& t);
     void update_obstacles_position(std::vector<Eigen::Vector2d> obstacles_position_);
     /* -------------------------------------------------------------------------- */
 

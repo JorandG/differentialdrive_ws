@@ -13,7 +13,7 @@ num_humans = 2;
 num_agents = num_humans;
 num_filling_boxes = 3;
 num_robots = 2;
-initialTime = 150;
+initialTime = 75;
 humanData = cell(num_humans, 1);
 pub = cell(num_humans, 1);
 humanSub = cell(num_humans, 1);
@@ -76,7 +76,7 @@ for h=1:num_humans
 
     for i = 1:num_filling_boxes, humanData{h}.StartFilling(i) = sum([0, repmat([initialTime + approaching_time + serving_time], 1, i-1)]); end
     for i = 1:num_filling_boxes, humanData{h}.FinishFilling(i) = sum([initialTime, repmat([initialTime + approaching_time + serving_time], 1, i-1)]); end
-    humanData{h}.TimeFilling = ones(1, num_filling_boxes)*initialTime;
+    humanData{h}.TimeFilling = ones(1, num_filling_boxes)*initialTime*h;
     humanData{h}.TimeServing = repmat(serving_time, 1, num_filling_boxes);
     humanData{h}.StartServing = humanData{h}.FinishFilling + approaching_time;
     humanData{h}.FinishServing = humanData{h}.StartServing + serving_time;
@@ -98,18 +98,18 @@ num_depot_tasks = num_service_tasks;
 num_tasks = num_service_tasks;
 service_time = zeros(num_tasks, num_robots);
 
-M = 3000000;
+M = 2000000;
 vel_min = ones(num_robots,1)*0.05; % min velocity for the robots
-vel_max = ones(num_robots,1)*0.2; % max velocity for the robots
+vel_max = [0.2; 0.3];%ones(num_robots,1)*0.2; % max velocity for the robots
 chi = ones(num_robots,1)*1;
 Reduction = 1;
 
 % Weights for objective function
-WeightHumanwaiting = 1;
-WeightEnergyPicking = 1;
-WeightEnergyProximity = 5;
-WeightEnergyDepositing = 1;
-WeightMakespan = 10;
+WeightHumanwaiting = 0.2;
+WeightEnergyPicking = 0.1;
+WeightEnergyProximity = 0.1;
+WeightEnergyDepositing = 0.1;
+WeightMakespan = 0.1;
 inv_vel_min = 1./vel_min;
 inv_vel_max = 1./vel_max;
 
@@ -133,7 +133,8 @@ idx_to_ignore_r = [];
 first_allocation = 0;
 ReAll = 0;
 RobotID = 1;
-humanTime_filling = ones(1, num_agents*num_filling_boxes)*150; %Find the first paramerters randomly for the allocation
+%humanTime_filling = ones(1, num_agents*num_filling_boxes)*150; %Find the first paramerters randomly for the allocation
+humanTime_filling = [75, 150, 75, 150, 75, 150]
 humanTime_serving = ones(1, num_agents*num_filling_boxes)*7.0;
 humanTime_fillingPrev = humanTime_filling;
 
@@ -180,7 +181,7 @@ simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
     global num_phases
     %% Display
-    close all
+    %close all
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
     colors_matrix = rand(num_agents*num_filling_boxes*4,3);
@@ -372,7 +373,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     send(pub{u}, humanData{u});
                 end
 
-                if humanData{u}.ConfirmServing(humanData{u}.Task) == 1 
+                if humanData{u}.ConfirmServing(humanData{u}.Task) == 1 || humanData{u}.ConfirmFilling(humanData{u}.Task) == 1
                     RobotID = u;
                     %% ROS topic for the robots
                     for robo = 1:num_robots
@@ -501,7 +502,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         end
                         humanTime_filling = ReAll.timeFh - ReAll.timeSh;
                         humanTime_serving = ReAll.timeF(idx_services_tasks) - ReAll.timeS(idx_services_tasks);
-                        ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);                        
+                        %ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);                        
                         
                         ReAllSave = ReAll;
 
@@ -622,7 +623,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         humanTime_filling = ReAll.timeFh - ReAll.timeSh;
                         humanTime_serving = ReAll.timeF(idx_services_tasks) - ReAll.timeS(idx_services_tasks);
                         ProxPrev = Prox
-                        ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);
+                        %ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);
                         ReAllSave = ReAll;
 
                         ProximityTaskDurations = [ProximityTaskDurations, (ReAllSave.timeF(idx_approaching_tasks) - ReAllSave.timeS(idx_approaching_tasks))]                        

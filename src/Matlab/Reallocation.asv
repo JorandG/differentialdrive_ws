@@ -48,7 +48,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     WaitWeight = [];
 
     for h=1:num_humans
-        baseProx = [baseProx, 6 - (5 * (humanData{h}.RobotVelocityProximityWeight(humanData{RobotID}.Task) - 0.1) / 0.9)]; %coeff for the proximity phase for each human, a higher value decrease the duration of the phase and so speed up the robot
+        baseProx = [baseProx, humanData{h}.RobotVelocityProximityWeight(humanData{RobotID}.Task)]; %coeff for the proximity phase for each human, a higher value decrease the duration of the phase and so speed up the robot
         inv_vel_max_prox = [inv_vel_max_prox, humanData{h}.RobotMaxVelocityProximity(humanData{RobotID}.Task)];
         inv_vel_min_prox = [inv_vel_min_prox, humanData{h}.RobotMinVelocityProximity(humanData{RobotID}.Task)];
         WaitWeight = [WaitWeight, humanData{h}.WaitingTimeWeight(humanData{RobotID}.Task)]; % Weight for waiting, should replace Ph

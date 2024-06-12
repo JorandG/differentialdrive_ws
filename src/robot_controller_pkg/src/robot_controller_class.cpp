@@ -21,6 +21,7 @@ RobotControllerClass::RobotControllerClass(std::string name_, int ID_, Eigen::Ve
 
     this->home_configuration = home_configuration_;
 
+    this->ongoing_activity_ = false;
     this->ongoing_activity_ID = -1;
     this->ongoing_phase_ID = -1;
 
@@ -180,104 +181,94 @@ void RobotControllerClass::init_spline_trajectories(Eigen::Vector2d start_positi
 /* -------------------------------------------------------------------------- */
 /*                            Update/Reset Methods                            */
 /* -------------------------------------------------------------------------- */
-void RobotControllerClass::update_robot_parameters(double t)
+void RobotControllerClass::update_robot_parameters(const double& t)
 {
     /* -------------------------------------------------------------------------- */
     /*                             Auxiliary Variables                            */
     /* -------------------------------------------------------------------------- */
-    double allocated_time;
-    goalStruct assigned_goal;
-
     Eigen::Vector2d velocities;
     Eigen::Matrix2d T;
     Eigen::Vector2d u;
     /* -------------------------------------------------------------------------- */
 
     /* -------------------------------------------------------------------------- */
-    /*                          Variables Initialization                          */
-    /* -------------------------------------------------------------------------- */
-    if(this->ongoing_activity != nullptr)
-        assigned_goal = this->ongoing_activity->activity.phase[this->ongoing_phase_ID].goal;
-    /* -------------------------------------------------------------------------- */
-
-    /* -------------------------------------------------------------------------- */
     /*                           Activity/Phase - State                           */
     /* -------------------------------------------------------------------------- */
-    if(this->ongoing_activity != nullptr)
+    if(this->ongoing_activity_)
     {
+        /* ------------------------------ Assigned Goal ----------------------------- */
+        goalStruct& assigned_goal = this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].goal;
+        /* -------------------------------------------------------------------------- */
+
         /* ------------------------------ Control Error ----------------------------- */
         this->robot_controller.error = (assigned_goal.final_pose.head(2) - Eigen::Vector2d(this->robot_controller.y_1,this->robot_controller.y_2)).norm();
         /* -------------------------------------------------------------------------- */
 
         /* --------------------------------- Status --------------------------------- */
-        if((this->robot_controller.error <= this->robot_controller.distance_threshold && t >= assigned_goal.times(2)) || (t >= assigned_goal.times(2)))
+        if((this->robot_controller.error <= this->robot_controller.distance_threshold && t >= assigned_goal.times(2)) || t >= assigned_goal.times(2))
         {
-
             /* ----------------------- Are there any other goals? ----------------------- */
-            if((int)this->ongoing_activity->activity.phase.size() > (this->ongoing_phase_ID + 1))
+            if (static_cast<int>(this->activities[this->ongoing_activity_ID].phase.size() - 1) > this->ongoing_phase_ID)
             {
-                /* ----- Are there any additional conditions that have to be satisfied? ----- */
-                if(this->ongoing_activity->activity.phase[this->ongoing_phase_ID].switch_condition.first == false /*There aren't any additional conditions.*/|| this->ongoing_activity->activity.phase[this->ongoing_phase_ID].switch_condition.second == true /*There is an additional condition, and it is satisfied.*/)
-                {
-                    /* --------------------------- Auxiliary Variables -------------------------- */
-                    double nominal_starting_time_;
-                    phaseStruct phase_;
-                    goalStruct goal_;
-                    /* -------------------------------------------------------------------------- */
+                /* ---------------------------------- Debug --------------------------------- */
+                std::cout << fmt::format("[Time]: {}", t) << std::endl;
+                /* -------------------------------------------------------------------------- */
 
+
+                /* ----- Are there any additional conditions that have to be satisfied? ----- */
+                if(t >= this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID + 1].startTime && (this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].switch_condition.first == false /*There aren't any additional conditions.*/|| this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].switch_condition.second == true /*There is an additional condition, and it is satisfied.*/))
+                {
                     /* ---------------------------- Current Phase ID ---------------------------- */
                     this->ongoing_phase_ID = this->ongoing_phase_ID + 1;
                     /* -------------------------------------------------------------------------- */
 
                     /* ------------------------------- Phase - Get ------------------------------ */    
-                    phase_ = this->ongoing_activity->activity.phase[this->ongoing_phase_ID];
+                    phaseStruct& phase_ = this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID];
                     /* -------------------------------------------------------------------------- */
-                    
+
                     /* ------------------------------ Starting Time ----------------------------- */
-                    nominal_starting_time_ = this->ongoing_activity->activity.nominal_start_time;
-    
+                    double nominal_starting_time_ = this->activities[this->ongoing_activity_ID].nominal_start_time;
+
                     for(int j = 0; j < this->ongoing_phase_ID; j++)
-                        nominal_starting_time_ = nominal_starting_time_ + this->ongoing_activity->activity.phase[j].allocated_time;
+                        nominal_starting_time_ = nominal_starting_time_ + this->activities[this->ongoing_activity_ID].phase[j].allocated_time;
                     /* -------------------------------------------------------------------------- */
 
                     /* ------------------- Goal - Construction and Allocation ------------------- */
-                    this->ongoing_activity->activity.phase[this->ongoing_phase_ID].goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,phase_.allocated_time - (t - nominal_starting_time_),t);
+                    // phase_.goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,phase_.allocated_time - (t - nominal_starting_time_),t);
 
-                    assigned_goal = this->ongoing_activity->activity.phase[this->ongoing_phase_ID].goal;
-                    this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].goal = assigned_goal;
+                    double allocated_time = phase_.endTime - phase_.startTime;
+
+                    phase_.goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,allocated_time,t);
                     /* -------------------------------------------------------------------------- */
 
                     /* ------------------------------- Trajectory ------------------------------- */
-                    if(assigned_goal.type != -1)
-                        this->init_spline_trajectories(assigned_goal.initial_pose.head(2),assigned_goal.mid_pose.head(2),assigned_goal.final_pose.head(2),assigned_goal.times(0),assigned_goal.times(1),assigned_goal.times(2));
+                    if(phase_.goal.type != -1)
+                        this->init_spline_trajectories(phase_.goal.initial_pose.head(2),phase_.goal.mid_pose.head(2),phase_.goal.final_pose.head(2),phase_.goal.times(0),phase_.goal.times(1),phase_.goal.times(2));
                     /* -------------------------------------------------------------------------- */
 
                     /* ------------------------------ Debug Message ----------------------------- */
                     std::cout << fmt::format("[{}][Robot-{}]: A New Goal has been allocated!",t,this->ID) << std::endl;
                     /* -------------------------------------------------------------------------- */
+
                 }
                 /* -------------------------------------------------------------------------- */
             }
             else
             {
                 /* ---------------------------------- State --------------------------------- */
+                this->ongoing_activity_ = false;
                 this->activities[this->ongoing_activity_ID].state = activityStates::COMPLETED;
                 /* -------------------------------------------------------------------------- */
 
-                /* ---------------------------------- Reset --------------------------------- */
-                delete this->ongoing_activity;
-                this->ongoing_activity = nullptr;
-                /* -------------------------------------------------------------------------- */
-
                 /* ------------------------------ Debug Message ----------------------------- */
-                std::cout << fmt::format("[{}][Robot-{}]: The Ongoing Activity has been completed!",t,this->ID) << std::endl;
+                std::cout << fmt::format("[{}][Robot-{}]: The Ongoing Activity has been completed!", t, this->ID) << std::endl;
                 /* -------------------------------------------------------------------------- */
 
                 /* ------------------------------- Plan State ------------------------------- */
-                if((int)this->activities.size() == this->ongoing_activity_ID + 1)
+                if (static_cast<int>(this->activities.size() - 1) == this->ongoing_activity_ID)
                 {
                     /* ------------------------------ Debug Message ----------------------------- */
-                    std::cout << fmt::format("[{}][Robot-{}]: The processing of the given plan has been completed!",t,this->ID) << std::endl;
+                    std::cout << fmt::format("[{}][Robot-{}]: The processing of the given plan has been completed!", t, this->ID) << std::endl;
                     /* -------------------------------------------------------------------------- */
 
                     /* ---------------------------------- Reset --------------------------------- */
@@ -292,57 +283,54 @@ void RobotControllerClass::update_robot_parameters(double t)
         }
         /* -------------------------------------------------------------------------- */
     }
-    else if((int)this->activities.size() > 0 && (int)this->activities.size() - 1 > this->ongoing_activity_ID && t >= this->activities[this->ongoing_activity_ID + 1].nominal_start_time)
+    else if(static_cast<int>(this->activities.size()) > 0 && static_cast<int>(this->activities.size() - 1) > this->ongoing_activity_ID && t >= this->activities[this->ongoing_activity_ID + 1].nominal_start_time)
     {
-        /* --------------------------- Auxiliary Variables -------------------------- */
-        phaseStruct phase_;
+        /* ------------------------- Ongoing Activity State ------------------------- */
+        this->ongoing_activity_ = true;
         /* -------------------------------------------------------------------------- */
 
         /* --------------------------- Ongoing Activity ID -------------------------- */
         this->ongoing_activity_ID = this->ongoing_activity_ID + 1;
         /* -------------------------------------------------------------------------- */
 
-        /* ----------------------------- Activity State ----------------------------- */
+        /* -------------------------- State and Start Time -------------------------- */
         this->activities[this->ongoing_activity_ID].state = activityStates::STARTED;
+        this->activities[this->ongoing_activity_ID].start_time = t;
         /* -------------------------------------------------------------------------- */
 
         /* ---------------------------- Phase Retrieving ---------------------------- */ 
         this->ongoing_phase_ID = 0;
-        phase_ = this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID];
+        phaseStruct& phase_ = this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID];
         /* -------------------------------------------------------------------------- */
 
         /* ---------------------------- Goal Construction --------------------------- */
-        assigned_goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,phase_.allocated_time,t);
+        double allocated_time = phase_.endTime - phase_.startTime;
+        // phase_.goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,phase_.allocated_time,t);
 
-        this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].goal = assigned_goal;
+        phase_.goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,phase_.allocated_time,phase_.startTime);
         /* -------------------------------------------------------------------------- */
 
         /* ------------------------------- Trajectory ------------------------------- */
-        this->init_spline_trajectories(assigned_goal.initial_pose.head(2),assigned_goal.mid_pose.head(2),assigned_goal.final_pose.head(2),assigned_goal.times(0),assigned_goal.times(1),assigned_goal.times(2));
-        /* -------------------------------------------------------------------------- */
-
-        /* ------------------------------- Allocation ------------------------------- */
-        this->ongoing_activity = new ongoingActivityStruct();
- 
-        this->ongoing_activity->activity = this->activities[this->ongoing_activity_ID];
-        this->ongoing_activity->activity.phase[0].goal = assigned_goal;
-        this->ongoing_activity->start_time = t;
+        this->init_spline_trajectories(phase_.goal.initial_pose.head(2),phase_.goal.mid_pose.head(2),phase_.goal.final_pose.head(2),phase_.goal.times(0),phase_.goal.times(1),phase_.goal.times(2));
         /* -------------------------------------------------------------------------- */
 
         /* ------------------------------ Debug Message ----------------------------- */
         std::cout << fmt::format("[{}][Robot-{}]: An Activity has been allocated!",t,this->ID) << std::endl;
         /* -------------------------------------------------------------------------- */
-
     }
     /* -------------------------------------------------------------------------- */
 
     /* -------------------------------------------------------------------------- */
     /*                               Goal Processing                              */
     /* -------------------------------------------------------------------------- */
-    if(this->ongoing_activity != nullptr && (assigned_goal.type != -1))
+    if(this->ongoing_activity_  && (this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].goal.type != -1))
     {
+        /* ---------------------------------- Phase --------------------------------- */
+        phaseStruct& phase_ = this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID];
+        /* -------------------------------------------------------------------------- */
+
         /* ------------------------------- Trajectory ------------------------------- */
-        this->evaluate_spline_and_derivatives(assigned_goal.initial_pose.head(2),assigned_goal.times(0),assigned_goal.final_pose.head(2),assigned_goal.times(2),t);
+        this->evaluate_spline_and_derivatives(phase_.goal.initial_pose.head(2),phase_.goal.times(0),phase_.goal.final_pose.head(2),phase_.goal.times(2),t);
         /* -------------------------------------------------------------------------- */
 
         /* --------------------------------- Inputs --------------------------------- */
@@ -429,78 +417,8 @@ void RobotControllerClass::update_robot_parameters(double t)
         /* -------------------------------------------------------------------------- */
     }
     /* -------------------------------------------------------------------------- */
+
 }
-
-void RobotControllerClass::update_robot_activities_vector(activityStruct activity_)
-{
-    /* -------------------------------------------------------------------------- */
-    /*                             Auxiliary Variables                            */
-    /* -------------------------------------------------------------------------- */
-    bool debug_messages;
-    /* -------------------------------------------------------------------------- */
-
-    /* -------------------------------------------------------------------------- */
-    /*                          Variables Initialization                          */
-    /* -------------------------------------------------------------------------- */
-    debug_messages = false;
-    /* -------------------------------------------------------------------------- */
-
-    /* -------------------------------------------------------------------------- */
-    /*                                 Processing                                 */
-    /* -------------------------------------------------------------------------- */
-    this->activities.push_back(activity_);
-    /* -------------------------------------------------------------------------- */
-
-    /* -------------------------------------------------------------------------- */
-    /*                                    Debug                                   */
-    /* -------------------------------------------------------------------------- */
-    if (debug_messages)
-        for(int i = 0; i < this->activities.size(); i++)
-            for(int j = 0; j < this->activities[i].phase.size(); j++)
-            {
-                /* -------------------------------------------------------------------------- */
-                /*                                     Get                                    */
-                /* -------------------------------------------------------------------------- */
-                phaseStruct phase_ = this->activities[i].phase[j];
-                /* -------------------------------------------------------------------------- */
-
-                /* -------------------------------------------------------------------------- */
-                /*                                 Going Phase                                */
-                /* -------------------------------------------------------------------------- */
-                if(j == 0)
-                    std::cout << fmt::format("[Activity-{}][Going Phase]: type: {}, allocated_time: {}, desired_configuration: {}, {}, {};",(i + 1),phase_.type,phase_.allocated_time,phase_.desired_configuration(0),phase_.desired_configuration(1),phase_.desired_configuration(2)) << std::endl;
-                /* -------------------------------------------------------------------------- */
-
-                /* -------------------------------------------------------------------------- */
-                /*                                Waiting Phase                               */
-                /* -------------------------------------------------------------------------- */
-                if(j == 1)
-                    std::cout << fmt::format("[Activity-{}][Waiting Phase]: type: {}, allocated_time: {}, desired_configuration: {}, {}, {};",(i + 1),phase_.type,phase_.allocated_time,phase_.desired_configuration(0),phase_.desired_configuration(1),phase_.desired_configuration(2)) << std::endl;
-                /* -------------------------------------------------------------------------- */
-
-                /* -------------------------------------------------------------------------- */
-                /*                                Serving Phase                               */
-                /* -------------------------------------------------------------------------- */
-                if(j == 2)
-                    std::cout << fmt::format("[Activity-{}][Serving Phase]: type: {}, allocated_time: {}, desired_configuration: {}, {}, {};",(i + 1),phase_.type,phase_.allocated_time,phase_.desired_configuration(0),phase_.desired_configuration(1),phase_.desired_configuration(2)) << std::endl;
-                /* -------------------------------------------------------------------------- */
-
-                /* -------------------------------------------------------------------------- */
-                /*                                 Depot Phase                                */
-                /* -------------------------------------------------------------------------- */
-                if(j == 3)
-                    std::cout << fmt::format("[Activity-{}][Depot Phase]: type: {}, allocated_time: {}, desired_configuration: {}, {}, {};",(i + 1),phase_.type,phase_.allocated_time,phase_.desired_configuration(0),phase_.desired_configuration(1),phase_.desired_configuration(2)) << std::endl;
-                /* -------------------------------------------------------------------------- */
-
-                /* -------------------------------------------------------------------------- */
-                /*                                 Final Check                                */
-                /* -------------------------------------------------------------------------- */
-                if(j == this->activities[i].phase.size() - 1)
-                    std::cout << std::endl;
-                /* -------------------------------------------------------------------------- */
-            }
-    /* -------------------------------------------------------------------------- */
-}   
 
 void RobotControllerClass::update_obstacles_position(std::vector<Eigen::Vector2d> obstacles_position_)
 {
@@ -758,7 +676,7 @@ void RobotControllerClass::allocate_a_plan(std::vector<activityStruct> activitie
     /* -------------------------------------------------------------------------- */
     /*                                Re-Allocation                               */
     /* -------------------------------------------------------------------------- */
-    if((int)this->activities.size() > 0)
+    if(static_cast<int>(this->activities.size()) > 0)
     {
         /* ---------------------------------- Loop ---------------------------------- */
         for(int i = 0; i < this->activities.size(); i++)
@@ -780,6 +698,8 @@ void RobotControllerClass::allocate_a_plan(std::vector<activityStruct> activitie
                     /* -------------------------------------------------------------------------- */
 
                     /* ---------------------------------- Time ---------------------------------- */
+                    this->activities[i].phase[j].startTime = activities_[i].phase[j].startTime;
+                    this->activities[i].phase[j].endTime = activities_[i].phase[j].endTime;
                     this->activities[i].phase[j].allocated_time = activities_[i].phase[j].allocated_time;
                     /* -------------------------------------------------------------------------- */
 
@@ -804,16 +724,12 @@ void RobotControllerClass::allocate_a_plan(std::vector<activityStruct> activitie
 
                 /* ------------------------- From Control to Contact ------------------------ */
                 initial_pose_contact = control2contact(this->activities[i].phase[this->ongoing_phase_ID].goal.initial_pose /*Initial Pose of the Control Point*/, this->robot_controller.b /*Displacement wrt the contact point*/);
-                final_pose_contact = control2contact(this->activities[i].phase[this->ongoing_phase_ID].goal.final_pose /*Final Pose of the Control Point*/, this->robot_controller.b /*Displacement wrt the contact point*/);
+                final_pose_contact = this->activities[i].phase[this->ongoing_phase_ID].desired_configuration;
                 /* -------------------------------------------------------------------------- */
 
 
                 /* --------- Re-generation of the last goal of the ongoing activity --------- */
                 this->activities[i].phase[this->ongoing_phase_ID].goal = this->goal_generation(this->activities[i].phase[this->ongoing_phase_ID].type /*Type of activity*/,initial_pose_contact /*Initial Pose of the Contact Point*/,final_pose_contact /*Final Pose desired for the Contact Point*/,this->activities[i].phase[this->ongoing_phase_ID].allocated_time /*Time available for performing the task*/,time_ /*Initial Time*/);
-                /* -------------------------------------------------------------------------- */
-
-                /* -------------- Updating of the 'ongoing_activity' attribute -------------- */
-                this->ongoing_activity->activity = this->activities[i];
                 /* -------------------------------------------------------------------------- */
 
                 /* --------------------------- Trajectory Updating -------------------------- */
@@ -964,7 +880,8 @@ goalStruct RobotControllerClass::goal_generation(int type_, Eigen::Vector3d init
     /* -------------------------------------------------------------------------- */
     /*                                    Debug                                   */
     /* -------------------------------------------------------------------------- */
-    std::cout << fmt::format("[GENERATION] - Goal Times: {},{},{}/{}",goal_.times(0),goal_.times(1),goal_.times(2),goal_.times(0) + allocated_time_) << std::endl;
+    std::cout << fmt::format("[{}]: Start: {}, ComputedEnd: {}, NominalEnd: {}",this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].name,goal_.times(0),goal_.times(2),goal_.times(0) + allocated_time_)  << std::endl;
+    std::cout << "InitialPose: " << initial_pose_.transpose() << " FinalPose: " << final_pose_.transpose() << std::endl;
     /* -------------------------------------------------------------------------- */
 
     /* -------------------------------------------------------------------------- */
