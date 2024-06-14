@@ -23,7 +23,6 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                 checkShift = true;
                 %Shifts human timings for slower human
                 for s=curr_hum:num_tasks
-                    
                     if s > 2
                         % if waiting_time(s)~=0
                         %     All.timeSh(s) = All.timeSh(s) + serv_time(s) + waiting_time(s) + approaching_time(s);

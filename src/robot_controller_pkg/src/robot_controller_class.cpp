@@ -234,9 +234,10 @@ void RobotControllerClass::update_robot_parameters(const double& t)
                     /* -------------------------------------------------------------------------- */
 
                     /* ------------------- Goal - Construction and Allocation ------------------- */
-                    // phase_.goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,phase_.allocated_time - (t - nominal_starting_time_),t);
-
                     double allocated_time = phase_.endTime - phase_.startTime;
+
+                    if(allocated_time <= 10e-3 && phase_.type != -1)
+                        phase_.type = -1;
 
                     phase_.goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,allocated_time,t);
                     /* -------------------------------------------------------------------------- */
@@ -305,7 +306,9 @@ void RobotControllerClass::update_robot_parameters(const double& t)
 
         /* ---------------------------- Goal Construction --------------------------- */
         double allocated_time = phase_.endTime - phase_.startTime;
-        // phase_.goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,phase_.allocated_time,t);
+
+        if(allocated_time <= 10e-3 && phase_.type != -1)
+            phase_.type = -1;
 
         phase_.goal = this->goal_generation(phase_.type,Eigen::Vector3d(this->position(0),this->position(1),this->theta),phase_.desired_configuration,phase_.allocated_time,phase_.startTime);
         /* -------------------------------------------------------------------------- */
@@ -323,7 +326,7 @@ void RobotControllerClass::update_robot_parameters(const double& t)
     /* -------------------------------------------------------------------------- */
     /*                               Goal Processing                              */
     /* -------------------------------------------------------------------------- */
-    if(this->ongoing_activity_  && (this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].goal.type != -1))
+    if(this->ongoing_activity_  && this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].goal.type != -1)
     {
         /* ---------------------------------- Phase --------------------------------- */
         phaseStruct& phase_ = this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID];

@@ -1020,7 +1020,6 @@ void MainLoopClass::MILP_results_subscriber_CB(const diff_drive_robot::MILPResul
         /* -------------------------------------------------------------------------- */
         phaseStruct phase_;
         activityStruct activity_;
-        bool waitingPhase_enabled;
         /* -------------------------------------------------------------------------- */
 
         /* -------------------------------------------------------------------------- */
@@ -1028,39 +1027,11 @@ void MainLoopClass::MILP_results_subscriber_CB(const diff_drive_robot::MILPResul
         /* -------------------------------------------------------------------------- */
 
         /* ------------------------------ Waiting Phase ----------------------------- */
-        waitingPhase_enabled = ((msg->WaitingFinish[i] - msg->WaitingStart[i]) <= 10e-3) ? false : true;
+        
         /* -------------------------------------------------------------------------- */
 
-
-        /* ---------------------------- No Waiting Phase ---------------------------- */
-        if(!waitingPhase_enabled)
-        {
-            /* ------------------------------- Going Phase ------------------------------ */
-            this->node_handler.getParam("/phases/approaching_phase_coefficient",k_1);
-            /* -------------------------------------------------------------------------- */
-
-            /* ---------------------------- Approaching Phase --------------------------- */
-            k_2 = 1;
-            /* -------------------------------------------------------------------------- */
-
-            /* ------------------------------ Serving Phase ----------------------------- */
-            k_3 = 0.0;
-            /* -------------------------------------------------------------------------- */
-        }
-        else
-        {
-            /* ------------------------------- Going Phase ------------------------------ */
-            this->node_handler.getParam("/phases/going_phase_coefficient",k_1);
-            /* -------------------------------------------------------------------------- */
-
-            /* ---------------------------- Approaching Phase --------------------------- */
-            this->node_handler.getParam("/phases/approaching_phase_coefficient",k_2);
-            /* -------------------------------------------------------------------------- */
-
-            /* ------------------------------ Serving Phase ----------------------------- */
-            this->node_handler.getParam("/phases/serving_phase_phase_coefficient",k_3);
-            /* -------------------------------------------------------------------------- */
-        }
+        /* ---------------------------------- Gains --------------------------------- */
+        this->node_handler.getParam("/phases/going_phase_coefficient", k_1);
         /* -------------------------------------------------------------------------- */
 
         /* ------------------------ Going Phase - Definition ------------------------ */
@@ -1078,13 +1049,27 @@ void MainLoopClass::MILP_results_subscriber_CB(const diff_drive_robot::MILPResul
         activity_.phase.push_back(phase_);
         /* -------------------------------------------------------------------------- */
 
+        /* ----------------------- Waiting Phase - Definition ----------------------- */
+        phase_.name = "WaitingPhase";
+        phase_.type = -1; // 0 - Moving phase (Forward Motion with L-path), 1 - Moving phase (Backward Motion with L-path), 2 - Moving phase (Motion with Linear Path), -1 - Waiting / Serving phase
+        phase_.startTime = msg->WaitingStart[i];
+        phase_.endTime = msg->WaitingFinish[i];
+        phase_.allocated_time = msg->WaitingFinish[i] - msg->WaitingStart[i];
+        phase_.desired_configuration.setConstant(-1);
+        phase_.switch_condition = std::make_pair<bool,bool>(true,static_cast<bool>(msg->FinishedFilling[i]));
+        /* -------------------------------------------------------------------------- */
+
+        /* ------------------------ Waiting Phase - Push Back ----------------------- */
+        activity_.phase.push_back(phase_);
+        /* -------------------------------------------------------------------------- */
+
         /* --------------------- Approaching Phase - Definition --------------------- */
         phase_.name = "ApproachingPhase";
         phase_.type = 2; // 0 - Moving phase (Forward Motion with L-path), 1 - Moving phase (Backward Motion with L-path), 2 - Moving phase (Motion with Linear Path), -1 - Waiting / Serving phase
         phase_.startTime = msg->ApproachingStart[i];
         phase_.endTime = msg->ApproachingFinish[i];
         phase_.allocated_time = msg->ApproachingFinish[i] - msg->ApproachingStart[i];
-        phase_.desired_configuration << this->humans_positions_vector[msg->Humans[i]-1][0], k_2*this->humans_positions_vector[msg->Humans[i]-1][1], 0.0;
+        phase_.desired_configuration << this->humans_positions_vector[msg->Humans[i]-1][0], this->humans_positions_vector[msg->Humans[i]-1][1], 0.0;
         phase_.switch_condition = std::make_pair<bool,bool>(false,false);
         std::cout << phase_.desired_configuration.transpose() << std::endl;
         /* -------------------------------------------------------------------------- */
@@ -1093,40 +1078,12 @@ void MainLoopClass::MILP_results_subscriber_CB(const diff_drive_robot::MILPResul
         activity_.phase.push_back(phase_);
         /* -------------------------------------------------------------------------- */
 
-        /* ----------------------- Waiting Phase - Definition ----------------------- */
-        phase_.name = "WaitingPhase";
-        phase_.type = -1; // 0 - Moving phase (Forward Motion with L-path), 1 - Moving phase (Backward Motion with L-path), 2 - Moving phase (Motion with Linear Path), -1 - Waiting / Serving phase
-        phase_.startTime = msg->WaitingStart[i];
-        phase_.endTime = msg->WaitingFinish[i];
-        phase_.allocated_time = msg->WaitingFinish[i] - msg->WaitingStart[i];
-        phase_.desired_configuration.setConstant(-1);
-        phase_.switch_condition = (waitingPhase_enabled) ? std::make_pair<bool,bool>(true,static_cast<bool>(msg->FinishedFilling[i])) : std::make_pair<bool,bool>(false,false);
-        /* -------------------------------------------------------------------------- */
-
-        /* ------------------------ Waiting Phase - Push Back ----------------------- */
-        activity_.phase.push_back(phase_);
-        /* -------------------------------------------------------------------------- */
-
-        /* -------------------- Serving Phase - Pt.1 - Definition ------------------- */
-        phase_.name = "ServingPhase_Pt1";
-        phase_.type = 2; // 0 - Moving phase (Forward Motion with L-path), 1 - Moving phase (Backward Motion with L-path), 2 - Moving phase (Motion with Linear Path), -1 - Waiting / Serving phase
-        phase_.startTime = msg->ServingStart[i];
-        phase_.endTime = msg->ServingStart[i] + k_3*(msg->ServingFinish[i] - msg->ServingStart[i]);
-        phase_.allocated_time = k_3*(msg->ServingFinish[i] - msg->ServingStart[i]);
-        phase_.desired_configuration << this->humans_positions_vector[msg->Humans[i]-1][0], this->humans_positions_vector[msg->Humans[i]-1][1], 0.0;
-        phase_.switch_condition = std::make_pair<bool,bool>(false,false);
-        /* -------------------------------------------------------------------------- */
-
-        /* -------------------- Serving Phase - Pt.1 - Push Back -------------------- */
-        activity_.phase.push_back(phase_);
-        /* -------------------------------------------------------------------------- */
-
         /* -------------------- Serving Phase - Pt.2 - Definition ------------------- */
-        phase_.name = "ServingPhase_Pt2";
+        phase_.name = "ServingPhase";
         phase_.type = -1; // 0 - Moving phase (Forward Motion with L-path), 1 - Moving phase (Backward Motion with L-path), 2 - Moving phase (Motion with Linear Path), -1 - Waiting / Serving phase
-        phase_.startTime = msg->ServingStart[i] + k_3*(msg->ServingFinish[i] - msg->ServingStart[i]);
+        phase_.startTime = msg->ServingStart[i];
         phase_.endTime = msg->ServingFinish[i];
-        phase_.allocated_time = (1.0 - k_3)*(msg->ServingFinish[i] - msg->ServingStart[i]);
+        phase_.allocated_time = msg->ServingFinish[i] - msg->ServingStart[i];
         phase_.desired_configuration.setConstant(-1);
         phase_.switch_condition = std::make_pair<bool,bool>(true,static_cast<bool>(msg->FinishedService[i]));
         /* -------------------------------------------------------------------------- */
