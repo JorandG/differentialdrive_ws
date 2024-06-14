@@ -60,7 +60,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                     disp('speed up going possible')
                     All.timeS(curr_hum) = All.timeFh(curr_hum) - nonzeros(dist1(curr_hum,:).*All.X(curr_hum,:))/max(vel_max); %We speed up to the max velocity to minimize the shifting quantity
                     All.timeF(curr_hum) = All.timeFh(curr_hum); %+ service_time1(curr_hum); %update final time of going
-                    
+
                     All.timeS(wait)=All.timeF(curr_hum); %waiting
                     All.timeF(wait)=All.timeS(wait)+waiting_time(curr_hum);
 

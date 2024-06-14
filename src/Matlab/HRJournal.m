@@ -13,7 +13,7 @@ num_humans = 2;
 num_agents = num_humans;
 num_filling_boxes = 3;
 num_robots = 2;
-initialTime = 100;
+initialTime = 150;
 humanData = cell(num_humans, 1);
 pub = cell(num_humans, 1);
 humanSub = cell(num_humans, 1);
@@ -106,7 +106,7 @@ chi = ones(num_robots,1)*1;
 Reduction = 1;
 
 % Weights for objective function
-WeightHumanwaiting = 1;
+WeightHumanwaiting = 5;
 WeightEnergyPicking = 0.5;
 WeightEnergyProximity = 0.5;
 WeightEnergyDepositing = 0.5;
