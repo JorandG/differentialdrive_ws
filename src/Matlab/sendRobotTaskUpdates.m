@@ -42,14 +42,14 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
     
     % Assign start and finish times for task phases
     MILPData{robotID}.GoingStart = inittime(1:num_filling_boxes);
-    MILPData{robotID}.ApproachingStart = inittime(num_filling_boxes+1:2*num_filling_boxes);
-    MILPData{robotID}.WaitingStart = inittime(2*num_filling_boxes+1:3*num_filling_boxes);
+    MILPData{robotID}.WaitingStart = inittime(num_filling_boxes+1:2*num_filling_boxes);
+    MILPData{robotID}.ApproachingStart = inittime(2*num_filling_boxes+1:3*num_filling_boxes);
     MILPData{robotID}.ServingStart = inittime(3*num_filling_boxes+1:4*num_filling_boxes);
     MILPData{robotID}.DepotStart = inittime(4*num_filling_boxes+1:5*num_filling_boxes);
 
     MILPData{robotID}.GoingFinish = endtime(1:num_filling_boxes);
-    MILPData{robotID}.ApproachingFinish = endtime(num_filling_boxes+1:2*num_filling_boxes);
-    MILPData{robotID}.WaitingFinish = endtime(2*num_filling_boxes+1:3*num_filling_boxes);
+    MILPData{robotID}.WaitingFinish = endtime(num_filling_boxes+1:2*num_filling_boxes);
+    MILPData{robotID}.ApproachingFinish = endtime(2*num_filling_boxes+1:3*num_filling_boxes);
     MILPData{robotID}.ServingFinish = endtime(3*num_filling_boxes+1:4*num_filling_boxes);
     MILPData{robotID}.DepotFinish = endtime(4*num_filling_boxes+1:5*num_filling_boxes);
 

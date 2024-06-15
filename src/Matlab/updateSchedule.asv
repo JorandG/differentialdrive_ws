@@ -23,6 +23,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                 checkShift = true;
                 %Shifts human timings for slower human
                 for s=curr_hum:num_tasks
+                    
                     if s > 2
                         % if waiting_time(s)~=0
                         %     All.timeSh(s) = All.timeSh(s) + serv_time(s) + waiting_time(s) + approaching_time(s);
@@ -33,6 +34,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                     end
                     difference = abs(All.timeFh(s) - (All.timeSh(s) + humanTime_filling(curr_hum)))
                     All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum);
+
                 end
             end
             %Shifts human timings for faster human
@@ -59,7 +61,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                     disp('speed up going possible')
                     All.timeS(curr_hum) = All.timeFh(curr_hum) - nonzeros(dist1(curr_hum,:).*All.X(curr_hum,:))/max(vel_max); %We speed up to the max velocity to minimize the shifting quantity
                     All.timeF(curr_hum) = All.timeFh(curr_hum); %+ service_time1(curr_hum); %update final time of going
-                    
+
                     All.timeS(wait)=All.timeF(curr_hum); %waiting
                     All.timeF(wait)=All.timeS(wait)+waiting_time(curr_hum);
 
@@ -113,6 +115,8 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
             end
         elseif ismember(curr_hum, idx_to_ignore_h) %&& curr_hum_slow
             disp('shifting current human')
+            All.timeSh(curr_hum) = All1.timeFh(curr_hum)
+            All.timeFh(curr_hum) = All1.timeFh(curr_hum)
             deltar = All.timeFh(curr_hum) - All.timeF(curr_hum);
            if curr_hum == human_to_shift
                 All.timeS(curr_hum) = All1.timeS(curr_hum);
@@ -129,7 +133,22 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
 
                 All.timeS(dep) = All.timeF(serv);%All.timeS(dep) + deltar; %depot
                 All.timeF(dep) = All.timeS(dep) + nonzeros(dist1(dep,:).*X(dep,:))/max(vel_max);%update final time of depot
-            end
+           else
+               All.timeS(curr_hum) = All1.timeS(curr_hum);
+               All.timeF(curr_hum) = All1.timeF(curr_hum);
+
+               All.timeS(wait) = All1.timeS(wait);
+               All.timeF(wait) = All1.timeF(wait);
+
+               All.timeS(app) = All1.timeS(app);
+               All.timeF(app) = All1.timeF(app);
+
+               All.timeS(serv) = All1.timeS(serv);
+               All.timeF(serv) = All1.timeF(serv);
+
+               All.timeS(dep) = All1.timeS(dep);
+               All.timeF(dep) = All1.timeF(dep);
+           end
         end
 
     end
