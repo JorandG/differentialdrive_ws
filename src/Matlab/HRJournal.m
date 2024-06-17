@@ -181,7 +181,7 @@ simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
     global num_phases
     %% Display
-    close all
+    %close all
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
     colors_matrix = rand(num_agents*num_filling_boxes*4,3);
@@ -380,6 +380,40 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     else
                         humanData{u}.TaskFilling = num_filling_boxes;
                     end
+
+
+                    difference = (humanData{u}.FinishFilling(humanData{u}.Task) - humanData{u}.StartFilling(humanData{u}.Task)) - humanData{u}.TimeFilling(humanData{u}.Task) %abs(timeReall - humanData{u}.FinishFilling(humanData{u}.Task)); %used for the updateschedule function
+                    humanData{u}.FinishFilling(humanData{u}.Task) = FinishFill;
+                    if humanData{u}.Task == 1
+                        difference1 = timeReall - ReAll.timeFh((u-1)+humanData{u}.Task);
+                    else
+                        difference1 = timeReall - ReAll.timeFh(u+humanData{u}.Task);
+                    end
+
+                    for h=1:num_agents
+                        humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
+                        humanTime_serving(h:num_humans:end) = humanData{h}.FinishServing - humanData{h}.StartServing;
+                        ReAll.timeFh(h:num_humans:end) = humanData{h}.FinishFilling; 
+                        ReAll.timeSh(h:num_humans:end) = humanData{h}.StartFilling;
+                    end    
+                    send(pub{u}, humanData{u});
+
+                    for l=1:num_service_tasks
+                        if ReAll.timeSh(l) > (FinishFill - 30)
+                            idx_to_consider_h(end+1) = l;
+                            idx_to_consider_r(end+1) = l;
+                        elseif ReAll.timeSh(l) < FinishFill 
+                            idx_to_ignore_h(end+1) = l;
+                            idx_to_ignore_r(end+1) = l;
+                        end
+                        
+                    end
+                    idx_to_ignore_h
+                    idx_to_ignore_r
+
+
+                    ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
+                    display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, FinishFill);
                     send(pub{u}, humanData{u});
                 end
 
@@ -650,7 +684,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         end                    
                     end
 
-                    display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                    %display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
                     %human{u}.confirmModif = 0;
                     idx_to_consider_r = [];
                     idx_to_consider_h = [];
