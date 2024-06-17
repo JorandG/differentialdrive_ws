@@ -412,7 +412,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     send(pub{u}, humanData{u});
 
                     for l=1:num_service_tasks
-                        if ReAll.timeSh(l) > (timeReall - 50)
+                        if ReAll.timeSh(l) > (timeReall - 30)
                             idx_to_consider_h(end+1) = l;
                             idx_to_consider_r(end+1) = l;
                         elseif ReAll.timeSh(l) < timeReall 
@@ -514,7 +514,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         end
                         humanTime_filling = ReAll.timeFh - ReAll.timeSh;
                         humanTime_serving = ReAll.timeF(idx_services_tasks) - ReAll.timeS(idx_services_tasks);
-                        ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);                        
+                        %ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);                        
                         
                         ReAllSave = ReAll;
 

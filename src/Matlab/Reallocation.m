@@ -54,7 +54,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     WaitWeight = [];
 
     for h=1:num_humans
-        baseProx = [baseProx, 3 - (2 * (humanData{h}.RobotVelocityProximityWeight(humanData{RobotID}.Task) - 0.1) / 0.9)]; %coeff for the proximity phase for each human, a higher value decrease the duration of the phase and so speed up the robot
+        baseProx = [1, 1]%[baseProx, 3 - (2 * (humanData{h}.RobotVelocityProximityWeight(humanData{RobotID}.Task) - 0.1) / 0.9)]; %coeff for the proximity phase for each human, a higher value decrease the duration of the phase and so speed up the robot
         inv_vel_max_prox = [inv_vel_max_prox, humanData{h}.RobotMaxVelocityProximity(humanData{RobotID}.Task)];
         inv_vel_min_prox = [inv_vel_min_prox, humanData{h}.RobotMinVelocityProximity(humanData{RobotID}.Task)];
         WaitWeight = [WaitWeight, humanData{h}.WaitingTimeWeight(humanData{RobotID}.Task)]; % Weight for waiting, should replace Ph
@@ -132,27 +132,27 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         prob.Constraints.duration7 = invprod(idx_approaching_tasks_consider,:) >= X1(idx_approaching_tasks_consider,:).*inv_vel_max_prox(idx_going_tasks_consider,:);
         prob.Constraints.duration8 = invprod(idx_approaching_tasks_consider,:) <= X1(idx_approaching_tasks_consider,:).*inv_vel_min_prox(idx_going_tasks_consider,:);
 
-        % prob.Constraints.duration11 = invprod(idx_to_ignore_r,:) == ReAll.invprod(idx_to_ignore_r,:);
-        % prob.Constraints.duration12 = max_invprod(idx_to_ignore_r,:) == ReAll.max_invprod(idx_to_ignore_r,:);
-        % prob.Constraints.maxInvProd3 = sum( (inv_vel_min_prox(idx_going_tasks_consider,1)) - ((max_invprod(idx_approaching_tasks_consider,:)).*Prox(idx_going_tasks_consider,1)) ) >= 0;
+        prob.Constraints.duration11 = invprod(idx_to_ignore_r,:) == ReAll.invprod(idx_to_ignore_r,:);
+        prob.Constraints.duration12 = max_invprod(idx_to_ignore_r,:) == ReAll.max_invprod(idx_to_ignore_r,:);
+        prob.Constraints.maxInvProd3 = sum( (inv_vel_min_prox(idx_going_tasks_consider,1)) - ((max_invprod(idx_approaching_tasks_consider,:)).*Prox(idx_going_tasks_consider,1)) ) >= 0;
 
-        % prob.Constraints.timeF_tasks_to_ignore = timeF(idx_to_ignore_r) == ReAll.timeF(idx_to_ignore_r);
-        % prob.Constraints.timeS_tasks_to_ignore = timeS(idx_to_ignore_r) == ReAll.timeS(idx_to_ignore_r);
-
-        prob.Constraints.timeF_tasks_to_ignore = timeF(idx_going_tasks_ignore) >= ReAll.timeF(idx_going_tasks_ignore);
-        prob.Constraints.timeS_tasks_to_ignore = timeS(idx_going_tasks_ignore) == ReAll.timeS(idx_going_tasks_ignore);
-
-        prob.Constraints.timeF_tasks_to_ignore1 = timeF(idx_waiting_tasks_ignore) == ReAll.timeF(idx_waiting_tasks_ignore);
-        prob.Constraints.timeS_tasks_to_ignore1 = timeS(idx_waiting_tasks_ignore) == ReAll.timeS(idx_waiting_tasks_ignore);
-
-        prob.Constraints.timeF_tasks_to_ignore2 = timeF(idx_approaching_tasks_ignore) == ReAll.timeF(idx_approaching_tasks_ignore);
-        prob.Constraints.timeS_tasks_to_ignore2 = timeS(idx_approaching_tasks_ignore) == ReAll.timeS(idx_approaching_tasks_ignore);
-
-        prob.Constraints.timeF_tasks_to_ignore3 = timeF(idx_services_tasks_ignore) == ReAll.timeF(idx_services_tasks_ignore);
-        prob.Constraints.timeS_tasks_to_ignore3 = timeS(idx_services_tasks_ignore) == ReAll.timeS(idx_services_tasks_ignore);
-
-        prob.Constraints.timeF_tasks_to_ignore4 = timeF(idx_depot_tasks_ignore) == ReAll.timeF(idx_depot_tasks_ignore);
-        prob.Constraints.timeS_tasks_to_ignore4 = timeS(idx_depot_tasks_ignore) == ReAll.timeS(idx_depot_tasks_ignore);
+        prob.Constraints.timeF_tasks_to_ignore = timeF(idx_to_ignore_r) == ReAll.timeF(idx_to_ignore_r);
+        prob.Constraints.timeS_tasks_to_ignore = timeS(idx_to_ignore_r) == ReAll.timeS(idx_to_ignore_r);
+        % 
+        % prob.Constraints.timeF_tasks_to_ignore = timeF(idx_going_tasks_ignore) >= ReAll.timeF(idx_going_tasks_ignore);
+        % prob.Constraints.timeS_tasks_to_ignore = timeS(idx_going_tasks_ignore) == ReAll.timeS(idx_going_tasks_ignore);
+        % 
+        % prob.Constraints.timeF_tasks_to_ignore1 = timeF(idx_waiting_tasks_ignore) == ReAll.timeF(idx_waiting_tasks_ignore);
+        % prob.Constraints.timeS_tasks_to_ignore1 = timeS(idx_waiting_tasks_ignore) == ReAll.timeS(idx_waiting_tasks_ignore);
+        % 
+        % prob.Constraints.timeF_tasks_to_ignore2 = timeF(idx_approaching_tasks_ignore) == ReAll.timeF(idx_approaching_tasks_ignore);
+        % prob.Constraints.timeS_tasks_to_ignore2 = timeS(idx_approaching_tasks_ignore) == ReAll.timeS(idx_approaching_tasks_ignore);
+        % 
+        % prob.Constraints.timeF_tasks_to_ignore3 = timeF(idx_services_tasks_ignore) == ReAll.timeF(idx_services_tasks_ignore);
+        % prob.Constraints.timeS_tasks_to_ignore3 = timeS(idx_services_tasks_ignore) == ReAll.timeS(idx_services_tasks_ignore);
+        % 
+        % prob.Constraints.timeF_tasks_to_ignore4 = timeF(idx_depot_tasks_ignore) == ReAll.timeF(idx_depot_tasks_ignore);
+        % prob.Constraints.timeS_tasks_to_ignore4 = timeS(idx_depot_tasks_ignore) == ReAll.timeS(idx_depot_tasks_ignore);
 
         prob.Constraints.X_tasks_to_ignore = X1(idx_to_ignore_r,:) == X2(idx_to_ignore_r,:);
 
@@ -232,7 +232,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     curr_idx = 1;
     for i = 1:num_agents
         idx_curr_hum = i:num_agents:num_agents*num_filling_boxes;
-        robot_service(curr_idx:curr_idx+num_filling_boxes-1) = timeF(idx_going_tasks(idx_curr_hum)) >= timeFh(idx_curr_hum); %+service_time(idx_curr_hum);
+        robot_service(curr_idx:curr_idx+num_filling_boxes-1) = timeF(idx_going_tasks(idx_curr_hum)) >= timeFh(idx_curr_hum)-waiting_time(idx_curr_hum);
         curr_idx = curr_idx +num_filling_boxes;
     end
     prob.Constraints.robot_service = robot_service;
