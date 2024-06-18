@@ -1,8 +1,9 @@
 function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev)
-    global FinishFill human_to_shift waiting_time humanTime_serving difference difference1 humanTime_fillingPrev timeReall num_tasks num_robots num_agents human num_filling_boxes num_phases idx_approaching_tasks num_humans
+    global idx_services_tasks FinishFill human_to_shift waiting_time humanTime_serving difference difference1 humanTime_fillingPrev timeReall num_tasks num_robots num_agents human num_filling_boxes num_phases idx_approaching_tasks num_humans
 
     service_time1 = [];
-    serv_time = humanTime_serving;
+    serv_time = All.timeF(idx_services_tasks) - All.timeS(idx_services_tasks);
+    
     approaching_time = All.timeF(idx_approaching_tasks) - All.timeS(idx_approaching_tasks);
     curr_hum_slow = false;
 
@@ -68,7 +69,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                     All.timeF(app)=All.timeS(app)+approaching_time(curr_hum);
 
                     All.timeS(serv)=All.timeF(app); %serving
-                    All.timeF(serv)=All.timeS(serv)+serv_time(curr_hum);%service_time1(hum_slow);
+                    All.timeF(serv)=All.timeS(serv)+serv_time(curr_hum)%service_time1(hum_slow);
 
                     All.timeS(dep)=All.timeF(serv); %depot
                     All.timeF(dep)=All.timeS(dep)+nonzeros(dist1(dep,:).*X(dep,:))/max(vel_max);%update final time of depot
