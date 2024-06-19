@@ -99,7 +99,7 @@ num_depot_tasks = num_service_tasks;
 num_tasks = num_service_tasks;
 service_time = zeros(num_tasks, num_robots);
 
-M = 5000000;
+M = 3000000;
 vel_min = ones(num_robots,1)*0.025; % min velocity for the robots
 vel_max = ones(num_robots,1)*0.2; % max velocity for the robots
 chi = ones(num_robots,1)*1;
@@ -557,14 +557,14 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         
                         ReAllSave = ReAll;
 
-                        % ProximityTaskDurations = [ProximityTaskDurations, (ReAllSave.timeF(idx_approaching_tasks) - ReAllSave.timeS(idx_approaching_tasks))]                        
-                        % ProximityTaskVelocities = [ProximityTaskVelocities, ReAllSave.max_invprod(idx_approaching_tasks)'];
-                        % ProximityTaskFeedback1 = [];
-                        % for h=1:num_agents
-                        %     ProximityTaskFeedback1 = [ProximityTaskFeedback1, humanData{h}.RobotVelocityProximity(humanData{RobotID}.Task)']
-                        %     ProximityTaskWeights = [ProximityTaskWeights, humanData{h}.RobotVelocityProximityWeight(humanData{RobotID}.Task)']
-                        % end
-                        % ProximityTaskFeedback = [ProximityTaskFeedback, repmat(ProximityTaskFeedback1, 1, num_filling_boxes)];
+                        ProximityTaskDurations = [ProximityTaskDurations, (ReAllSave.timeF(idx_approaching_tasks) - ReAllSave.timeS(idx_approaching_tasks))]                        
+                        ProximityTaskVelocities = [ProximityTaskVelocities, ReAllSave.max_invprod(idx_approaching_tasks)'];
+                        ProximityTaskFeedback1 = [];
+                        for h=1:num_agents
+                            ProximityTaskFeedback1 = [ProximityTaskFeedback1, humanData{h}.RobotVelocityProximity(humanData{RobotID}.Task)']
+                            ProximityTaskWeights = [ProximityTaskWeights, humanData{h}.RobotVelocityProximityWeight(humanData{RobotID}.Task)']
+                        end
+                        ProximityTaskFeedback = [ProximityTaskFeedback, repmat(ProximityTaskFeedback1, 1, num_filling_boxes)];
 
                         humanTime_fillingPrev = humanTime_filling;
                         % Send new timings on the topic
@@ -674,14 +674,14 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         ReAll = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);
                         ReAllSave = ReAll;
 
-                        % ProximityTaskDurations = [ProximityTaskDurations, (ReAllSave.timeF(idx_approaching_tasks) - ReAllSave.timeS(idx_approaching_tasks))]                        
-                        % ProximityTaskVelocities = [ProximityTaskVelocities, ReAllSave.max_invprod(idx_approaching_tasks)'];
-                        % ProximityTaskFeedback1 = [];
-                        % for h=1:num_agents
-                        %     ProximityTaskFeedback1 = [ProximityTaskFeedback1, humanData{h}.RobotVelocityProximity(humanData{RobotID}.Task)']
-                        %     ProximityTaskWeights = [ProximityTaskWeights, humanData{h}.RobotVelocityProximityWeight(humanData{RobotID}.Task)']
-                        % end
-                        % ProximityTaskFeedback = [ProximityTaskFeedback, repmat(ProximityTaskFeedback1, 1, num_filling_boxes)];
+                        ProximityTaskDurations = [ProximityTaskDurations, (ReAllSave.timeF(idx_approaching_tasks) - ReAllSave.timeS(idx_approaching_tasks))]                        
+                        ProximityTaskVelocities = [ProximityTaskVelocities, ReAllSave.max_invprod(idx_approaching_tasks)'];
+                        ProximityTaskFeedback1 = [];
+                        for h=1:num_agents
+                            ProximityTaskFeedback1 = [ProximityTaskFeedback1, humanData{h}.RobotVelocityProximity(humanData{RobotID}.Task)']
+                            ProximityTaskWeights = [ProximityTaskWeights, humanData{h}.RobotVelocityProximityWeight(humanData{RobotID}.Task)']
+                        end
+                        ProximityTaskFeedback = [ProximityTaskFeedback, repmat(ProximityTaskFeedback1, 1, num_filling_boxes)];
 
                         humanTime_fillingPrev = humanTime_filling;
                         % Send new timings on the topic
@@ -746,12 +746,13 @@ theta = 0.75;
 
         %New weights for waiting and proximity
         Wtp = alpha*Xtp + (1 - alpha)*Wt1p + gamma*humanData{h}.Happiness(humanData{h}.Task); %+ gamma*(Xtp - Xt1p)
-        Wtp = 3 - (Wtp + 1) %To fit the range for the velocities in the MILP in [1, 3] 1 being to get a slow robot and 3 a fast robot
+        Wtp = 3 - (inputValue + 1)
         Wtv = alpha*Xtv + (1 - alpha)*Wt1v; %+gamma*(Xtv - Xt1v)
     else
         humanData{h}.Happiness(humanData{h}.Task) = theta*humanData{h}.RobotVelocityProximity(humanData{h}.Task);
+        Xtp
+        Xtv
         Wtp = Xtp;
-        Wtp = 3 - (Wtp + 1) %To fit the range for the velocities in the MILP in [1, 3] 1 being to get a slow robot and 3 a fast robot
         Wtv = Xtv; 
     end
     %Velocity for the proximity phase 

@@ -5,8 +5,8 @@ phases:
 
 humans:
   position:
-    - [12, 3]
-    - [10, 2]
+    - [2, 3]
+    - [1, 2]
 
 robots:
   controller:
