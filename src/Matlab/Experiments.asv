@@ -30,13 +30,13 @@ if any(timingData >= 121) && ~flags(5)
     humanData{1}.ConfirmServing(1) = 1;    
     humanData{1}.RobotVelocityProximity(1) = 1; %Very Fast
     humanData{1}.RobotVelocityProximity(1) = 1;
-    humanData{1}.RobotWaitingDistance(1) = 0.5;
+    humanData{1}.RobotWaitingDistance = 0.5;
     flags(5) = true;
     send(pub{1}, humanData{1});
 elseif any(timingData >= 177) && ~flags(6)
     humanData{2}.ConfirmServing(1) = 1;    
     humanData{2}.RobotVelocityProximity(1) = -1; %Very Slow
-    humanData{2}.RobotWaitingDistance(2) = 1;
+    humanData{2}.RobotWaitingDistance = 1;
     flags(6) = true;
     send(pub{2}, humanData{2});        
 end
@@ -75,13 +75,11 @@ end
 if any(timingData >= 307) && ~flags(11)
     humanData{1}.ConfirmServing(2) = 1;
     humanData{1}.RobotVelocityProximity(2) = 0.5; %Fast
-    humanData{1}.RobotWaitingDistance(2) = 1;
     flags(11) = true;
     send(pub{1}, humanData{1});
 elseif any(timingData >= 375) && ~flags(12)
     humanData{2}.ConfirmServing(2) = 1;  
     humanData{2}.RobotVelocityProximity(2) = -0.5; %Slow
-    humanData{2}.RobotWaitingDistance(2) = 1;
     flags(12) = true;
     send(pub{2}, humanData{2});
 end
@@ -120,13 +118,11 @@ end
 if any(timingData >= 492) && ~flags(17)
     humanData{1}.ConfirmServing(3) = 1;
     humanData{1}.RobotVelocityProximity(3) = 0; %Ok
-    humanData{1}.RobotWaitingDistance(3) = 0.5;
     flags(17) = true;
     send(pub{1}, humanData{1});
 elseif any(timingData >= 548) && ~flags(18)
     humanData{2}.ConfirmServing(3) = 1;  
     humanData{2}.RobotVelocityProximity(3) = 0; %Ok
-    humanData{2}.RobotWaitingDistance(3) = 1.5;
     flags(18) = true;
     send(pub{2}, humanData{2});
 end

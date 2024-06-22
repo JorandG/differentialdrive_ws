@@ -314,7 +314,8 @@ void RobotControllerClass::update_robot_parameters(const double& t)
         /* -------------------------------------------------------------------------- */
 
         /* ------------------------------- Trajectory ------------------------------- */
-        this->init_spline_trajectories(phase_.goal.initial_pose.head(2),phase_.goal.mid_pose.head(2),phase_.goal.final_pose.head(2),phase_.goal.times(0),phase_.goal.times(1),phase_.goal.times(2));
+        if(phase_.goal.type != -1)
+            this->init_spline_trajectories(phase_.goal.initial_pose.head(2),phase_.goal.mid_pose.head(2),phase_.goal.final_pose.head(2),phase_.goal.times(0),phase_.goal.times(1),phase_.goal.times(2));
         /* -------------------------------------------------------------------------- */
 
         /* ------------------------------ Debug Message ----------------------------- */
@@ -736,7 +737,8 @@ void RobotControllerClass::allocate_a_plan(std::vector<activityStruct> activitie
                 /* -------------------------------------------------------------------------- */
 
                 /* --------------------------- Trajectory Updating -------------------------- */
-                this->init_spline_trajectories(this->activities[i].phase[this->ongoing_phase_ID].goal.initial_pose.head(2) /*Initial Position of the Control Point*/,this->activities[i].phase[this->ongoing_phase_ID].goal.mid_pose.head(2) /*Mid Position desired for the Control Point*/,this->activities[i].phase[this->ongoing_phase_ID].goal.final_pose.head(2) /*Final Position desired for the Contact Point*/,this->activities[i].phase[this->ongoing_phase_ID].goal.times(0) /*Initial Time*/,this->activities[i].phase[this->ongoing_phase_ID].goal.times(1) /*The Control Point should reach the mid position at this time*/,this->activities[i].phase[this->ongoing_phase_ID].goal.times(2) /*The Control Point should reach the final position at this time*/);
+                if(this->activities[i].phase[this->ongoing_phase_ID].type != -1)
+                    this->init_spline_trajectories(this->activities[i].phase[this->ongoing_phase_ID].goal.initial_pose.head(2) /*Initial Position of the Control Point*/,this->activities[i].phase[this->ongoing_phase_ID].goal.mid_pose.head(2) /*Mid Position desired for the Control Point*/,this->activities[i].phase[this->ongoing_phase_ID].goal.final_pose.head(2) /*Final Position desired for the Contact Point*/,this->activities[i].phase[this->ongoing_phase_ID].goal.times(0) /*Initial Time*/,this->activities[i].phase[this->ongoing_phase_ID].goal.times(1) /*The Control Point should reach the mid position at this time*/,this->activities[i].phase[this->ongoing_phase_ID].goal.times(2) /*The Control Point should reach the final position at this time*/);
                 /* -------------------------------------------------------------------------- */
 
             }

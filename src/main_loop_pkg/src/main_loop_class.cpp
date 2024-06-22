@@ -957,7 +957,8 @@ void MainLoopClass::odometry_subscriber_real_CB(const geometry_msgs::PoseStamped
     /*                          Variables Initialization                          */
     /* -------------------------------------------------------------------------- */
     position << msg->pose.position.x,msg->pose.position.y;
-
+    position = -position;
+    
     quat << msg->pose.orientation.x,msg->pose.orientation.y,msg->pose.orientation.z,msg->pose.orientation.w;
     theta = quat2rpy((Eigen::VectorXd) quat)(2);
     /* -------------------------------------------------------------------------- */

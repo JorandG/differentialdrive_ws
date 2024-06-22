@@ -8,10 +8,11 @@ classdef HumanRobotInteraction < ros.Message
         MessageType = 'diff_drive_robot/HumanRobotInteraction' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = '81b2515a21db4e38742fa3f5e558216c' % The MD5 Checksum of the message definition
-        PropertyList = { 'HumanID' 'Robots' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' 'Happiness' } % List of non-constant message properties
-        ROSPropertyList = { 'HumanID' 'Robots' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' 'Happiness' } % List of non-constant ROS message properties
+        MD5Checksum = '1000c15f95c2e4fabf7336df01fd5232' % The MD5 Checksum of the message definition
+        PropertyList = { 'HumanID' 'Robots' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' 'Happiness' 'Efficiency' } % List of non-constant message properties
+        ROSPropertyList = { 'HumanID' 'Robots' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' 'Happiness' 'Efficiency' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
+            '' ...
             '' ...
             '' ...
             '' ...
@@ -56,6 +57,7 @@ classdef HumanRobotInteraction < ros.Message
         Task
         TaskFilling
         Happiness
+        Efficiency
     end
     methods
         function set.HumanID(obj, val)
@@ -262,6 +264,17 @@ classdef HumanRobotInteraction < ros.Message
             validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'Happiness');
             obj.Happiness = double(val);
+        end
+        function set.Efficiency(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'Efficiency');
+            obj.Efficiency = double(val);
         end
     end
     methods (Static, Access = {?matlab.unittest.TestCase, ?ros.Message})

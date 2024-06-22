@@ -18,3 +18,5 @@ int32[] ConfirmFilling
 int32 Task
 int32 TaskFilling
 float64[] Happiness
+float64[] Efficiency
+float64[] Severity

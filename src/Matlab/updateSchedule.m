@@ -69,7 +69,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                     All.timeF(app)=All.timeS(app)+approaching_time(curr_hum);
 
                     All.timeS(serv)=All.timeF(app); %serving
-                    All.timeF(serv)=All.timeS(serv)+serv_time(curr_hum)%service_time1(hum_slow);
+                    All.timeF(serv)=All.timeS(serv)+serv_time(curr_hum);%service_time1(hum_slow);
 
                     All.timeS(dep)=All.timeF(serv); %depot
                     All.timeF(dep)=All.timeS(dep)+nonzeros(dist1(dep,:).*X(dep,:))/max(vel_max);%update final time of depot
