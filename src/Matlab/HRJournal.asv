@@ -60,7 +60,7 @@ for r=1:num_robots
     MILPData{r}.DepotFinish = [];
     MILPData{r}.FinishedFilling = repmat(0, 1, num_filling_boxes+1);
     MILPData{r}.FinishedService = repmat(0, 1, num_filling_boxes+1);
-    MILPData{r}.DistanceWaiting = [];
+    MILPData{r}.DistanceWaiting = repmat(0, 1, num_filling_boxes);
     %send(MILPDataPub{r}, MILPData{r});
 end
 
@@ -480,8 +480,11 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         updateVelocitiesBoundaries(u, num_tasks, num_filling_boxes, ReAll, humanData, vel_max, vel_min, chi, Reduction)
 
                         % Need to run updateSchedule before Reallocation
-                        ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
-                        display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                        if humanData{u}.FinishFilling(humanData{u}.Task) > ReAll.timeFh(u+(humanData{u}.Task-1)*num_humans)
+                            disp('human slower shifting ...')
+                            ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
+                            display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                        end
 
                         for c=1:num_robots
                             sendRobotTaskUpdates(c, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
@@ -522,8 +525,11 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         send(pub{u}, humanData{u});        
                         %Need to run updateSchedule before Reallocation
 
-                        ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
-                        display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                        if humanData{u}.FinishFilling(humanData{u}.Task) > ReAll.timeFh(u+(humanData{u}.Task-1)*num_humans)
+                            disp('human slower shifting ...')
+                            ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
+                            display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                        end
                         for c=1:num_robots
                             sendRobotTaskUpdates(c, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
                         end 
