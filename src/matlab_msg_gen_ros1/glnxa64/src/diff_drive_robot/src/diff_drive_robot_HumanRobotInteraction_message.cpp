@@ -263,11 +263,22 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     } catch (matlab::Exception&) {
         throw std::invalid_argument("Field 'Efficiency' is wrong type; expected a double.");
     }
+    try {
+        //Severity
+        const matlab::data::TypedArray<double> Severity_arr = arr["Severity"];
+        size_t nelem = Severity_arr.getNumberOfElements();
+        	msg->Severity.resize(nelem);
+        	std::copy(Severity_arr.begin(), Severity_arr.begin()+nelem, msg->Severity.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'Severity' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'Severity' is wrong type; expected a double.");
+    }
   }
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_HumanRobotInteraction_common::get_arr(MDFactory_T& factory, const diff_drive_robot::HumanRobotInteraction* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","Robots","RobotWaitingDistance","RobotVelocityProximity","RobotMinVelocityProximity","RobotMaxVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling","Happiness","Efficiency"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","Robots","RobotWaitingDistance","RobotVelocityProximity","RobotMinVelocityProximity","RobotMaxVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling","Happiness","Efficiency","Severity"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/HumanRobotInteraction");
     // HumanID
@@ -333,6 +344,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     // Efficiency
     auto currentElement_Efficiency = (msg + ctr)->Efficiency;
     outArray[ctr]["Efficiency"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_Efficiency_type::const_iterator, double>({currentElement_Efficiency.size(),1}, currentElement_Efficiency.begin(), currentElement_Efficiency.end());
+    // Severity
+    auto currentElement_Severity = (msg + ctr)->Severity;
+    outArray[ctr]["Severity"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_Severity_type::const_iterator, double>({currentElement_Severity.size(),1}, currentElement_Severity.begin(), currentElement_Severity.end());
     }
     return std::move(outArray);
   } 

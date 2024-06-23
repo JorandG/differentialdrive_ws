@@ -60,7 +60,7 @@ for r=1:num_robots
     MILPData{r}.DepotFinish = [];
     MILPData{r}.FinishedFilling = repmat(0, 1, num_filling_boxes+1);
     MILPData{r}.FinishedService = repmat(0, 1, num_filling_boxes+1);
-    MILPData{r}.DistanceWaiting = repmat(0, 1, num_filling_boxes);
+    MILPData{r}.DistanceWaiting = [];
     %send(MILPDataPub{r}, MILPData{r});
 end
 

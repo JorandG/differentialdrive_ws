@@ -18,7 +18,7 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
     % Outputs:
     %    none
 
-    global num_agents num_filling_boxes
+    global num_agents
 
     % Identify tasks assigned to this robot
     index = find(X1(:, robotID) > 0.1);
@@ -52,13 +52,10 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
     MILPData{robotID}.ApproachingFinish = endtime(2*num_filling_boxes+1:3*num_filling_boxes);
     MILPData{robotID}.ServingFinish = endtime(3*num_filling_boxes+1:4*num_filling_boxes);
     MILPData{robotID}.DepotFinish = endtime(4*num_filling_boxes+1:5*num_filling_boxes);
-    
-
-    for t=1:num_filling_boxes
-        MILPData{robotID}.DistanceWaiting(t) = humanData{MILPData{robotID}.Humans(t)}.RobotWaitingDistance(t)
+    if humanData{humanID}.Robots(currentHumanTask) == robotID
+        MILPData{robotID}.DistanceWaiting = humanData{humanID}.RobotWaitingDistance(currentHumanTask)
     end
 
-    
     if humanData{humanID}.ConfirmServing(currentHumanTask) == 1 && MILPData{robotID}.Humans(currentHumanTask) == humanID
         MILPData{robotID}.FinishedService(currentHumanTask) = 1;  
     end

@@ -37,7 +37,8 @@ struct MILPResult_
     , ServingFinish()
     , DepotFinish()
     , FinishedFilling()
-    , FinishedService()  {
+    , FinishedService()
+    , DistanceWaiting()  {
     }
   MILPResult_(const ContainerAllocator& _alloc)
     : RobotID(0)
@@ -53,7 +54,8 @@ struct MILPResult_
     , ServingFinish(_alloc)
     , DepotFinish(_alloc)
     , FinishedFilling(_alloc)
-    , FinishedService(_alloc)  {
+    , FinishedService(_alloc)
+    , DistanceWaiting(_alloc)  {
   (void)_alloc;
     }
 
@@ -101,6 +103,9 @@ struct MILPResult_
    typedef std::vector<int32_t, typename ContainerAllocator::template rebind<int32_t>::other >  _FinishedService_type;
   _FinishedService_type FinishedService;
 
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _DistanceWaiting_type;
+  _DistanceWaiting_type DistanceWaiting;
+
 
 
 
@@ -143,7 +148,8 @@ bool operator==(const ::diff_drive_robot::MILPResult_<ContainerAllocator1> & lhs
     lhs.ServingFinish == rhs.ServingFinish &&
     lhs.DepotFinish == rhs.DepotFinish &&
     lhs.FinishedFilling == rhs.FinishedFilling &&
-    lhs.FinishedService == rhs.FinishedService;
+    lhs.FinishedService == rhs.FinishedService &&
+    lhs.DistanceWaiting == rhs.DistanceWaiting;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -200,12 +206,12 @@ struct MD5Sum< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "fd8dfb9081b18be68467dd19f671fb0d";
+    return "81b36c2343c9f97260edd473aefea46f";
   }
 
   static const char* value(const ::diff_drive_robot::MILPResult_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0xfd8dfb9081b18be6ULL;
-  static const uint64_t static_value2 = 0x8467dd19f671fb0dULL;
+  static const uint64_t static_value1 = 0x81b36c2343c9f972ULL;
+  static const uint64_t static_value2 = 0x60edd473aefea46fULL;
 };
 
 template<class ContainerAllocator>
@@ -238,6 +244,7 @@ struct Definition< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
 "float64[] DepotFinish\n"
 "int32[] FinishedFilling\n"
 "int32[] FinishedService\n"
+"float64[] DistanceWaiting\n"
 ;
   }
 
@@ -270,6 +277,7 @@ namespace serialization
       stream.next(m.DepotFinish);
       stream.next(m.FinishedFilling);
       stream.next(m.FinishedService);
+      stream.next(m.DistanceWaiting);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -367,6 +375,12 @@ struct Printer< ::diff_drive_robot::MILPResult_<ContainerAllocator> >
     {
       s << indent << "  FinishedService[" << i << "]: ";
       Printer<int32_t>::stream(s, indent + "  ", v.FinishedService[i]);
+    }
+    s << indent << "DistanceWaiting[]" << std::endl;
+    for (size_t i = 0; i < v.DistanceWaiting.size(); ++i)
+    {
+      s << indent << "  DistanceWaiting[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.DistanceWaiting[i]);
     }
   }
 };

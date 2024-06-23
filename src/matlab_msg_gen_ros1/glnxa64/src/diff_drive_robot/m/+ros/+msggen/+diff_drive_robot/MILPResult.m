@@ -8,10 +8,11 @@ classdef MILPResult < ros.Message
         MessageType = 'diff_drive_robot/MILPResult' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = 'fd8dfb9081b18be68467dd19f671fb0d' % The MD5 Checksum of the message definition
-        PropertyList = { 'RobotID' 'Humans' 'GoingStart' 'ApproachingStart' 'WaitingStart' 'ServingStart' 'DepotStart' 'GoingFinish' 'ApproachingFinish' 'WaitingFinish' 'ServingFinish' 'DepotFinish' 'FinishedFilling' 'FinishedService' } % List of non-constant message properties
-        ROSPropertyList = { 'RobotID' 'Humans' 'GoingStart' 'ApproachingStart' 'WaitingStart' 'ServingStart' 'DepotStart' 'GoingFinish' 'ApproachingFinish' 'WaitingFinish' 'ServingFinish' 'DepotFinish' 'FinishedFilling' 'FinishedService' } % List of non-constant ROS message properties
+        MD5Checksum = '81b36c2343c9f97260edd473aefea46f' % The MD5 Checksum of the message definition
+        PropertyList = { 'RobotID' 'Humans' 'GoingStart' 'ApproachingStart' 'WaitingStart' 'ServingStart' 'DepotStart' 'GoingFinish' 'ApproachingFinish' 'WaitingFinish' 'ServingFinish' 'DepotFinish' 'FinishedFilling' 'FinishedService' 'DistanceWaiting' } % List of non-constant message properties
+        ROSPropertyList = { 'RobotID' 'Humans' 'GoingStart' 'ApproachingStart' 'WaitingStart' 'ServingStart' 'DepotStart' 'GoingFinish' 'ApproachingFinish' 'WaitingFinish' 'ServingFinish' 'DepotFinish' 'FinishedFilling' 'FinishedService' 'DistanceWaiting' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
+            '' ...
             '' ...
             '' ...
             '' ...
@@ -44,6 +45,7 @@ classdef MILPResult < ros.Message
         DepotFinish
         FinishedFilling
         FinishedService
+        DistanceWaiting
     end
     methods
         function set.RobotID(obj, val)
@@ -194,6 +196,17 @@ classdef MILPResult < ros.Message
             validAttributes = {'vector'};
             validateattributes(val, validClasses, validAttributes, 'MILPResult', 'FinishedService');
             obj.FinishedService = int32(val);
+        end
+        function set.DistanceWaiting(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'MILPResult', 'DistanceWaiting');
+            obj.DistanceWaiting = double(val);
         end
     end
     methods (Static, Access = {?matlab.unittest.TestCase, ?ros.Message})

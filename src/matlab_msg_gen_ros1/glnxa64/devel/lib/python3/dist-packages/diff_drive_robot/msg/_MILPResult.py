@@ -8,7 +8,7 @@ import struct
 
 
 class MILPResult(genpy.Message):
-  _md5sum = "fd8dfb9081b18be68467dd19f671fb0d"
+  _md5sum = "81b36c2343c9f97260edd473aefea46f"
   _type = "diff_drive_robot/MILPResult"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 RobotID
@@ -24,9 +24,10 @@ float64[] WaitingFinish
 float64[] ServingFinish
 float64[] DepotFinish
 int32[] FinishedFilling
-int32[] FinishedService"""
-  __slots__ = ['RobotID','Humans','GoingStart','ApproachingStart','WaitingStart','ServingStart','DepotStart','GoingFinish','ApproachingFinish','WaitingFinish','ServingFinish','DepotFinish','FinishedFilling','FinishedService']
-  _slot_types = ['int32','int32[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]']
+int32[] FinishedService
+float64[] DistanceWaiting"""
+  __slots__ = ['RobotID','Humans','GoingStart','ApproachingStart','WaitingStart','ServingStart','DepotStart','GoingFinish','ApproachingFinish','WaitingFinish','ServingFinish','DepotFinish','FinishedFilling','FinishedService','DistanceWaiting']
+  _slot_types = ['int32','int32[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','float64[]']
 
   def __init__(self, *args, **kwds):
     """
@@ -36,7 +37,7 @@ int32[] FinishedService"""
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       RobotID,Humans,GoingStart,ApproachingStart,WaitingStart,ServingStart,DepotStart,GoingFinish,ApproachingFinish,WaitingFinish,ServingFinish,DepotFinish,FinishedFilling,FinishedService
+       RobotID,Humans,GoingStart,ApproachingStart,WaitingStart,ServingStart,DepotStart,GoingFinish,ApproachingFinish,WaitingFinish,ServingFinish,DepotFinish,FinishedFilling,FinishedService,DistanceWaiting
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -73,6 +74,8 @@ int32[] FinishedService"""
         self.FinishedFilling = []
       if self.FinishedService is None:
         self.FinishedService = []
+      if self.DistanceWaiting is None:
+        self.DistanceWaiting = []
     else:
       self.RobotID = 0
       self.Humans = []
@@ -88,6 +91,7 @@ int32[] FinishedService"""
       self.DepotFinish = []
       self.FinishedFilling = []
       self.FinishedService = []
+      self.DistanceWaiting = []
 
   def _get_types(self):
     """
@@ -155,6 +159,10 @@ int32[] FinishedService"""
       buff.write(_struct_I.pack(length))
       pattern = '<%si'%length
       buff.write(struct.Struct(pattern).pack(*self.FinishedService))
+      length = len(self.DistanceWaiting)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.DistanceWaiting))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -274,6 +282,14 @@ int32[] FinishedService"""
       s = struct.Struct(pattern)
       end += s.size
       self.FinishedService = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.DistanceWaiting = s.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -340,6 +356,10 @@ int32[] FinishedService"""
       buff.write(_struct_I.pack(length))
       pattern = '<%si'%length
       buff.write(self.FinishedService.tostring())
+      length = len(self.DistanceWaiting)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.DistanceWaiting.tostring())
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -460,6 +480,14 @@ int32[] FinishedService"""
       s = struct.Struct(pattern)
       end += s.size
       self.FinishedService = numpy.frombuffer(str[start:end], dtype=numpy.int32, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.DistanceWaiting = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill

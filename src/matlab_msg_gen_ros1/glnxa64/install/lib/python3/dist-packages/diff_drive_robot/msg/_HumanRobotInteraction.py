@@ -8,7 +8,7 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "1000c15f95c2e4fabf7336df01fd5232"
+  _md5sum = "d476374a890a24a3723780d1c56bf0f8"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
@@ -32,9 +32,10 @@ int32 Task
 int32 TaskFilling
 float64[] Happiness
 float64[] Efficiency
+float64[] Severity
 """
-  __slots__ = ['HumanID','Robots','RobotWaitingDistance','RobotVelocityProximity','RobotMinVelocityProximity','RobotMaxVelocityProximity','RobotVelocityProximityWeight','WaitingTime','WaitingTimeWeight','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task','TaskFilling','Happiness','Efficiency']
-  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','int32','int32','float64[]','float64[]']
+  __slots__ = ['HumanID','Robots','RobotWaitingDistance','RobotVelocityProximity','RobotMinVelocityProximity','RobotMaxVelocityProximity','RobotVelocityProximityWeight','WaitingTime','WaitingTimeWeight','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task','TaskFilling','Happiness','Efficiency','Severity']
+  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','int32','int32','float64[]','float64[]','float64[]']
 
   def __init__(self, *args, **kwds):
     """
@@ -44,7 +45,7 @@ float64[] Efficiency
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,Robots,RobotWaitingDistance,RobotVelocityProximity,RobotMinVelocityProximity,RobotMaxVelocityProximity,RobotVelocityProximityWeight,WaitingTime,WaitingTimeWeight,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task,TaskFilling,Happiness,Efficiency
+       HumanID,Robots,RobotWaitingDistance,RobotVelocityProximity,RobotMinVelocityProximity,RobotMaxVelocityProximity,RobotVelocityProximityWeight,WaitingTime,WaitingTimeWeight,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task,TaskFilling,Happiness,Efficiency,Severity
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -95,6 +96,8 @@ float64[] Efficiency
         self.Happiness = []
       if self.Efficiency is None:
         self.Efficiency = []
+      if self.Severity is None:
+        self.Severity = []
     else:
       self.HumanID = 0
       self.Robots = []
@@ -117,6 +120,7 @@ float64[] Efficiency
       self.TaskFilling = 0
       self.Happiness = []
       self.Efficiency = []
+      self.Severity = []
 
   def _get_types(self):
     """
@@ -206,6 +210,10 @@ float64[] Efficiency
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(struct.Struct(pattern).pack(*self.Efficiency))
+      length = len(self.Severity)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.Severity))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -369,6 +377,14 @@ float64[] Efficiency
       s = struct.Struct(pattern)
       end += s.size
       self.Efficiency = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.Severity = s.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -457,6 +473,10 @@ float64[] Efficiency
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
       buff.write(self.Efficiency.tostring())
+      length = len(self.Severity)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.Severity.tostring())
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -621,6 +641,14 @@ float64[] Efficiency
       s = struct.Struct(pattern)
       end += s.size
       self.Efficiency = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.Severity = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill

@@ -190,11 +190,22 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
     } catch (matlab::Exception&) {
         throw std::invalid_argument("Field 'FinishedService' is wrong type; expected a int32.");
     }
+    try {
+        //DistanceWaiting
+        const matlab::data::TypedArray<double> DistanceWaiting_arr = arr["DistanceWaiting"];
+        size_t nelem = DistanceWaiting_arr.getNumberOfElements();
+        	msg->DistanceWaiting.resize(nelem);
+        	std::copy(DistanceWaiting_arr.begin(), DistanceWaiting_arr.begin()+nelem, msg->DistanceWaiting.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'DistanceWaiting' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'DistanceWaiting' is wrong type; expected a double.");
+    }
   }
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_MILPResult_common::get_arr(MDFactory_T& factory, const diff_drive_robot::MILPResult* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","RobotID","Humans","GoingStart","ApproachingStart","WaitingStart","ServingStart","DepotStart","GoingFinish","ApproachingFinish","WaitingFinish","ServingFinish","DepotFinish","FinishedFilling","FinishedService"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","RobotID","Humans","GoingStart","ApproachingStart","WaitingStart","ServingStart","DepotStart","GoingFinish","ApproachingFinish","WaitingFinish","ServingFinish","DepotFinish","FinishedFilling","FinishedService","DistanceWaiting"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/MILPResult");
     // RobotID
@@ -239,6 +250,9 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_MILPResult_common : public MA
     // FinishedService
     auto currentElement_FinishedService = (msg + ctr)->FinishedService;
     outArray[ctr]["FinishedService"] = factory.createArray<diff_drive_robot::MILPResult::_FinishedService_type::const_iterator, int32_t>({currentElement_FinishedService.size(),1}, currentElement_FinishedService.begin(), currentElement_FinishedService.end());
+    // DistanceWaiting
+    auto currentElement_DistanceWaiting = (msg + ctr)->DistanceWaiting;
+    outArray[ctr]["DistanceWaiting"] = factory.createArray<diff_drive_robot::MILPResult::_DistanceWaiting_type::const_iterator, double>({currentElement_DistanceWaiting.size(),1}, currentElement_DistanceWaiting.begin(), currentElement_DistanceWaiting.end());
     }
     return std::move(outArray);
   } 
