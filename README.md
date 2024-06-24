@@ -64,6 +64,11 @@ export ROS_HOSTNAME=192.168.0.185
 export ROS_MASTER_URI=http://192.168.0.137:11311
 ```
 
+Start the vrpn_client:
+```
+roslaunch vrpn_client_ros sample.launch 
+```
+
 To start moving the robot (after starting the HRJournal) use on the master PC:
 
 ```
