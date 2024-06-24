@@ -31,7 +31,7 @@ source devel/setup.bash
 rostopic echo /human_robot_interaction1
 ```
 
-##To start the simulation use:
+# To start the simulation use:
 
 ```
 roslaunch diff_drive_robot gazebo_diff_drive_robot.launch
@@ -46,7 +46,7 @@ And to start moving the robot (after starting the HRJournal) use:
 NB: In the file parameters.yaml use "simulation: true" to use the simulation. You can also change the Odometry and Velocities topic for simulation or real world testing. The timing can also be set to "external: true" to use the Timing.py node.
 
 
-##To start the real world testing:
+# To start the real world testing:
 First source the bashrc:
 ```
 source ~/.bashrc
