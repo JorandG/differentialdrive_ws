@@ -64,7 +64,7 @@ export ROS_HOSTNAME=192.168.0.185
 export ROS_MASTER_URI=http://192.168.0.137:11311
 ```
 
-And to start moving the robot (after starting the HRJournal) use:
+To start moving the robot (after starting the HRJournal) use on the master PC:
 
 ```
  roslaunch main_loop_pkg main_loop.launch 
