@@ -8,7 +8,7 @@ import struct
 
 
 class HumanRobotInteraction(genpy.Message):
-  _md5sum = "d476374a890a24a3723780d1c56bf0f8"
+  _md5sum = "d5fec899592480c5639102bc67f05c6a"
   _type = "diff_drive_robot/HumanRobotInteraction"
   _has_header = False  # flag to mark the presence of a Header object
   _full_text = """int32 HumanID
@@ -30,12 +30,13 @@ int32[] ConfirmServing
 int32[] ConfirmFilling
 int32 Task
 int32 TaskFilling
-float64[] Happiness
+float64[] HappinessWait
+float64[] HappinessProx
 float64[] Efficiency
 float64[] Severity
 """
-  __slots__ = ['HumanID','Robots','RobotWaitingDistance','RobotVelocityProximity','RobotMinVelocityProximity','RobotMaxVelocityProximity','RobotVelocityProximityWeight','WaitingTime','WaitingTimeWeight','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task','TaskFilling','Happiness','Efficiency','Severity']
-  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','int32','int32','float64[]','float64[]','float64[]']
+  __slots__ = ['HumanID','Robots','RobotWaitingDistance','RobotVelocityProximity','RobotMinVelocityProximity','RobotMaxVelocityProximity','RobotVelocityProximityWeight','WaitingTime','WaitingTimeWeight','StartFilling','FinishFilling','StartServing','FinishServing','TimeFilling','TimeServing','ConfirmServing','ConfirmFilling','Task','TaskFilling','HappinessWait','HappinessProx','Efficiency','Severity']
+  _slot_types = ['int32','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','float64[]','int32[]','int32[]','int32','int32','float64[]','float64[]','float64[]','float64[]']
 
   def __init__(self, *args, **kwds):
     """
@@ -45,7 +46,7 @@ float64[] Severity
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       HumanID,Robots,RobotWaitingDistance,RobotVelocityProximity,RobotMinVelocityProximity,RobotMaxVelocityProximity,RobotVelocityProximityWeight,WaitingTime,WaitingTimeWeight,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task,TaskFilling,Happiness,Efficiency,Severity
+       HumanID,Robots,RobotWaitingDistance,RobotVelocityProximity,RobotMinVelocityProximity,RobotMaxVelocityProximity,RobotVelocityProximityWeight,WaitingTime,WaitingTimeWeight,StartFilling,FinishFilling,StartServing,FinishServing,TimeFilling,TimeServing,ConfirmServing,ConfirmFilling,Task,TaskFilling,HappinessWait,HappinessProx,Efficiency,Severity
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -92,8 +93,10 @@ float64[] Severity
         self.Task = 0
       if self.TaskFilling is None:
         self.TaskFilling = 0
-      if self.Happiness is None:
-        self.Happiness = []
+      if self.HappinessWait is None:
+        self.HappinessWait = []
+      if self.HappinessProx is None:
+        self.HappinessProx = []
       if self.Efficiency is None:
         self.Efficiency = []
       if self.Severity is None:
@@ -118,7 +121,8 @@ float64[] Severity
       self.ConfirmFilling = []
       self.Task = 0
       self.TaskFilling = 0
-      self.Happiness = []
+      self.HappinessWait = []
+      self.HappinessProx = []
       self.Efficiency = []
       self.Severity = []
 
@@ -202,10 +206,14 @@ float64[] Severity
       buff.write(struct.Struct(pattern).pack(*self.ConfirmFilling))
       _x = self
       buff.write(_get_struct_2i().pack(_x.Task, _x.TaskFilling))
-      length = len(self.Happiness)
+      length = len(self.HappinessWait)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
-      buff.write(struct.Struct(pattern).pack(*self.Happiness))
+      buff.write(struct.Struct(pattern).pack(*self.HappinessWait))
+      length = len(self.HappinessProx)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(struct.Struct(pattern).pack(*self.HappinessProx))
       length = len(self.Efficiency)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -368,7 +376,15 @@ float64[] Severity
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.Happiness = s.unpack(str[start:end])
+      self.HappinessWait = s.unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.HappinessProx = s.unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
@@ -465,10 +481,14 @@ float64[] Severity
       buff.write(self.ConfirmFilling.tostring())
       _x = self
       buff.write(_get_struct_2i().pack(_x.Task, _x.TaskFilling))
-      length = len(self.Happiness)
+      length = len(self.HappinessWait)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
-      buff.write(self.Happiness.tostring())
+      buff.write(self.HappinessWait.tostring())
+      length = len(self.HappinessProx)
+      buff.write(_struct_I.pack(length))
+      pattern = '<%sd'%length
+      buff.write(self.HappinessProx.tostring())
       length = len(self.Efficiency)
       buff.write(_struct_I.pack(length))
       pattern = '<%sd'%length
@@ -632,7 +652,15 @@ float64[] Severity
       start = end
       s = struct.Struct(pattern)
       end += s.size
-      self.Happiness = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      self.HappinessWait = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      pattern = '<%sd'%length
+      start = end
+      s = struct.Struct(pattern)
+      end += s.size
+      self.HappinessProx = numpy.frombuffer(str[start:end], dtype=numpy.float64, count=length)
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])

@@ -128,7 +128,6 @@ if any(timingData >= 492) && ~flags(17)
     humanData{1}.FinishServing(3) = 492;
     humanData{1}.ConfirmServing(3) = 1;
     humanData{1}.RobotVelocityProximity(3) = 0; %Ok
-    humanData{1}.WaitingTime(3) = 0; %Ok
     humanData{1}.RobotWaitingDistance(3) = 0.5;
     flags(17) = true;
     send(pub{1}, humanData{1});
@@ -136,7 +135,6 @@ elseif any(timingData >= 558) && ~flags(18)
     humanData{2}.FinishServing(3) = 558;
     humanData{2}.ConfirmServing(3) = 1;  
     humanData{2}.RobotVelocityProximity(3) = 0; %Ok
-    humanData{2}.WaitingTime(3) = 0; %Ok
     humanData{2}.RobotWaitingDistance(3) = 1.5;
     flags(18) = true;
     send(pub{2}, humanData{2});

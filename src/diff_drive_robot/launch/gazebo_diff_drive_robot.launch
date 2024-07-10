@@ -10,12 +10,12 @@
   </include>
 
   <!-- Define positions and orientations for two robots -->
-  <arg name="robot1_pos_x" default="-1"/>
-  <arg name="robot1_pos_y" default="-0.5"/>
+  <arg name="robot1_pos_x" default="2.08"/>
+  <arg name="robot1_pos_y" default="-1.33"/>
   <arg name="robot1_pos_z" default="0.0"/>
   <arg name="robot1_yaw" default="0"/>
-  <arg name="robot2_pos_x" default="0"/>
-  <arg name="robot2_pos_y" default="0.5"/>
+  <arg name="robot2_pos_x" default="1.48"/>
+  <arg name="robot2_pos_y" default="-2.14"/>
   <arg name="robot2_pos_z" default="0.0"/>
   <arg name="robot2_yaw" default="0" />
 
@@ -45,7 +45,7 @@
   <node name="spawn_$(arg human_1)" pkg="gazebo_ros" type="spawn_model"
       args="-file $(find diff_drive_robot)/model/model_blue.sdf -sdf
               -model $(arg human_1)
-              -x 12 -y 3 -z 0 -Y 0"
+              -x 0 -y 0 -z 0 -Y 0"
       respawn="false" output="screen">
   </node>
 
@@ -55,7 +55,7 @@
   <node name="spawn_$(arg human_2)" pkg="gazebo_ros" type="spawn_model"
       args="-file $(find diff_drive_robot)/model/model_red.sdf -sdf
               -model $(arg human_2)
-              -x 10 -y 2 -z 0 -Y 0"
+              -x -1.2 -y 0.63 -z 0 -Y 0"
       respawn="false" output="screen">
   </node>
 </launch>

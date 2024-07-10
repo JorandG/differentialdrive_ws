@@ -97,7 +97,7 @@ void RobotControllerClass::init_robot_controller_parameters(double b_, double di
     /* -------------------------------------------------------------------------- */
 }
 
-void RobotControllerClass::init_spline_trajectories(Eigen::Vector2d start_position, Eigen::Vector2d corner_position, Eigen::Vector2d end_position, double t_1, double t_2, double t_3)
+void RobotControllerClass::init_spline_trajectories(Eigen::Vector2d start_position, Eigen::Vector2d corner_position, Eigen::Vector2d end_position, double t_1, double t_2, double t_3, std::pair<Eigen::Vector2d,Eigen::Vector2d> velocity, std::pair<Eigen::Vector2d,Eigen::Vector2d> acceleration)
 {
     /* -------------------------------------------------------------------------- */
     /*                             Auxiliary Variables                            */
@@ -168,10 +168,22 @@ void RobotControllerClass::init_spline_trajectories(Eigen::Vector2d start_positi
     this->robot_controller.times = fmt::format("[{},{},{},{},{},{},{},{},{}]",t_1,t_C,t_A,t_E,t_2,t_F,t_B,t_D,t_3).c_str();
     /* -------------------------------------------------------------------------- */
 
-    /* -------------------------- Trajectory Generation ------------------------- */
-    alglib::spline1dbuildcubic(this->robot_controller.times,this->robot_controller.traj_x_values,this->robot_controller.N,this->robot_controller.bound_type,0.0 /*First Derivative (Velocity) - Initial Value*/,this->robot_controller.bound_type,0.0 /*First Derivative (Velocity) - Final Value*/,this->robot_controller.traj_x);
+    std::cout << "[Velocities] -  Initial: " << velocity.first.transpose() << " Final: " << velocity.second.transpose() << std::endl;
+    std::cout << "[Acceleration] -  Initial: " << acceleration.first.transpose() << " Final: " << acceleration.second.transpose() << std::endl;
 
-    alglib::spline1dbuildcubic(this->robot_controller.times,this->robot_controller.traj_y_values,this->robot_controller.N,this->robot_controller.bound_type,0.0 /*First Derivative (Velocity) - Initial Value*/,this->robot_controller.bound_type,0.0 /*First Derivative (Velocity) - Final Value*/,this->robot_controller.traj_y);
+    /* -------------------------- Trajectory Generation ------------------------- */
+    if(acceleration.first.isZero() == false || acceleration.second.isZero() == false)
+    {
+        alglib::spline1dbuildcubic(this->robot_controller.times,this->robot_controller.traj_x_values,this->robot_controller.N,alglib::ae_int_t(2) /*Second derivative boundary condition*/,acceleration.first[0] /*Second Derivative (Acceleration) - Initial Value*/,alglib::ae_int_t(2) /*Second derivative boundary condition*/,acceleration.second[0] /*Second Derivative (Acceleration) - Final Value*/,this->robot_controller.traj_x);
+
+        alglib::spline1dbuildcubic(this->robot_controller.times,this->robot_controller.traj_y_values,this->robot_controller.N,alglib::ae_int_t(2) /*Second derivative boundary condition*/,acceleration.first[1] /*Second Derivative (Acceleration) - Initial Value*/,alglib::ae_int_t(2) /*Second derivative boundary condition*/,acceleration.second[1] /*Second Derivative (Acceleration) - Final Value*/,this->robot_controller.traj_y);
+    }
+    else 
+    {
+        alglib::spline1dbuildcubic(this->robot_controller.times,this->robot_controller.traj_x_values,this->robot_controller.N,this->robot_controller.bound_type /*First derivative boundary condition*/,velocity.first[0] /*First Derivative (Velocity) - Initial Value*/,this->robot_controller.bound_type /*First derivative boundary condition*/,velocity.second[0] /*First Derivative (Velocity) - Final Value*/,this->robot_controller.traj_x);
+
+        alglib::spline1dbuildcubic(this->robot_controller.times,this->robot_controller.traj_y_values,this->robot_controller.N,this->robot_controller.bound_type /*First derivative boundary condition*/,velocity.first[1] /*First Derivative (Velocity) - Initial Value*/,this->robot_controller.bound_type /*First derivative boundary condition*/,velocity.second[1] /*First Derivative (Velocity) - Final Value*/,this->robot_controller.traj_y);
+    }
     /* -------------------------------------------------------------------------- */
 
     /* -------------------------------------------------------------------------- */
@@ -211,7 +223,7 @@ void RobotControllerClass::update_robot_parameters(const double& t)
             if (static_cast<int>(this->activities[this->ongoing_activity_ID].phase.size() - 1) > this->ongoing_phase_ID)
             {
                 /* ---------------------------------- Debug --------------------------------- */
-                std::cout << fmt::format("[Time]: {}", t) << std::endl;
+                // std::cout << fmt::format("[Time]: {}", t) << std::endl;
                 /* -------------------------------------------------------------------------- */
 
 
@@ -314,8 +326,7 @@ void RobotControllerClass::update_robot_parameters(const double& t)
         /* -------------------------------------------------------------------------- */
 
         /* ------------------------------- Trajectory ------------------------------- */
-        if(phase_.goal.type != -1)
-            this->init_spline_trajectories(phase_.goal.initial_pose.head(2),phase_.goal.mid_pose.head(2),phase_.goal.final_pose.head(2),phase_.goal.times(0),phase_.goal.times(1),phase_.goal.times(2));
+        this->init_spline_trajectories(phase_.goal.initial_pose.head(2),phase_.goal.mid_pose.head(2),phase_.goal.final_pose.head(2),phase_.goal.times(0),phase_.goal.times(1),phase_.goal.times(2));
         /* -------------------------------------------------------------------------- */
 
         /* ------------------------------ Debug Message ----------------------------- */
@@ -728,6 +739,8 @@ void RobotControllerClass::allocate_a_plan(std::vector<activityStruct> activitie
 
                 /* ------------------------- From Control to Contact ------------------------ */
                 initial_pose_contact = control2contact(this->activities[i].phase[this->ongoing_phase_ID].goal.initial_pose /*Initial Pose of the Control Point*/, this->robot_controller.b /*Displacement wrt the contact point*/);
+                
+                // initial_pose_contact << this->position[0], this->position[1], this->theta;
                 final_pose_contact = this->activities[i].phase[this->ongoing_phase_ID].desired_configuration;
                 /* -------------------------------------------------------------------------- */
 
@@ -885,8 +898,10 @@ goalStruct RobotControllerClass::goal_generation(int type_, Eigen::Vector3d init
     /* -------------------------------------------------------------------------- */
     /*                                    Debug                                   */
     /* -------------------------------------------------------------------------- */
-    std::cout << fmt::format("[{}]: Start: {}, ComputedEnd: {}, NominalEnd: {}",this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].name,goal_.times(0),goal_.times(2),goal_.times(0) + allocated_time_)  << std::endl;
-    std::cout << "InitialPose: " << initial_pose_.transpose() << " FinalPose: " << final_pose_.transpose() << std::endl;
+    std::cout << "/* -------------------------------------------------------------------------- */" << std::endl;
+    std::cout << fmt::format("[Robot-{}][{}]: Duration: {}, Start: {}, ComputedEnd: {}, NominalEnd: {}",this->ID,this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].name,goal_.times(0) + allocated_time_ - goal_.times(0),goal_.times(0),goal_.times(2),goal_.times(0) + allocated_time_)  << std::endl;
+    std::cout << fmt::format("[Robot-{}][{}]:",this->ID,this->activities[this->ongoing_activity_ID].phase[this->ongoing_phase_ID].name) << " InitialPose: " << initial_pose_.transpose() << " FinalPose: " << final_pose_.transpose() << std::endl;
+    std::cout << "/* -------------------------------------------------------------------------- */" << std::endl;
     /* -------------------------------------------------------------------------- */
 
     /* -------------------------------------------------------------------------- */

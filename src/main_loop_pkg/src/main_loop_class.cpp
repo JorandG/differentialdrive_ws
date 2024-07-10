@@ -34,7 +34,7 @@ MainLoopClass::MainLoopClass(const ros::NodeHandle &node_handler_)
     this->node_handler.getParam("/timer/external",this->external_timer.first);
     this->external_timer.second = false;
 
-    this->control_frequency = 50;
+    this->control_frequency = 100;
     this->Ts = 1/this->control_frequency;
     this->t = 0.0;
     /* -------------------------------------------------------------------------- */
@@ -957,8 +957,7 @@ void MainLoopClass::odometry_subscriber_real_CB(const geometry_msgs::PoseStamped
     /*                          Variables Initialization                          */
     /* -------------------------------------------------------------------------- */
     position << msg->pose.position.x,msg->pose.position.y;
-    position = -position;
-    
+
     quat << msg->pose.orientation.x,msg->pose.orientation.y,msg->pose.orientation.z,msg->pose.orientation.w;
     theta = quat2rpy((Eigen::VectorXd) quat)(2);
     /* -------------------------------------------------------------------------- */
@@ -1021,6 +1020,7 @@ void MainLoopClass::MILP_results_subscriber_CB(const diff_drive_robot::MILPResul
         /* -------------------------------------------------------------------------- */
         phaseStruct phase_;
         activityStruct activity_;
+        int sign = (this->humans_positions_vector[msg->Humans[i]-1][1] < 0) ? -1 : 1;
         /* -------------------------------------------------------------------------- */
 
         /* -------------------------------------------------------------------------- */
@@ -1028,7 +1028,6 @@ void MainLoopClass::MILP_results_subscriber_CB(const diff_drive_robot::MILPResul
         /* -------------------------------------------------------------------------- */
 
         /* ------------------------------ Waiting Phase ----------------------------- */
-        
         /* -------------------------------------------------------------------------- */
 
         /* ---------------------------------- Gains --------------------------------- */
@@ -1041,7 +1040,7 @@ void MainLoopClass::MILP_results_subscriber_CB(const diff_drive_robot::MILPResul
         phase_.startTime = msg->GoingStart[i];
         phase_.endTime = msg->GoingFinish[i];
         phase_.allocated_time = msg->GoingFinish[i] - msg->GoingStart[i];
-        phase_.desired_configuration << this->humans_positions_vector[msg->Humans[i]-1][0], k_1*this->humans_positions_vector[msg->Humans[i]-1][1], 0.0;
+        phase_.desired_configuration << this->humans_positions_vector[msg->Humans[i]-1][0], sign*(std::abs(this->humans_positions_vector[msg->Humans[i]-1][1]) - msg->DistanceWaiting[i]), 0.0;
         phase_.switch_condition = std::make_pair<bool,bool>(false,false);
         /* -------------------------------------------------------------------------- */
         
@@ -1072,7 +1071,6 @@ void MainLoopClass::MILP_results_subscriber_CB(const diff_drive_robot::MILPResul
         phase_.allocated_time = msg->ApproachingFinish[i] - msg->ApproachingStart[i];
         phase_.desired_configuration << this->humans_positions_vector[msg->Humans[i]-1][0], this->humans_positions_vector[msg->Humans[i]-1][1], 0.0;
         phase_.switch_condition = std::make_pair<bool,bool>(false,false);
-        std::cout << phase_.desired_configuration.transpose() << std::endl;
         /* -------------------------------------------------------------------------- */
 
         /* ---------------------- Approaching Phase - Push Back --------------------- */

@@ -43,7 +43,8 @@ struct HumanRobotInteraction_
     , ConfirmFilling()
     , Task(0)
     , TaskFilling(0)
-    , Happiness()
+    , HappinessWait()
+    , HappinessProx()
     , Efficiency()
     , Severity()  {
     }
@@ -67,7 +68,8 @@ struct HumanRobotInteraction_
     , ConfirmFilling(_alloc)
     , Task(0)
     , TaskFilling(0)
-    , Happiness(_alloc)
+    , HappinessWait(_alloc)
+    , HappinessProx(_alloc)
     , Efficiency(_alloc)
     , Severity(_alloc)  {
   (void)_alloc;
@@ -132,8 +134,11 @@ struct HumanRobotInteraction_
    typedef int32_t _TaskFilling_type;
   _TaskFilling_type TaskFilling;
 
-   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _Happiness_type;
-  _Happiness_type Happiness;
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _HappinessWait_type;
+  _HappinessWait_type HappinessWait;
+
+   typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _HappinessProx_type;
+  _HappinessProx_type HappinessProx;
 
    typedef std::vector<double, typename ContainerAllocator::template rebind<double>::other >  _Efficiency_type;
   _Efficiency_type Efficiency;
@@ -189,7 +194,8 @@ bool operator==(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAlloca
     lhs.ConfirmFilling == rhs.ConfirmFilling &&
     lhs.Task == rhs.Task &&
     lhs.TaskFilling == rhs.TaskFilling &&
-    lhs.Happiness == rhs.Happiness &&
+    lhs.HappinessWait == rhs.HappinessWait &&
+    lhs.HappinessProx == rhs.HappinessProx &&
     lhs.Efficiency == rhs.Efficiency &&
     lhs.Severity == rhs.Severity;
 }
@@ -248,12 +254,12 @@ struct MD5Sum< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "d476374a890a24a3723780d1c56bf0f8";
+    return "d5fec899592480c5639102bc67f05c6a";
   }
 
   static const char* value(const ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0xd476374a890a24a3ULL;
-  static const uint64_t static_value2 = 0x723780d1c56bf0f8ULL;
+  static const uint64_t static_value1 = 0xd5fec899592480c5ULL;
+  static const uint64_t static_value2 = 0x639102bc67f05c6aULL;
 };
 
 template<class ContainerAllocator>
@@ -291,7 +297,8 @@ struct Definition< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator
 "int32[] ConfirmFilling\n"
 "int32 Task\n"
 "int32 TaskFilling\n"
-"float64[] Happiness\n"
+"float64[] HappinessWait\n"
+"float64[] HappinessProx\n"
 "float64[] Efficiency\n"
 "float64[] Severity\n"
 ;
@@ -331,7 +338,8 @@ namespace serialization
       stream.next(m.ConfirmFilling);
       stream.next(m.Task);
       stream.next(m.TaskFilling);
-      stream.next(m.Happiness);
+      stream.next(m.HappinessWait);
+      stream.next(m.HappinessProx);
       stream.next(m.Efficiency);
       stream.next(m.Severity);
     }
@@ -454,11 +462,17 @@ struct Printer< ::diff_drive_robot::HumanRobotInteraction_<ContainerAllocator> >
     Printer<int32_t>::stream(s, indent + "  ", v.Task);
     s << indent << "TaskFilling: ";
     Printer<int32_t>::stream(s, indent + "  ", v.TaskFilling);
-    s << indent << "Happiness[]" << std::endl;
-    for (size_t i = 0; i < v.Happiness.size(); ++i)
+    s << indent << "HappinessWait[]" << std::endl;
+    for (size_t i = 0; i < v.HappinessWait.size(); ++i)
     {
-      s << indent << "  Happiness[" << i << "]: ";
-      Printer<double>::stream(s, indent + "  ", v.Happiness[i]);
+      s << indent << "  HappinessWait[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.HappinessWait[i]);
+    }
+    s << indent << "HappinessProx[]" << std::endl;
+    for (size_t i = 0; i < v.HappinessProx.size(); ++i)
+    {
+      s << indent << "  HappinessProx[" << i << "]: ";
+      Printer<double>::stream(s, indent + "  ", v.HappinessProx[i]);
     }
     s << indent << "Efficiency[]" << std::endl;
     for (size_t i = 0; i < v.Efficiency.size(); ++i)

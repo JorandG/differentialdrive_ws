@@ -193,7 +193,7 @@ class RobotControllerClass
     /* ----------------------------- Initialization ----------------------------- */
     void init_robot_controller_parameters(double b_, double distance_threshold_, double k_1_, double k_2_, double k_3_, double max_linear_velocity_, double max_angular_velocity_, bool obstacle_avoidance_enabled_, double obstacle_avoidance_gain_, double obstacle_avoidance_threshold_, double obstacle_avoidance_eta_);
 
-    void init_spline_trajectories(Eigen::Vector2d start_position, Eigen::Vector2d corner_position, Eigen::Vector2d end_position, double t_1, double t_2, double t_3);
+    void init_spline_trajectories(Eigen::Vector2d start_position, Eigen::Vector2d corner_position, Eigen::Vector2d end_position, double t_1, double t_2, double t_3, std::pair<Eigen::Vector2d,Eigen::Vector2d> velocity = std::make_pair<Eigen::Vector2d,Eigen::Vector2d>(Eigen::Vector2d::Zero(),Eigen::Vector2d::Zero()), std::pair<Eigen::Vector2d,Eigen::Vector2d> acceleration = std::make_pair<Eigen::Vector2d,Eigen::Vector2d>(Eigen::Vector2d::Zero(),Eigen::Vector2d::Zero()));    
     /* -------------------------------------------------------------------------- */
 
     /* ------------------------------ Update/Reset ------------------------------ */

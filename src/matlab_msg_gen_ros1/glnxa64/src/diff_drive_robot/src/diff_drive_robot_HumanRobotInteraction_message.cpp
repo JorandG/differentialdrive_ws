@@ -242,15 +242,26 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
         throw std::invalid_argument("Field 'TaskFilling' is wrong type; expected a int32.");
     }
     try {
-        //Happiness
-        const matlab::data::TypedArray<double> Happiness_arr = arr["Happiness"];
-        size_t nelem = Happiness_arr.getNumberOfElements();
-        	msg->Happiness.resize(nelem);
-        	std::copy(Happiness_arr.begin(), Happiness_arr.begin()+nelem, msg->Happiness.begin());
+        //HappinessWait
+        const matlab::data::TypedArray<double> HappinessWait_arr = arr["HappinessWait"];
+        size_t nelem = HappinessWait_arr.getNumberOfElements();
+        	msg->HappinessWait.resize(nelem);
+        	std::copy(HappinessWait_arr.begin(), HappinessWait_arr.begin()+nelem, msg->HappinessWait.begin());
     } catch (matlab::data::InvalidFieldNameException&) {
-        throw std::invalid_argument("Field 'Happiness' is missing.");
+        throw std::invalid_argument("Field 'HappinessWait' is missing.");
     } catch (matlab::Exception&) {
-        throw std::invalid_argument("Field 'Happiness' is wrong type; expected a double.");
+        throw std::invalid_argument("Field 'HappinessWait' is wrong type; expected a double.");
+    }
+    try {
+        //HappinessProx
+        const matlab::data::TypedArray<double> HappinessProx_arr = arr["HappinessProx"];
+        size_t nelem = HappinessProx_arr.getNumberOfElements();
+        	msg->HappinessProx.resize(nelem);
+        	std::copy(HappinessProx_arr.begin(), HappinessProx_arr.begin()+nelem, msg->HappinessProx.begin());
+    } catch (matlab::data::InvalidFieldNameException&) {
+        throw std::invalid_argument("Field 'HappinessProx' is missing.");
+    } catch (matlab::Exception&) {
+        throw std::invalid_argument("Field 'HappinessProx' is wrong type; expected a double.");
     }
     try {
         //Efficiency
@@ -278,7 +289,7 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
   //----------------------------------------------------------------------------
   MDArray_T diff_drive_robot_msg_HumanRobotInteraction_common::get_arr(MDFactory_T& factory, const diff_drive_robot::HumanRobotInteraction* msg,
        MultiLibLoader loader, size_t size) {
-    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","Robots","RobotWaitingDistance","RobotVelocityProximity","RobotMinVelocityProximity","RobotMaxVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling","Happiness","Efficiency","Severity"});
+    auto outArray = factory.createStructArray({size,1},{"MessageType","HumanID","Robots","RobotWaitingDistance","RobotVelocityProximity","RobotMinVelocityProximity","RobotMaxVelocityProximity","RobotVelocityProximityWeight","WaitingTime","WaitingTimeWeight","StartFilling","FinishFilling","StartServing","FinishServing","TimeFilling","TimeServing","ConfirmServing","ConfirmFilling","Task","TaskFilling","HappinessWait","HappinessProx","Efficiency","Severity"});
     for(size_t ctr = 0; ctr < size; ctr++){
     outArray[ctr]["MessageType"] = factory.createCharArray("diff_drive_robot/HumanRobotInteraction");
     // HumanID
@@ -338,9 +349,12 @@ class DIFF_DRIVE_ROBOT_EXPORT diff_drive_robot_msg_HumanRobotInteraction_common 
     // TaskFilling
     auto currentElement_TaskFilling = (msg + ctr)->TaskFilling;
     outArray[ctr]["TaskFilling"] = factory.createScalar(currentElement_TaskFilling);
-    // Happiness
-    auto currentElement_Happiness = (msg + ctr)->Happiness;
-    outArray[ctr]["Happiness"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_Happiness_type::const_iterator, double>({currentElement_Happiness.size(),1}, currentElement_Happiness.begin(), currentElement_Happiness.end());
+    // HappinessWait
+    auto currentElement_HappinessWait = (msg + ctr)->HappinessWait;
+    outArray[ctr]["HappinessWait"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_HappinessWait_type::const_iterator, double>({currentElement_HappinessWait.size(),1}, currentElement_HappinessWait.begin(), currentElement_HappinessWait.end());
+    // HappinessProx
+    auto currentElement_HappinessProx = (msg + ctr)->HappinessProx;
+    outArray[ctr]["HappinessProx"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_HappinessProx_type::const_iterator, double>({currentElement_HappinessProx.size(),1}, currentElement_HappinessProx.begin(), currentElement_HappinessProx.end());
     // Efficiency
     auto currentElement_Efficiency = (msg + ctr)->Efficiency;
     outArray[ctr]["Efficiency"] = factory.createArray<diff_drive_robot::HumanRobotInteraction::_Efficiency_type::const_iterator, double>({currentElement_Efficiency.size(),1}, currentElement_Efficiency.begin(), currentElement_Efficiency.end());

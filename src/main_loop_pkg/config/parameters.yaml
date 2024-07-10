@@ -5,8 +5,8 @@ phases:
 
 humans:
   position:
-    - [2, 2.5]
-    - [1, 2]
+    - [0, 0]
+    - [-1.2, 0.63]
 
 robots:
   controller:
@@ -19,18 +19,21 @@ robots:
     k_1: 0.2
     k_2: 0.2
     k_3: 1.0
-    max_linear_velocity: 0.25
+    max_linear_velocity: 0.22
     max_angular_velocity: 1.0
   home_position:
-    - [-1, -0.5]
-    - [-0.5, 0.5]
+    - [2.08, -1.33]
+    - [1.48, -2.14]
   topics:
     MILP_results:
       - "/MILPResults1"
       - "/MILPResults2"
+    HRI:
+      - "/human_robot_interaction1"
+      - "/human_robot_interaction2"
     odometry:
       - "/vrpn_client_node/Turtlebot1/pose" #Simulation: /robot1/odom - Real: /vrpn_client_node/Turtlebot1/pose
-      - "/vrpn_client_node/Turtlebot31/pose" #Simulation: /robot2/odom - Real: /vrpn_client_node/Turtlebot3/pose
+      - "/vrpn_client_node/Turtlebot3/pose" #Simulation: /robot2/odom - Real: /vrpn_client_node/Turtlebot3/pose
     velocities:
       - "/nuc1/cmd_vel_mux/input/teleop" #Simulation: /robot1/cmd_vel - Real: /nuc1/cmd_vel_mux/input/teleop
       - "/nuc3/cmd_vel_mux/input/teleop" #Simulation: /robot2/cmd_vel - Real: /nuc3/cmd_vel_mux/input/teleop

@@ -8,10 +8,11 @@ classdef HumanRobotInteraction < ros.Message
         MessageType = 'diff_drive_robot/HumanRobotInteraction' % The ROS message type
     end
     properties (Constant, Hidden)
-        MD5Checksum = 'd476374a890a24a3723780d1c56bf0f8' % The MD5 Checksum of the message definition
-        PropertyList = { 'HumanID' 'Robots' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' 'Happiness' 'Efficiency' 'Severity' } % List of non-constant message properties
-        ROSPropertyList = { 'HumanID' 'Robots' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' 'Happiness' 'Efficiency' 'Severity' } % List of non-constant ROS message properties
+        MD5Checksum = 'd5fec899592480c5639102bc67f05c6a' % The MD5 Checksum of the message definition
+        PropertyList = { 'HumanID' 'Robots' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' 'HappinessWait' 'HappinessProx' 'Efficiency' 'Severity' } % List of non-constant message properties
+        ROSPropertyList = { 'HumanID' 'Robots' 'RobotWaitingDistance' 'RobotVelocityProximity' 'RobotMinVelocityProximity' 'RobotMaxVelocityProximity' 'RobotVelocityProximityWeight' 'WaitingTime' 'WaitingTimeWeight' 'StartFilling' 'FinishFilling' 'StartServing' 'FinishServing' 'TimeFilling' 'TimeServing' 'ConfirmServing' 'ConfirmFilling' 'Task' 'TaskFilling' 'HappinessWait' 'HappinessProx' 'Efficiency' 'Severity' } % List of non-constant ROS message properties
         PropertyMessageTypes = { '' ...
+            '' ...
             '' ...
             '' ...
             '' ...
@@ -57,7 +58,8 @@ classdef HumanRobotInteraction < ros.Message
         ConfirmFilling
         Task
         TaskFilling
-        Happiness
+        HappinessWait
+        HappinessProx
         Efficiency
         Severity
     end
@@ -256,7 +258,7 @@ classdef HumanRobotInteraction < ros.Message
             validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'TaskFilling');
             obj.TaskFilling = int32(val);
         end
-        function set.Happiness(obj, val)
+        function set.HappinessWait(obj, val)
             validClasses = {'numeric'};
             if isempty(val)
                 % Allow empty [] input
@@ -264,8 +266,19 @@ classdef HumanRobotInteraction < ros.Message
             end
             val = val(:);
             validAttributes = {'vector'};
-            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'Happiness');
-            obj.Happiness = double(val);
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'HappinessWait');
+            obj.HappinessWait = double(val);
+        end
+        function set.HappinessProx(obj, val)
+            validClasses = {'numeric'};
+            if isempty(val)
+                % Allow empty [] input
+                val = double.empty(0, 1);
+            end
+            val = val(:);
+            validAttributes = {'vector'};
+            validateattributes(val, validClasses, validAttributes, 'HumanRobotInteraction', 'HappinessProx');
+            obj.HappinessProx = double(val);
         end
         function set.Efficiency(obj, val)
             validClasses = {'numeric'};
