@@ -30,3 +30,47 @@ source devel/setup.bash
 ```
 rostopic echo /human_robot_interaction1
 ```
+
+# To start the simulation use:
+
+```
+roslaunch diff_drive_robot gazebo_diff_drive_robot.launch
+```
+
+And to start moving the robot (after starting the HRJournal) use:
+
+```
+ roslaunch main_loop_pkg main_loop.launch 
+```
+
+NB: In the file parameters.yaml use "simulation: true" to use the simulation. You can also change the Odometry and Velocities topic for simulation or real world testing. The timing can also be set to "external: true" to use the Timing.py node.
+
+
+# To start the real world testing:
+First source the bashrc:
+```
+source ~/.bashrc
+```
+
+Where the IPs should be coherent with the network for example for the master:
+```
+export ROS_HOSTNAME=192.168.0.137
+export ROS_MASTER_URI=http://192.168.0.137:11311
+```
+
+And for a turtlebot:
+```
+export ROS_HOSTNAME=192.168.0.185
+export ROS_MASTER_URI=http://192.168.0.137:11311
+```
+
+Start the vrpn_client:
+```
+roslaunch vrpn_client_ros sample.launch 
+```
+
+To start moving the robot (after starting the HRJournal) use on the master PC:
+
+```
+ roslaunch main_loop_pkg main_loop.launch 
+```
