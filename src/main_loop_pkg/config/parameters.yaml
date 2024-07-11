@@ -19,7 +19,7 @@ robots:
     k_1: 0.2
     k_2: 0.2
     k_3: 1.0
-    max_linear_velocity: 0.22
+    max_linear_velocity: 0.25
     max_angular_velocity: 1.0
   home_position:
     - [2.08, -1.33]

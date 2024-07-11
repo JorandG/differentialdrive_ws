@@ -11,13 +11,13 @@ global FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskD
 
 global flags
 
-flags = false(1, 19);
+flags = false(1, 28);
 
 num_humans = 2;
 num_agents = num_humans;
 num_filling_boxes = 3;
 num_robots = 2;
-initialTime = 150;
+initialTime = 110;
 humanData = cell(num_humans, 1);
 pub = cell(num_humans, 1);
 humanSub = cell(num_humans, 1);
@@ -108,8 +108,8 @@ num_tasks = num_service_tasks;
 service_time = zeros(num_tasks, num_robots);
 
 M = 1000000;
-vel_min = ones(num_robots,1)*0.02; % min velocity for the robots
-vel_max = ones(num_robots,1)*0.1; % max velocity for the robots
+vel_min = ones(num_robots,1)*0.025; % min velocity for the robots
+vel_max = ones(num_robots,1)*0.19; % max velocity for the robots
 chi = ones(num_robots,1)*1;
 Reduction = 1;
 
@@ -160,23 +160,33 @@ for h=1:num_agents
     ProximityTaskWeights = [ProximityTaskWeights, humanData{h}.RobotVelocityProximityWeight(1)']
 end
 
+% Initialize a cell array to store the robots serving each human
+humanData = cell(num_agents, 1);
 for h = 1:num_agents
-    % Find the indices of robots serving the human
-    serving_robots = find(ReAll.X(:, h));
-    % Calculate the actual robot numbers (considering num_robots)
-    robot_numbers = mod(serving_robots - 1, num_robots) + 1;
+    humanData{h}.Robots = [];
+end
+
+% Loop over each task to map robots to humans
+for task_idx = 1:num_tasks
+    % Determine the current human being served
+    current_human = mod(task_idx - 1, num_agents) + 1;
+    
+    % Find the robots serving in the current task
+    serving_robots = find(ReAll.X(task_idx, :));
     
     % Store the results in the corresponding human vectors
-    humanData{h}.Robots = robot_numbers';
+    for robot_idx = serving_robots
+        humanData{current_human}.Robots = [humanData{current_human}.Robots; robot_idx];
+    end
 end
 
 % Display the results
 for h = 1:num_agents
     fprintf('Human %d robots:\n', h);
     disp(humanData{h}.Robots);
-    send(pub{h}, humanData{h});
+    % Assuming send and pub are defined elsewhere in your code
+    % send(pub{h}, humanData{h});
 end
-
 
 % Command to run ROS node for timing
 command = 'source /opt/ros/noetic/setup.bash && rosnode list | grep "^/timer_publisher" | xargs -I {} rosnode kill {}';
@@ -199,7 +209,7 @@ simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
     global num_phases
     %% Display
-    close all
+    %close all
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
     colors_matrix = rand(num_agents*num_filling_boxes*4,3);
@@ -305,7 +315,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
             end
         end
         pause(0.01); % Pause for 0.1 second
-        Experiments
+        Experiments2
         duration = ReAll.makespan;
         i = i + 1;
         X1 = repmat(ReAll.X,num_phases,1);
@@ -419,7 +429,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     idx_to_ignore_h = [];
 
                     for l=1:num_service_tasks
-                        if ReAll.timeSh(l) > (FinishFill - 40)
+                        if ReAll.timeSh(l) > (FinishFill - 30)
                             ReAll.timeSh
                             FinishFill
                             idx_to_consider_h(end+1) = l;
@@ -517,8 +527,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
 
                         humanTime_fillingPrev = humanTime_filling;
                         % Send new timings on the topic
-                        humanData{u}.FinishFilling = ReAll.timeFh(u:2:end);
-                        humanData{u}.StartFilling = ReAll.timeSh(u:2:end);
+                        humanData{u}.FinishFilling = ReAll.timeFh(u:num_agents:end);
+                        humanData{u}.StartFilling = ReAll.timeSh(u:num_agents:end);
                         if humanData{u}.Task == num_filling_boxes
                             humanData{u}.Task = num_filling_boxes + 1;
                         else
@@ -565,8 +575,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
 
                         humanTime_fillingPrev = humanTime_filling;
                         % Send new timings on the topic
-                        humanData{u}.FinishFilling = ReAll.timeFh(u:2:end);
-                        humanData{u}.StartFilling = ReAll.timeSh(u:2:end);
+                        humanData{u}.FinishFilling = ReAll.timeFh(u:num_agents:end);
+                        humanData{u}.StartFilling = ReAll.timeSh(u:num_agents:end);
                         humanData{u}.Task = humanData{u}.Task + 1;
                         send(pub{u}, humanData{u});
                         for c=1:num_robots
@@ -603,8 +613,8 @@ global num_filling_boxes humanTime_filling
 %X_t−1 is the feedback at time t−1.
 alpha = 0.75;
 gamma = 0.2;
-theta = 0.75;
-initialValues = 1.5
+theta = 0.9;
+initialValues = 1
 h = u;
 
 %Velocity for the proximity phase 

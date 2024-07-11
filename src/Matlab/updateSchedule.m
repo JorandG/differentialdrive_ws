@@ -72,7 +72,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                     All.timeF(serv)=All.timeS(serv)+serv_time(curr_hum);%service_time1(hum_slow);
 
                     All.timeS(dep)=All.timeF(serv); %depot
-                    All.timeF(dep)=All.timeS(dep)+nonzeros(dist1(dep,:).*X(dep,:))/(0.4*max(vel_max));%update final time of depot
+                    All.timeF(dep)=All.timeS(dep)+nonzeros(dist1(dep,:).*X(dep,:))/(0.3*max(vel_max));%update final time of depot
             end
 
             variation = All.timeF(dep) - prev_dep_time;
@@ -132,7 +132,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                 All.timeF(serv) = All.timeS(serv) + serv_time(curr_hum);%service_time1(hum_slow);
 
                 All.timeS(dep) = All.timeF(serv);%All.timeS(dep) + deltar; %depot
-                All.timeF(dep) = All.timeS(dep) + nonzeros(dist1(dep,:).*X(dep,:))/(0.4*max(vel_max));%update final time of depot
+                All.timeF(dep) = All.timeS(dep) + nonzeros(dist1(dep,:).*X(dep,:))/(0.3*max(vel_max));%update final time of depot
             end
         end
 
