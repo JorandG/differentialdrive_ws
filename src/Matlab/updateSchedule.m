@@ -1,5 +1,5 @@
 function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev)
-    global idx_services_tasks FinishFill human_to_shift waiting_time humanTime_serving difference difference1 humanTime_fillingPrev timeReall num_tasks num_robots num_agents human num_filling_boxes num_phases idx_approaching_tasks num_humans
+    global idx_services_tasks FinishFill human_to_shift waiting_time humanTime_serving difference humanTime_fillingPrev timeReall num_tasks num_robots num_agents human num_filling_boxes num_phases idx_approaching_tasks num_humans
 
     service_time1 = [];
     serv_time = All.timeF(idx_services_tasks) - All.timeS(idx_services_tasks);
@@ -72,7 +72,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                     All.timeF(serv)=All.timeS(serv)+serv_time(curr_hum);%service_time1(hum_slow);
 
                     All.timeS(dep)=All.timeF(serv); %depot
-                    All.timeF(dep)=All.timeS(dep)+nonzeros(dist1(dep,:).*X(dep,:))/(0.3*max(vel_max));%update final time of depot
+                    All.timeF(dep)=All.timeS(dep)+nonzeros(dist1(dep,:).*X(dep,:))/(max(vel_max));%update final time of depot
             end
 
             variation = All.timeF(dep) - prev_dep_time;
@@ -115,7 +115,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
             end
         elseif ismember(curr_hum, idx_to_ignore_h) %&& curr_hum_slow
             disp('shifting current human')
-            deltar = All.timeFh(curr_hum) - All.timeF(curr_hum);
+            deltar = All.timeFh(curr_hum) - All.timeF(curr_hum)
             All.timeSh(curr_hum) = All1.timeSh(curr_hum)
             All.timeFh(curr_hum) = All1.timeFh(curr_hum)
             if curr_hum == human_to_shift
@@ -132,7 +132,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                 All.timeF(serv) = All.timeS(serv) + serv_time(curr_hum);%service_time1(hum_slow);
 
                 All.timeS(dep) = All.timeF(serv);%All.timeS(dep) + deltar; %depot
-                All.timeF(dep) = All.timeS(dep) + nonzeros(dist1(dep,:).*X(dep,:))/(0.3*max(vel_max));%update final time of depot
+                All.timeF(dep) = All.timeS(dep) + nonzeros(dist1(dep,:).*X(dep,:))/(max(vel_max));%update final time of depot
             end
         end
 

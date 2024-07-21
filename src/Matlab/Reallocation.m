@@ -69,7 +69,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         inv_vel_min_prox = [inv_vel_min_prox, 1/humanData{h}.RobotMinVelocityProximity(humanData{RobotID}.Task)];
         WaitWeight = [WaitWeight, humanData{h}.WaitingTimeWeight(humanData{RobotID}.Task)]; % Weight for waiting, should replace Ph
     end
-
+    WaitWeight
     inv_vel_min_prox = repmat(inv_vel_min_prox', num_filling_boxes, 2)
     inv_vel_max_prox = repmat(inv_vel_max_prox', num_filling_boxes, 2)
 

@@ -93,7 +93,7 @@ for h=1:num_humans
     humanData{h}.HappinessWait = repmat(0, 1, num_filling_boxes+1);
     humanData{h}.HappinessProx = repmat(0, 1, num_filling_boxes+1);
     humanData{h}.Efficiency = repmat(0, 1, num_filling_boxes+1);
-    humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
+    humanData{h}.Severity = repmat(0.5, 1, num_filling_boxes+1);
     send(pub{h}, humanData{h});
 end 
 
