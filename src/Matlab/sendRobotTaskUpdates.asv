@@ -20,8 +20,57 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
 
     global num_agents num_filling_boxes agents_ordered_allocation
 
+    % Identify tasks assigned to this robot
+    % index = find(X1(:, robotID) > 0.1);
+    % inittime = ReAll.timeS(X1(:, robotID) > 0.1);
+    % endtime = ReAll.timeF(X1(:, robotID) > 0.1);
+
+    % Initialize human indexing for this robot's tasks
+    % z = 1;
+    % for k = 1:length(inittime)
+    %     if any(index(k) == idx_going_tasks)
+    %         MILPData{robotID}.Humans(z) = mod(index(k), num_agents);
+    %         if MILPData{robotID}.Humans(z) == 0
+    %             MILPData{robotID}.Humans(z) = num_agents;
+    %         end
+    %         z = z + 1;
+    %     end
+    %end
+
+    % z = 1;
+    % %for i=1:num_robots
+    % for k=1:length(inittime)
+    %     if find(index(k) == idx_going_tasks)
+    %         h_idx = mod(index(k), num_agents);
+    %         if h_idx == 0
+    %             h_idx = num_agents;
+    %         end
+    % 
+    %         t_idx = ceil(index(k)/num_agents);
+    %         MILPData{robotID}.Humans(z) = h_idx
+    %         z = z + 1;
+    %     end
+    % 
+    % end
+    %end
+
+
     % Set Robot ID
     MILPData{robotID}.RobotID = robotID;
+    
+    % Assign start and finish times for task phases
+    % MILPData{robotID}.GoingStart = inittime(1:num_filling_boxes);
+    % MILPData{robotID}.WaitingStart = inittime(num_filling_boxes+1:2*num_filling_boxes);
+    % MILPData{robotID}.ApproachingStart = inittime(2*num_filling_boxes+1:3*num_filling_boxes);
+    % MILPData{robotID}.ServingStart = inittime(3*num_filling_boxes+1:4*num_filling_boxes);
+    % MILPData{robotID}.DepotStart = inittime(4*num_filling_boxes+1:5*num_filling_boxes);
+    % 
+    % MILPData{robotID}.GoingFinish = endtime(1:num_filling_boxes);
+    % MILPData{robotID}.WaitingFinish = endtime(num_filling_boxes+1:2*num_filling_boxes);
+    % MILPData{robotID}.ApproachingFinish = endtime(2*num_filling_boxes+1:3*num_filling_boxes);
+    % MILPData{robotID}.ServingFinish = endtime(3*num_filling_boxes+1:4*num_filling_boxes);
+    % MILPData{robotID}.DepotFinish = endtime(4*num_filling_boxes+1:5*num_filling_boxes);
+    
     MILPData{robotID}.GoingStart = agents_ordered_allocation(robotID).timeS(1:5:length(agents_ordered_allocation(robotID).timeS));
     MILPData{robotID}.WaitingStart = agents_ordered_allocation(robotID).timeS(2:5:length(agents_ordered_allocation(robotID).timeS));
     MILPData{robotID}.ApproachingStart = agents_ordered_allocation(robotID).timeS(3:5:length(agents_ordered_allocation(robotID).timeS));
@@ -33,8 +82,6 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
     MILPData{robotID}.ApproachingFinish = agents_ordered_allocation(robotID).timeF(3:5:length(agents_ordered_allocation(robotID).timeF));
     MILPData{robotID}.ServingFinish = agents_ordered_allocation(robotID).timeF(4:5:length(agents_ordered_allocation(robotID).timeF));
     MILPData{robotID}.DepotFinish = agents_ordered_allocation(robotID).timeF(5:5:length(agents_ordered_allocation(robotID).timeF));
-
-    MILPData{robotID}.Humans = agents_ordered_allocation(robotID).humanop(1,1:5:(length(agents_ordered_allocation(robotID).humanop)))
 
     for t=1:num_filling_boxes
         MILPData{robotID}.DistanceWaiting(t) = humanData{MILPData{robotID}.Humans(t)}.RobotWaitingDistance(t);
