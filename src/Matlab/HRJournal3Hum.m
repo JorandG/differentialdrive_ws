@@ -343,60 +343,9 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
         Experiments
         duration = ReAll.makespan;
         i = i + 1;
+        agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
         X1 = repmat(ReAll.X,num_phases,1);
         for v=1:num_robots
-            orderobots{v} = [];
-            index = find(X1(:,v)>0.1);
-            inittime = ReAll.timeS(ReAll.X(:,v)>0.1);
-            endtime = ReAll.timeF(ReAll.X(:,v)>0.1);
-
-            length(inittime);
-            for k=1:length(inittime)
-                if find(index(k) == idx_going_tasks)
-                    h_idx = mod(index(k), num_agents);
-                    if h_idx == 0
-                        h_idx = num_agents;
-                    end
-                    t_idx = ceil(index(k)/num_agents);
-                    orderobots{v}(end+1) = h_idx;
-                    orderobots{v}(end+1) = h_idx;
-                end
-            end
-
-            curr_allocation = find(abs(X1(:,v)-1)<0.01);
-            curr_timeF = ReAll.timeF(curr_allocation);
-            curr_timeS = ReAll.timeS(curr_allocation);
-            [~, idx_times] = sort(curr_timeF);
-            agents_ordered_allocation(v).tasks = curr_allocation(idx_times);
-            agents_ordered_allocation(v).timeS = curr_timeS(idx_times);
-            agents_ordered_allocation(v).timeF = curr_timeF(idx_times);
-            % Retrieve positions
-            num_curr_tasks = length(curr_allocation);
-            agents_ordered_allocation(v).type = cell(1,num_curr_tasks);
-            agents_ordered_allocation(v).humanop = zeros(2,num_curr_tasks); % index human, operation human
-            for k = 1:num_curr_tasks
-                if find(curr_allocation(idx_times(k)) == idx_going_tasks)
-                    % service task
-                    h_idx = mod(curr_allocation(idx_times(k)), num_agents);
-                    if h_idx == 0
-                        h_idx = num_agents;
-                    end
-                    t_idx = ceil(curr_allocation(idx_times(k))/num_agents);
-                    agents_ordered_allocation(v).type{k} = 'pick';
-                    agents_ordered_allocation(v).humanop(:,k) = [h_idx, t_idx]';
-                elseif find(curr_allocation(idx_times(k)) == idx_depot_tasks)
-                    % depositing task
-                    idxdep = curr_allocation(idx_times(k))-max(idx_going_tasks);
-                    h_idx = mod(idxdep, num_agents);
-                    if h_idx == 0
-                        h_idx = num_agents;
-                    end
-                    t_idx = ceil(idxdep/num_agents);
-
-                    agents_ordered_allocation(v).type{k} = 'depot';
-                    agents_ordered_allocation(v).humanop(:,k) = [h_idx, t_idx]';
-                end
-            end
 
             for u=1:num_agents
 
@@ -593,6 +542,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         humanData{u}.StartFilling = ReAll.timeSh(u:num_agents:end);
                         humanData{u}.Task = humanData{u}.Task + 1;
                         send(pub{u}, humanData{u});
+
+                        agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                         for c=1:num_robots
                             sendRobotTaskUpdates(c, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
                         end                    
@@ -694,6 +645,71 @@ humanData{h}.WaitingTimeWeight(humanData{h}.Task) = Wtw
 send(pub{h}, humanData{h});
 %end
     
+end
+
+
+function agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks)
+    % Initialize variables
+    X1 = repmat(ReAll.X, num_phases, 1);
+    agents_ordered_allocation(num_robots) = struct('tasks', [], 'timeS', [], 'timeF', [], 'type', [], 'humanop', []);
+    
+    % Process each robot
+    for v = 1:num_robots
+        orderobots{v} = [];
+        index = find(X1(:,v) > 0.1);
+        inittime = ReAll.timeS(ReAll.X(:,v) > 0.1);
+        endtime = ReAll.timeF(ReAll.X(:,v) > 0.1);
+        
+        % Process each task
+        for k = 1:length(inittime)
+            if any(index(k) == idx_going_tasks)
+                h_idx = mod(index(k), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(index(k) / num_agents);
+                orderobots{v}(end+1) = h_idx;
+                orderobots{v}(end+1) = h_idx;
+            end
+        end
+        
+        % Current allocation
+        curr_allocation = find(abs(X1(:,v) - 1) < 0.01);
+        curr_timeF = ReAll.timeF(curr_allocation);
+        curr_timeS = ReAll.timeS(curr_allocation);
+        [~, idx_times] = sort(curr_timeF);
+        agents_ordered_allocation(v).tasks = curr_allocation(idx_times);
+        agents_ordered_allocation(v).timeS = curr_timeS(idx_times);
+        agents_ordered_allocation(v).timeF = curr_timeF(idx_times);
+        
+        % Retrieve positions
+        num_curr_tasks = length(curr_allocation);
+        agents_ordered_allocation(v).type = cell(1, num_curr_tasks);
+        agents_ordered_allocation(v).humanop = zeros(2, num_curr_tasks); % index human, operation human
+        
+        for k = 1:num_curr_tasks
+            if any(curr_allocation(idx_times(k)) == idx_going_tasks)
+                % Service task
+                h_idx = mod(curr_allocation(idx_times(k)), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(curr_allocation(idx_times(k)) / num_agents);
+                agents_ordered_allocation(v).type{k} = 'pick';
+                agents_ordered_allocation(v).humanop(:, k) = [h_idx, t_idx]';
+            elseif any(curr_allocation(idx_times(k)) == idx_depot_tasks)
+                % Depositing task
+                idxdep = curr_allocation(idx_times(k)) - max(idx_going_tasks);
+                h_idx = mod(idxdep, num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(idxdep / num_agents);
+                agents_ordered_allocation(v).type{k} = 'depot';
+                agents_ordered_allocation(v).humanop(:, k) = [h_idx, t_idx]';
+            end
+        end
+    end
 end
 
 
