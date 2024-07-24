@@ -43,12 +43,12 @@ if any(timingData >= 122) && ~flags(5)
     humanData{1}.FinishServing(1) = 122;
     humanData{1}.ConfirmServing(1) = 1;    
     humanData{1}.RobotVelocityProximity(1) = 1; % Very Slow
-    humanData{1}.WaitingTime(1) = 1; % Waiting time too high
+    humanData{1}.WaitingTime(1) = 0.5; % Waiting time too high
     humanData{1}.RobotWaitingDistance(1) = 0.5;
     flags(5) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= 212) && ~flags(6)
-    humanData{2}.FinishServing(1) = 212;
+elseif any(timingData >= 202) && ~flags(6)
+    humanData{2}.FinishServing(1) = 202;
     humanData{2}.ConfirmServing(1) = 1;    
     humanData{2}.RobotVelocityProximity(1) = -1; % Very Fast
     humanData{2}.WaitingTime(1) = -1; % Waiting time too low

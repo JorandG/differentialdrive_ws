@@ -2,7 +2,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
     global idx_services_tasks FinishFill human_to_shift waiting_time humanTime_serving difference humanTime_fillingPrev timeReall num_tasks num_robots num_agents human num_filling_boxes num_phases idx_approaching_tasks num_humans
 
     service_time1 = [];
-    serv_time = All.timeF(idx_services_tasks) - All.timeS(idx_services_tasks);
+    serv_time = humanTime_serving; %All.timeF(idx_services_tasks) - All.timeS(idx_services_tasks);
     
     approaching_time = All.timeF(idx_approaching_tasks) - All.timeS(idx_approaching_tasks);
     curr_hum_slow = false;
