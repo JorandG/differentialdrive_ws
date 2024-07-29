@@ -356,6 +356,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     
                 if humanData{u}.ConfirmFilling(humanData{u}.TaskFilling) == 1
                     EMAWeights(humanData, num_humans, pub, u)
+
+                    agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                     for robo = 1:num_robots
                         sendRobotTaskUpdates(robo, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task) 
                     end
@@ -427,6 +429,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     EMAWeights(humanData, num_humans, pub, u)
                     RobotID = u;
                     %% ROS topic for the robots
+
+                    agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                     for robo = 1:num_robots
                         sendRobotTaskUpdates(robo, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task) 
                     end
@@ -467,9 +471,10 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         if humanData{u}.FinishFilling(humanData{u}.Task) > ReAllSave.timeFh(u+(humanData{u}.Task-1)*num_humans)
                             disp('human slower shifting ...')
                             ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
-                            %display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                            display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
                         end
 
+                        agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                         for c=1:num_robots
                             sendRobotTaskUpdates(c, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
                         end
@@ -495,6 +500,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                             humanData{u}.Task = humanData{u}.Task + 1;
                         end
                         send(pub{u}, humanData{u});
+
+                        agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                         for c=1:num_robots
                             sendRobotTaskUpdates(c, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
                         end
@@ -516,6 +523,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                             disp('human slower shifting ...')
                         end
 
+                        agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                         for c=1:num_robots
                             sendRobotTaskUpdates(c, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
                         end 

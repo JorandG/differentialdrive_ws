@@ -77,7 +77,7 @@ if any(timingData >= 280) && ~flags(9)
     humanData{1}.StartServing(2) = 280;
     flags(9) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= 395) && ~flags(10)
+elseif any(timingData >= 390) && ~flags(10)
     humanData{2}.FinishFilling(2) = 395;
     humanData{2}.ConfirmFilling(2) = 1;
     humanData{2}.StartServing(2) = 395;
@@ -94,7 +94,7 @@ if any(timingData >= 287) && ~flags(11)
     humanData{1}.RobotWaitingDistance(2) = 1;
     flags(11) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= 405) && ~flags(12)
+elseif any(timingData >= 400) && ~flags(12)
     humanData{2}.FinishServing(2) = 405;
     humanData{2}.ConfirmServing(2) = 1;  
     humanData{2}.RobotVelocityProximity(2) = -0.5; % Fast

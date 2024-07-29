@@ -19,7 +19,7 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
     %    none
 
     global num_agents num_filling_boxes agents_ordered_allocation
-
+ 
     % Set Robot ID
     MILPData{robotID}.RobotID = robotID;
     MILPData{robotID}.GoingStart = agents_ordered_allocation(robotID).timeS(1:5:length(agents_ordered_allocation(robotID).timeS));

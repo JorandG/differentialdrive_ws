@@ -33,7 +33,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                         %end
                         
                     end
-                    difference = abs(All.timeFh(s) - (All.timeSh(s) + humanTime_filling(curr_hum)))
+                    difference = abs(All.timeFh(s) - (All.timeSh(s) + humanTime_filling(curr_hum))) + serv_time(s) + approaching_time(s);
                     All.timeFh(s) = All.timeSh(s) + humanTime_filling(curr_hum);
                 end
             end
