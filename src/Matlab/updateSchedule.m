@@ -4,11 +4,16 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
     service_time1 = [];
     humanTime_filling1 = repmat(0,1, num_humans*num_filling_boxes);
     serv_time = humanTime_serving; %All.timeF(idx_services_tasks) - All.timeS(idx_services_tasks);
+
     for h=1:num_agents
-        humanTime_filling1(h:num_humans:end) = repmat(humanData{h}.FinishFilling(humanData{h}.Task) - humanData{h}.StartFilling(humanData{h}.Task), 1, num_filling_boxes);
-        humanTime_serving(h:num_humans:end) = repmat(humanData{h}.FinishServing(humanData{h}.Task) - humanData{h}.StartServing(humanData{h}.Task), 1, num_filling_boxes);
+        if humanData{h}.Task < num_filling_boxes
+            humanTime_filling1(h:num_humans:end) = repmat(humanData{h}.FinishFilling(humanData{h}.Task) - humanData{h}.StartFilling(humanData{h}.Task), 1, num_filling_boxes);
+            humanTime_serving(h:num_humans:end) = repmat(humanData{h}.FinishServing(humanData{h}.Task) - humanData{h}.StartServing(humanData{h}.Task), 1, num_filling_boxes);
+        else
+            humanTime_filling1(h:num_humans:end) = repmat(humanData{h}.FinishFilling(3) - humanData{h}.StartFilling(3), 1, num_filling_boxes);
+            humanTime_serving(h:num_humans:end) = repmat(humanData{h}.FinishServing(3) - humanData{h}.StartServing(3), 1, num_filling_boxes);
     end 
-    
+
     approaching_time = All.timeF(idx_approaching_tasks) - All.timeS(idx_approaching_tasks);
     curr_hum_slow = false;
 

@@ -514,16 +514,14 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         % Send new timings on the topic
                         humanData{u}.FinishFilling = ReAll.timeFh(u:num_agents:end);
                         humanData{u}.StartFilling = ReAll.timeSh(u:num_agents:end);
-                        MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks = MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks + 1;
                         if humanData{u}.Task == num_filling_boxes
                             humanData{u}.Task = num_filling_boxes + 1;
-                            
                         else
                             humanData{u}.Task = humanData{u}.Task + 1;
                         end
                         send(pub{u}, humanData{u});
 
-                        
+                        MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks = MILPData{humanData{u}.Robots(humanData{u}.Task-1)}.Tasks + 1;
                         agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                         for c=1:num_robots
                             sendRobotTaskUpdates(c, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
