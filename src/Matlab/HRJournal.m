@@ -13,7 +13,7 @@ global flags
 
 flags = false(1, 28);
 
-num_humans = 3;
+num_humans = 2;
 num_agents = num_humans;
 num_filling_boxes = 3;
 num_robots = 2;
@@ -97,8 +97,8 @@ for h=1:num_humans
     send(pub{h}, humanData{h});
 end 
 %Reduce the waiting time weight for the robot considered as human 3 here
-humanData{3}.WaitingTimeWeight = repmat(0.8, 1, num_filling_boxes);
-send(pub{3}, humanData{3});
+%humanData{3}.WaitingTimeWeight = repmat(0.8, 1, num_filling_boxes);
+%send(pub{3}, humanData{3});
 
 for j=1:num_robots
     tasknum{j} = 1;
@@ -110,7 +110,7 @@ num_depot_tasks = num_service_tasks;
 num_tasks = num_service_tasks;
 service_time = zeros(num_tasks, num_robots);
 
-M = 2000000;
+M = 1000000;
 vel_min = ones(num_robots,1)*0.05; % min velocity for the robots
 vel_max = ones(num_robots,1)*0.2; % max velocity for the robots
 chi = ones(num_robots,1)*1;
@@ -562,6 +562,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         for c=1:num_robots
                             sendRobotTaskUpdates(c, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
                         end
+                        NumericalValidation(ReAll, humanData, u)
                     end
 
                     if humanData{u}.Task < 2

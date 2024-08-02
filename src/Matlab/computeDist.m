@@ -26,7 +26,7 @@ function [distance, service_t] = computeDist(num_tasks, num_robots, position_hum
                 service_time(i,j) = service_time(i,j) + 15;
             else
                 dist(i,j) = sum(abs(probot(:,j) - ptasks(:,i-num_service_tasks)));
-                service_time(i,j) = 5;
+                service_time(i,j) = 7;
             end
         end
     end

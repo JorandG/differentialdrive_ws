@@ -13,3 +13,4 @@ float64[] DepotFinish
 int32[] FinishedFilling
 int32[] FinishedService
 float64[] DistanceWaiting
+int32[] Tasks

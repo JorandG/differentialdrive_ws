@@ -1,0 +1,22 @@
+function NumericalValidation(ReAll, humanData, u)
+global num_agents indexVal
+
+if humanData{u}.WaitingTime(humanData{u}.Task-1) < 0
+    taup = ReAll.timeSh(u+num_agents*2) - ReAll.timeFh(u+num_agents)
+    taup1 = ReAll.timeSh(u+num_agents) - ReAll.timeFh(u)
+    if taup > taup1
+        indexVal = indexVal + (1/humanData{u}.WaitingTimeWeight)*((taup - taup1)/taup)
+    elseif taup < taup1
+        indexVal = indexVal - (1/humanData{u}.WaitingTimeWeight)*((taup - taup1)/taup)
+    end
+end
+
+if humanData{u}.WaitingTime(humanData{u}.Task-1) > 0
+    taup = ReAll.timeSh(u+num_agents*2) - ReAll.timeFh(u+num_agents)
+    taup1 = ReAll.timeSh(u+num_agents) - ReAll.timeFh(u)
+    if taup > taup1
+        indexVal = indexVal + (1/humanData{u}.WaitingTimeWeight(humanData{u}.Task))*((taup - taup1)/taup)
+    elseif taup < taup1
+        indexVal = indexVal - (1/humanData{u}.WaitingTimeWeight(humanData{u}.Task))*((taup - taup1)/taup)
+    end
+end

@@ -63,9 +63,9 @@ if any(timingData >= 185) && ~flags(7)
     humanData{1}.StartFilling(2) = 185;
     flags(7) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= 240) && ~flags(8)
+elseif any(timingData >= 250) && ~flags(8)
     disp('start filling 22')
-    humanData{2}.StartFilling(2) = 240;
+    humanData{2}.StartFilling(2) = 250;
     flags(8) = true;
     send(pub{2}, humanData{2});
 end
@@ -95,7 +95,7 @@ if any(timingData >= 287) && ~flags(11)
     flags(11) = true;
     send(pub{1}, humanData{1});
 elseif any(timingData >= 400) && ~flags(12)
-    humanData{2}.FinishServing(2) = 405;
+    humanData{2}.FinishServing(2) = 400;
     humanData{2}.ConfirmServing(2) = 1;  
     humanData{2}.RobotVelocityProximity(2) = -0.5; % Fast
     humanData{2}.WaitingTime(2) = -0.5; % Waiting time low
