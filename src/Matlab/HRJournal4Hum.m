@@ -135,8 +135,8 @@ idx_services_tasks = num_service_tasks*3+1:num_service_tasks*4;
 idx_depot_tasks = num_service_tasks*4+1:num_service_tasks*5;
 
 % Positions
-probot = [-8.4, 5.0; -12.4, 5.0]; %probot = [2.08, -1.33; 1.48, -2.14];
-position_hum = [1, -1.33; 1.48, -4.14; 4, -9.7; 5, -10];%position_hum = [3, 7.5; 5, 10; 4, 12.5];
+probot = [-10.4, 7.0; -14.4, 7.0] %probot = [-8.4, 5.0; -12.4, 5.0]; %probot = [2.08, -1.33; 1.48, -2.14];
+position_hum = [1, -1.375; 2.3, -4.125; 1, -9.625; 2.3, -15.125] %position_hum = [1, -1.33; 1.48, -4.14; 4, -9.7; 5, -10];%position_hum = [3, 7.5; 5, 10; 4, 12.5];
 
 %probot = [1, -0.5; 0.5, 0.5];%[1, -2.43; 0.55, -1.7];
 %position_hum = [-2, -2.3; -1, -1.8]; %[-0.66, 0.33; -2, -0.2];%[2, 3; 1, 2];

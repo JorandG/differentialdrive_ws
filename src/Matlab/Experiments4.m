@@ -82,7 +82,7 @@ elseif any(timingData >= 250) && ~flags(10)
     humanData{3}.RobotWaitingDistance(1) = 1;
     flags(10) = true;
     send(pub{3}, humanData{3});     
-elseif any(timingData >= 435) && ~flags(11)
+elseif any(timingData >= 425) && ~flags(11)
     humanData{4}.ConfirmServing(1) = 1;    
     flags(11) = true;
     send(pub{4}, humanData{4});     
@@ -122,7 +122,7 @@ elseif any(timingData >= 550) && ~flags(17)
     humanData{3}.StartServing(2) = 550;
     flags(17) = true;
     send(pub{3}, humanData{3});
-elseif any(timingData >= 1011.02) && ~flags(18)
+elseif any(timingData >= 1000) && ~flags(18)
     humanData{4}.ConfirmFilling(2) = 1;    
     flags(18) = true;
     send(pub{4}, humanData{4}); 
@@ -153,7 +153,7 @@ elseif any(timingData >= 560) && ~flags(21)
     humanData{3}.RobotWaitingDistance(2) = 1;
     flags(21) = true;
     send(pub{3}, humanData{3});
-elseif any(timingData >= 1043.02) && ~flags(22)
+elseif any(timingData >= 1031.3) && ~flags(22)
     humanData{4}.ConfirmServing(2) = 1;    
     flags(22) = true;
     send(pub{4}, humanData{4});    
@@ -193,7 +193,7 @@ elseif any(timingData >= 790) && ~flags(28)
     humanData{3}.StartServing(3) = 790;
     flags(28) = true;
     send(pub{3}, humanData{3});
-elseif any(timingData >= 1293.02) && ~flags(29)
+elseif any(timingData >= 1281.3) && ~flags(29)
     humanData{4}.ConfirmFilling(3) = 1;    
     flags(29) = true;
     send(pub{4}, humanData{4}); 
@@ -224,7 +224,7 @@ elseif any(timingData >= 797) && ~flags(32)
     humanData{3}.RobotWaitingDistance(3) = 1.5;
     flags(32) = true;
     send(pub{3}, humanData{3});
-elseif any(timingData >= 1325.02) && ~flags(33)
+elseif any(timingData >= 1313.3) && ~flags(33)
     humanData{4}.ConfirmServing(3) = 1;    
     flags(33) = true;
     send(pub{4}, humanData{4});   
