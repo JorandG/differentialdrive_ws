@@ -60,7 +60,7 @@ for r=1:num_robots
     MILPData{r}.DepotFinish = [];
     MILPData{r}.FinishedFilling = repmat(0, 1, num_filling_boxes*2);
     MILPData{r}.FinishedService = repmat(0, 1, num_filling_boxes*2);
-    MILPData{r}.DistanceWaiting = repmat(0, 1, num_filling_boxes*2);
+    MILPData{r}.DistanceWaiting = repmat(1, 1, num_filling_boxes*2);
     MILPData{r}.Tasks = 1;
     %send(MILPDataPub{r}, MILPData{r});
 end
@@ -114,8 +114,8 @@ num_tasks = num_service_tasks;
 service_time = zeros(num_tasks, num_robots);
 
 M = 100000;
-vel_min = ones(num_robots,1)*0.05; % min velocity for the robots
-vel_max = ones(num_robots,1)*0.2; % max velocity for the robots
+vel_min = ones(num_robots,1)*0.05*0.5; % min velocity for the robots
+vel_max = ones(num_robots,1)*0.2*0.5; % max velocity for the robots
 chi = ones(num_robots,1)*1;
 Reduction = 1;
 
@@ -285,7 +285,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
 end
 
 function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
-    global alreadyHere agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+    global finfill finserv alreadyHere agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
     ReAll1 = ReAll
     reall_already_once = 0;
     num_phases = 5;
@@ -373,7 +373,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     
                 if humanData{u}.ConfirmFilling(humanData{u}.TaskFilling) == 1
                     EMAWeights(humanData, num_humans, pub, u)
-
+                    finfill = true;
                     agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                     for hum = 1:num_humans
                         for robo = 1:num_robots
@@ -449,7 +449,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     EMAWeights(humanData, num_humans, pub, u)
                     RobotID = u;
                     %% ROS topic for the robots
-
+                    finserv = true;
                     agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                     for robo = 1:num_robots
                         sendRobotTaskUpdates(robo, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task) 

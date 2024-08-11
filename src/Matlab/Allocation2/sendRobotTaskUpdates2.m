@@ -18,8 +18,8 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
     % Outputs:
     %    none
 
-    global num_agents num_filling_boxes agents_ordered_allocation alreadyHere finfill finserv
-
+    global num_agents num_filling_boxes agents_ordered_allocation alreadyHere
+ 
     % Set Robot ID
     MILPData{robotID}.RobotID = robotID;
     MILPData{robotID}.GoingStart = agents_ordered_allocation(robotID).timeS(1:5:length(agents_ordered_allocation(robotID).timeS));
@@ -44,34 +44,12 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
     end
 
     if humanData{humanID}.ConfirmServing(currentHumanTask) == 1 && humanData{humanID}.Robots(currentHumanTask) == robotID %&& MILPData{robotID}.Humans(currentHumanTask) == humanID
-        for i=1:length(MILPData{robotID}.Humans)
-            if MILPData{robotID}.FinishedService(i) == 0 && MILPData{robotID}.Humans(i) == humanID && finserv
-                MILPData{robotID}.FinishedService(i) = 1
-                finserv = false
-            end
-        end
+        MILPData{robotID}.FinishedService(currentHumanTask) = 1;  
+        %MILPData{robotID}.Tasks = currentHumanTask;
     end
-
-        % if MILPData{robotID}.Humans(MILPData{robotID}.Tasks) == humanID
-        %     MILPData{robotID}.FinishedService(MILPData{robotID}.Tasks) = 1; 
-        % else
-        %     MILPData{robotID}.FinishedService(MILPData{robotID}.Tasks+1) = 1;
-        % end
-        %MILPData{robotID}.Tasks = MILPData{robotID}.Tasks + 1;
-    
     
     if humanData{humanID}.ConfirmFilling(currentHumanTask) == 1 && humanData{humanID}.Robots(currentHumanTask) == robotID %MILPData{robotID}.Humans(currentHumanTask) == humanID
-        for i=1:length(MILPData{robotID}.Humans)
-            if MILPData{robotID}.FinishedFilling(i) == 0 && MILPData{robotID}.Humans(i) == humanID && finfill
-                MILPData{robotID}.FinishedFilling(i) = 1
-                finfill = false
-            end
-        end
-        % if MILPData{robotID}.Humans(MILPData{robotID}.Tasks) == humanID
-        %     MILPData{robotID}.FinishedFilling(MILPData{robotID}.Tasks) = 1;    
-        % else
-        %     MILPData{robotID}.FinishedFilling(MILPData{robotID}.Tasks+1) = 1;
-        % end
+        MILPData{robotID}.FinishedFilling(currentHumanTask) = 1;     
     end
 
     

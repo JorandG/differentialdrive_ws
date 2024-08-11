@@ -51,12 +51,6 @@ if any(timingData >= 153) && ~flags(7)
     humanData{1}.StartFilling(2) = 153;
     flags(7) = true;
     send(pub{1}, humanData{1});
-    % 
-    % ProximityTaskFeedback = [ProximityTaskFeedback, humanData{1}.RobotVelocityProximity(1)'];
-    % ProximityTaskFeedback = [ProximityTaskFeedback, humanData{2}.RobotVelocityProximity(1)'];
-    % ProximityTaskWeights = [ProximityTaskWeights, humanData{1}.RobotVelocityProximityWeight(1)'];
-    % ProximityTaskWeights = [ProximityTaskWeights, humanData{2}.RobotVelocityProximityWeight(1)'];
-    % ProximityTaskDurations = [ProximityTaskDurations, (ReAllSave.timeF(idx_approaching_tasks) - ReAllSave.timeS(idx_approaching_tasks))];  
 elseif any(timingData >= 170) && ~flags(8)
     humanData{2}.StartFilling(2) = 170;
     flags(8) = true;
@@ -101,13 +95,7 @@ end
 if any(timingData >= 326) && ~flags(13)
     humanData{1}.StartFilling(3) = 326;
     flags(13) = true;
-    send(pub{1}, humanData{1});
-    % 
-    % ProximityTaskFeedback = [ProximityTaskFeedback, humanData{1}.RobotVelocityProximity(2)'];
-    % ProximityTaskFeedback = [ProximityTaskFeedback, humanData{2}.RobotVelocityProximity(2)'];
-    % ProximityTaskWeights = [ProximityTaskWeights, humanData{1}.RobotVelocityProximityWeight(2)'];
-    % ProximityTaskWeights = [ProximityTaskWeights, humanData{2}.RobotVelocityProximityWeight(2)'];
-    % ProximityTaskDurations = [ProximityTaskDurations, (ReAllSave.timeF(idx_approaching_tasks) - ReAllSave.timeS(idx_approaching_tasks))];  
+    send(pub{1}, humanData{1}); 
 elseif any(timingData >= 341) && ~flags(14)
     humanData{2}.StartFilling(3) = 341;
     flags(14) = true;
@@ -148,11 +136,3 @@ elseif any(timingData >= 508) && ~flags(18)
     send(pub{2}, humanData{2});
 end
 
-if any(timingData >= 540) && ~flags(19)
-    flags(19) = true;
-    ProximityTaskFeedback = [ProximityTaskFeedback, humanData{1}.RobotVelocityProximity(3)'];
-    ProximityTaskFeedback = [ProximityTaskFeedback, humanData{2}.RobotVelocityProximity(3)'];
-    ProximityTaskWeights = [ProximityTaskWeights, humanData{1}.RobotVelocityProximityWeight(3)'];
-    ProximityTaskWeights = [ProximityTaskWeights, humanData{2}.RobotVelocityProximityWeight(3)'];
-    ProximityTaskDurations = [ProximityTaskDurations, (ReAllSave.timeF(idx_approaching_tasks) - ReAllSave.timeS(idx_approaching_tasks))];
-end
