@@ -28,18 +28,18 @@ if any(timingData >= ReAllSave.timeFh(1)-30) && ~flags(5)
     humanData{1}.StartServing(1) = ReAllSave.timeS(37);
     flags(5) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= ReAllSave.timeFh(2)-10) && ~flags(6)
+elseif any(timingData >= ReAllSave.timeFh(2)+50) && ~flags(6)
     finfill = true;
-    humanData{2}.FinishFilling(1) = ReAllSave.timeFh(2)-10;
+    humanData{2}.FinishFilling(1) = ReAllSave.timeFh(2)+50;
     humanData{2}.ConfirmFilling(1) = 1;
-    humanData{2}.StartServing(1) = ReAllSave.timeS(38);
+    humanData{2}.StartServing(1) = ReAllSave.timeS(38)+50;
     flags(6) = true;
     send(pub{2}, humanData{2});
-elseif any(timingData >= ReAllSave.timeFh(3)+50) && ~flags(7)
+elseif any(timingData >= ReAllSave.timeFh(3)-10) && ~flags(7)
     finfill = true;
-    humanData{3}.FinishFilling(1) = ReAllSave.timeFh(3)+50;
+    humanData{3}.FinishFilling(1) = ReAllSave.timeFh(3)-10;
     humanData{3}.ConfirmFilling(1) = 1;
-    humanData{3}.StartServing(1) = ReAllSave.timeS(39)+50;
+    humanData{3}.StartServing(1) = ReAllSave.timeS(39)-10;
     flags(7) = true;
     send(pub{3}, humanData{3});
 elseif any(timingData >= ReAllSave.timeFh(4)) && ~flags(8)
@@ -61,21 +61,21 @@ if any(timingData >= ReAllSave.timeF(37)-2) && ~flags(9)
     humanData{1}.RobotWaitingDistance(1) = 0.5;
     flags(9) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= ReAllSave.timeF(38)-3) && ~flags(10)
+elseif any(timingData >= ReAllSave.timeF(38)) && ~flags(10)
     finserv = true;
-    humanData{2}.FinishServing(1) = ReAllSave.timeF(38)-3;
+    humanData{2}.FinishServing(1) = ReAllSave.timeF(38);
     humanData{2}.ConfirmServing(1) = 1;
     humanData{2}.RobotVelocityProximity(1) = -1; % Very Fast
-    humanData{2}.WaitingTime = repmat(1, 1, num_filling_boxes); % Waiting time too high
+    humanData{2}.WaitingTime = repmat(1, 1, num_filling_boxes); % Waiting time high
     humanData{2}.RobotWaitingDistance(2) = 1;
     flags(10) = true;
     send(pub{2}, humanData{2});
-elseif any(timingData >= ReAllSave.timeF(39)) && ~flags(11)
+elseif any(timingData >= ReAllSave.timeF(39)-3) && ~flags(11)
     finserv = true;
-    humanData{3}.FinishServing(1) = ReAllSave.timeF(39);
+    humanData{3}.FinishServing(1) = ReAllSave.timeF(39)-3;
     humanData{3}.ConfirmServing(1) = 1;
     humanData{3}.RobotVelocityProximity(1) = 0.5; % Slow
-    humanData{3}.WaitingTime = repmat(-0.5, 1, num_filling_boxes); % Waiting time low
+    humanData{3}.WaitingTime = repmat(-1, 1, num_filling_boxes); % Waiting time too low
     humanData{3}.RobotWaitingDistance(3) = 1.5;
     flags(11) = true;
     send(pub{3}, humanData{3});
@@ -160,12 +160,11 @@ elseif any(timingData >= ReAllSave.timeF(42)) && ~flags(22)
     humanData{2}.RobotWaitingDistance(2) = 1;
     flags(22) = true;
     send(pub{2}, humanData{2});
-elseif any(timingData >= ReAllSave.timeF(43)) && ~flags(23)
-    finserv = true;
-    humanData{3}.FinishServing(2) = ReAllSave.timeF(43);
+elseif any(timingData >= ReAllSave.timeF(43)+30) && ~flags(23)
+    humanData{3}.FinishServing(2) = ReAllSave.timeF(43)+30;
     humanData{3}.ConfirmServing(2) = 1;
     humanData{3}.RobotVelocityProximity(2) = 0; % Ok
-    humanData{3}.WaitingTime = repmat(-1, 1, num_filling_boxes); % too low
+    humanData{3}.WaitingTime = repmat(-1, 1, num_filling_boxes); % too high
     humanData{3}.RobotWaitingDistance(3) = 1.5;
     flags(23) = true;
     send(pub{3}, humanData{3});
@@ -180,6 +179,8 @@ elseif any(timingData >= ReAllSave.timeF(44)) && ~flags(24)
     flags(24) = true;
     send(pub{4}, humanData{4});
 end
+
+% Continue adding logic for Start Filling 3, Finish Filling & Start Serving 3, Finish Serving 3, and so on...
 
 % Start Filling 3
 if any(timingData >= ReAllSave.timeSh(9)) && ~flags(25)
@@ -242,7 +243,6 @@ if any(timingData >= ReAllSave.timeF(45)) && ~flags(33)
     flags(33) = true;
     send(pub{1}, humanData{1});
 elseif any(timingData >= ReAllSave.timeF(46)) && ~flags(34)
-    finserv = true;
     humanData{2}.FinishServing(3) = ReAllSave.timeF(46);
     humanData{2}.ConfirmServing(3) = 1;
     humanData{2}.RobotVelocityProximity(3) = 0; % Ok

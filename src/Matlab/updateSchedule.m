@@ -124,10 +124,10 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                 end
             end
         elseif ismember(curr_hum, idx_to_ignore_h) %&& curr_hum_slow
-            disp('shifting current human')
-            deltar = All.timeFh(curr_hum) - All.timeF(curr_hum)
-            All.timeSh(curr_hum) = All1.timeSh(curr_hum)
-            All.timeFh(curr_hum) = All1.timeFh(curr_hum)
+            disp('shifting current human');
+            deltar = All.timeFh(curr_hum) - All.timeF(curr_hum);
+            All.timeSh(curr_hum) = All1.timeSh(curr_hum);
+            All.timeFh(curr_hum) = All1.timeFh(curr_hum);
             if curr_hum == human_to_shift
                 All.timeS(curr_hum) = All1.timeS(curr_hum);
                 All.timeF(curr_hum) = All1.timeF(curr_hum);
@@ -135,8 +135,8 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                 All.timeS(wait) = All.timeF(curr_hum); %All.timeS(wait) + deltar; %waiting
                 All.timeF(wait) = All.timeS(wait) + waiting_time(curr_hum); %All.timeF(wait) + deltar;
 
-                All.timeS(app) = All.timeF(wait)
-                All.timeF(app) = All.timeS(app) + approaching_time(curr_hum)
+                All.timeS(app) = All.timeF(wait);
+                All.timeF(app) = All.timeS(app) + approaching_time(curr_hum);
 
                 All.timeS(serv) = All.timeF(app); %serving
                 All.timeF(serv) = All.timeS(serv) + serv_time(curr_hum);%service_time1(hum_slow);

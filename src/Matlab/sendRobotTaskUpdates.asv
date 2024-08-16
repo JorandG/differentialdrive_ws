@@ -18,10 +18,7 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
     % Outputs:
     %    none
 
-    global num_agents num_filling_boxes agents_ordered_allocation alreadyHere
-
-    finfill = true;
-    finserv = true;
+    global num_agents num_filling_boxes agents_ordered_allocation alreadyHere finfill finserv
 
     % Set Robot ID
     MILPData{robotID}.RobotID = robotID;
@@ -46,38 +43,30 @@ function sendRobotTaskUpdates(robotID, humanID, ReAll, X1, MILPDataPub, MILPData
         MILPData{robotID}.DistanceWaiting(t) = humanData{MILPData{robotID}.Humans(t)}.RobotWaitingDistance(t);
     end
 
-    if humanData{humanID}.ConfirmServing(currentHumanTask) == 1 && humanData{humanID}.Robots(currentHumanTask) == robotID %&& MILPData{robotID}.Humans(currentHumanTask) == humanID
+    if humanData{humanID}.ConfirmServing(currentHumanTask) == 1 && humanData{humanID}.Robots(currentHumanTask) == robotID  %&& MILPData{robotID}.Humans(currentHumanTask) == humanID
         for i=1:length(MILPData{robotID}.Humans)
-            if MILPData{robotID}.FinishedService(i) == 0 && MILPData{robotID}.Humans(i) == humanID && finserv
-                MILPData{robotID}.FinishedService(i) = 1
-                finserv = false
+            if finserv == true
+                if MILPData{robotID}.FinishedService(i) == 0 && MILPData{robotID}.Humans(i) == humanID && finserv
+                    MILPData{robotID}.FinishedService(i) = 1
+                    finserv = false
+                end
             end
         end
-        finserv = true
     end
-
-        % if MILPData{robotID}.Humans(MILPData{robotID}.Tasks) == humanID
-        %     MILPData{robotID}.FinishedService(MILPData{robotID}.Tasks) = 1; 
-        % else
-        %     MILPData{robotID}.FinishedService(MILPData{robotID}.Tasks+1) = 1;
-        % end
-        %MILPData{robotID}.Tasks = MILPData{robotID}.Tasks + 1;
     
-    
-    if humanData{humanID}.ConfirmFilling(currentHumanTask) == 1 && humanData{humanID}.Robots(currentHumanTask) == robotID %MILPData{robotID}.Humans(currentHumanTask) == humanID
+    %if humanData{humanID}.ConfirmFilling(humanData{humanID}.TaskFilling) == 1
+    if humanData{humanID}.ConfirmFilling(humanData{humanID}.TaskFilling) == 1 && humanData{humanID}.Robots(currentHumanTask) == robotID %MILPData{robotID}.Humans(currentHumanTask) == humanID
         for i=1:length(MILPData{robotID}.Humans)
-            if MILPData{robotID}.FinishedFilling(i) == 0 && MILPData{robotID}.Humans(i) == humanID 
-                MILPData{robotID}.FinishedFilling(i) = 1
-                finfill = false
+            if finfill == true
+                if MILPData{robotID}.FinishedFilling(i) == 0 && MILPData{robotID}.Humans(i) == humanID 
+                    MILPData{robotID}.FinishedFilling(i) = 1
+                    finfill = false
+                end
             end
         end
-        finfill = true; 
-        % if MILPData{robotID}.Humans(MILPData{robotID}.Tasks) == humanID
-        %     MILPData{robotID}.FinishedFilling(MILPData{robotID}.Tasks) = 1;    
-        % else
-        %     MILPData{robotID}.FinishedFilling(MILPData{robotID}.Tasks+1) = 1;
-        % end
+        disp("finished filling")
     end
+    %end
 
     
     % Send the updated data to the corresponding ROS topic
