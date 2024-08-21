@@ -1,7 +1,7 @@
 function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll)
     global humanTime_filling inv_vel_min_prox inv_vel_max_prox Prox humanTime_serving waiting_time approaching_time humanData msgTime pubTime Ph idx_going_tasks idx_approaching_tasks idx_depot_tasks idx_waiting_tasks idx_services_tasks dist HumMaxVelRobot num_humans num_farming_robot num_agents human humanTime_filling1 WeightHumanwaiting WeightEnergyDepositing WeightEnergyProximity WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation num_phases
-
-    serv_time = humanTime_serving;
+    
+    serv_time = 7;%humanTime_serving;
     num_phases = 5;
 
     inversedistance = 0;
@@ -30,7 +30,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     idx_services_tasks = num_service_tasks*3+1:num_service_tasks*4;
     idx_depot_tasks = num_service_tasks*4+1:num_service_tasks*5;
 
-    humanwaiting = 0.0;
+    humanwaiting = [];
     humanproximity = 0.0;
     velocityproximityduration = 0.0;
 
@@ -51,7 +51,8 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     velocityproximity1 = optimvar('velocityproximity1','LowerBound',0); %velocity of robot for proximity phase
     velocitydepositing = optimvar('velocitydepositing','LowerBound',0); %velocity of robot for proximity phase
     humanwaitingconst =  optimvar('humanwaitingconst','LowerBound',0);
-    
+    individual_human_waiting = optimvar('individual_human_waiting', num_agents, 'LowerBound', 0);
+    sum_ind_wait = optimvar('sum_ind_wait','LowerBound',0); %sum human individual waiting
     max_invprod = optimvar('max_invprod', [num_tasks*num_phases], 'LowerBound', 0); %maximum of the invprod velocity
 
     v_min = min(vel_min);
@@ -77,12 +78,10 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     colProx = baseProx.'; 
     Prox = repmat(colProx, 1, num_robots); 
     Prox = repmat(Prox, num_filling_boxes, 1)
-    %Prox = 1./Prox
+    
+    % Calculate and add constraints for individual human waiting times
 
-    for i=1:num_agents
-        humanwaiting1 = WaitWeight(i)*(sum(timeSh(num_agents+i:num_agents:num_service_tasks) - timeFh(i:num_agents:num_service_tasks-num_agents) + timeSh(i))); %WaitWeight(i)*((sum(timeF(num_filling_boxes*num_tasks+i:num_agents:num_filling_boxes*num_tasks+num_service_tasks) - timeFh(i:num_agents:num_tasks) + timeSh(i))) + (sum(timeSh(num_agents+i:num_agents:num_service_tasks) - timeFh(i:num_agents:num_service_tasks-num_agents) + timeSh(i)))); %WaitWeight(i)*(sum(timeSh(num_agents+i:num_agents:num_service_tasks) - timeFh(i:num_agents:num_service_tasks-num_agents) + timeSh(i))); %humanwaiting1 = WaitWeight(i)*((sum(timeF(num_filling_boxes*num_tasks+i:num_agents:num_filling_boxes*num_tasks+num_service_tasks) - timeFh(i:num_agents:num_tasks) + timeSh(i))) + (sum(timeSh(num_agents+i:num_agents:num_service_tasks) - timeFh(i:num_agents:num_service_tasks-num_agents) + timeSh(i))));
-        humanwaiting = humanwaiting + humanwaiting1;
-    end
+    %humanwaiting = humanwaiting1 + humanwaiting2 + humanwaiting3 + humanwaiting4;
 
     velocitydepositingduration = sum(sum(((1/min(vel_min))*X-(invprod(idx_depot_tasks,:)))))*normavel;
     velocitygoingduration = sum(sum((1/min(vel_min))*X-(invprod(idx_going_tasks,:))))*normavel;
@@ -90,9 +89,39 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     %% Problem definition
     prob = optimproblem;
     %% Objective Function
-    prob.Objective =  WeightHumanwaiting*(humanwaitingconst)*normawait+WeightEnergyPicking*velocitygoingduration+WeightEnergyDepositing*velocitydepositingduration+WeightMakespan*makespan+WeightEnergyProximity*velocityproximity1;% %+WeightEnergyDepositing*(num_tasks*(1/min(vel_min))-sum(invprod,'all'));
-
+    prob.Objective =  WeightHumanwaiting * sum(individual_human_waiting) * normawait+WeightEnergyPicking*velocitygoingduration+WeightEnergyDepositing*velocitydepositingduration+WeightMakespan*normamakespan+WeightEnergyProximity*velocityproximity1;% %+WeightEnergyDepositing*(num_tasks*(1/min(vel_min))-sum(invprod,'all'));
+    
     %% Constraints
+    humanwaiting1 = WaitWeight(1)*(sum(timeSh(num_agents + 1:num_agents:num_service_tasks) - timeFh(1:num_agents:num_service_tasks - num_agents)) + timeSh(1)); 
+    humanwaiting2 = WaitWeight(2)*(sum(timeSh(num_agents + 2:num_agents:num_service_tasks) - timeFh(2:num_agents:num_service_tasks - num_agents)) + timeSh(2)); 
+    humanwaiting3 = WaitWeight(3)*(sum(timeSh(num_agents + 3:num_agents:num_service_tasks) - timeFh(3:num_agents:num_service_tasks - num_agents)) + timeSh(3)); 
+    %humanwaiting4 = WaitWeight(4)*(sum(timeSh(num_agents + 4:num_agents:num_service_tasks) - timeFh(4:num_agents:num_service_tasks - num_agents)) + timeSh(4)); 
+    
+    prob.Constraints.individual_human_waiting1 = individual_human_waiting(1) == humanwaiting1;
+    prob.Constraints.individual_human_waiting2 = individual_human_waiting(2) == humanwaiting2;
+    prob.Constraints.individual_human_waiting3 = individual_human_waiting(3) == humanwaiting3;
+    %prob.Constraints.individual_human_waiting4 = individual_human_waiting(4) == humanwaiting4;
+    %humanwaiting = humanwaiting1 + humanwaiting2 + humanwaiting3 + humanwaiting4;
+	balance_factor = 2; % Example value, adjust as needed
+    average_waiting_time = sum(individual_human_waiting) / num_agents;
+    % % for i = 1:num_agents
+    % %     prob.Constraints.balanced_waiting_time_upper(i) = individual_human_waiting(i) <= (1 + balance_factor) * average_waiting_time;
+    % %     prob.Constraints.balanced_waiting_time_lower(i) = individual_human_waiting(i) >= (1 - balance_factor) * average_waiting_time;
+    % % end
+    prob.Constraints.balanced_waiting_time_upper1 = individual_human_waiting(1) <= (1.5 + 1/WaitWeight(1)) * average_waiting_time;
+    prob.Constraints.balanced_waiting_time_lower1 = individual_human_waiting(1) >= (1/WaitWeight(1)) * average_waiting_time;
+
+    prob.Constraints.balanced_waiting_time_upper2 = individual_human_waiting(2) <= (1.5 + 1/WaitWeight(2)) * average_waiting_time;
+    prob.Constraints.balanced_waiting_time_lower2 = individual_human_waiting(2) >= (1/WaitWeight(2)) * average_waiting_time;
+
+    prob.Constraints.balanced_waiting_time_upper3 = individual_human_waiting(3) <= (1.5 + 1/WaitWeight(3)) * average_waiting_time;
+    prob.Constraints.balanced_waiting_time_lower3 = individual_human_waiting(3) >= (1/WaitWeight(3)) * average_waiting_time;
+
+    %prob.Constraints.balanced_waiting_time_upper4 = individual_human_waiting(4) <= (1 + balance_factor) * average_waiting_time;
+    %prob.Constraints.balanced_waiting_time_lower4 = individual_human_waiting(4) >= (1 - balance_factor) * average_waiting_time;
+    % 
+    prob.Constraints.sum_ind_wait = sum_ind_wait == humanwaiting
+
     prob.Constraints.maxInvProd1 = max_invprod >= invprod(:,1) + invprod(:,2);
     prob.Constraints.maxInvProd12 = max_invprod <= invprod(:,1) + invprod(:,2);
     %prob.Constraints.maxInvProd3 = sum( ((1/min(vel_min))) - ((max_invprod(idx_approaching_tasks,:)).*Prox(:,1)) ) >= 0;
@@ -103,8 +132,8 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     idx_tasks = [idx_going_tasks, idx_waiting_tasks, idx_approaching_tasks, idx_services_tasks, idx_depot_tasks];
     X1 = repmat(X,num_phases,1);
 
-    prob.Constraints.humanwait = humanwaitingconst == humanwaiting;
-    prob.Constraints.humanwait = humanwaitingconst == humanwaiting;
+    %prob.Constraints.humanwait = humanwaitingconst == humanwaiting;
+    %prob.Constraints.humanwait1 = humanwaitingconst <= 1500;
 
     if first_allocation == 2
         
@@ -116,10 +145,10 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
             humanTask = humanData{h}.Task
         end
 
-        % for h=1:num_agents
-        %     humanTime_filling(h:num_humans:end) = repmat(humanData{h}.FinishFilling(humanTask) - humanData{h}.StartFilling(humanTask), 1, num_filling_boxes);
-        %     humanTime_serving(h:num_humans:end) = repmat(humanData{h}.FinishServing(humanTask) - humanData{h}.StartServing(humanTask), 1, num_filling_boxes);
-        % end 
+        for h=1:num_agents
+            humanTime_filling(h:num_humans:end) = repmat(humanData{h}.FinishFilling(humanTask) - humanData{h}.StartFilling(humanTask), 1, num_filling_boxes);
+            humanTime_serving(h:num_humans:end) = repmat(humanData{h}.FinishServing(humanTask) - humanData{h}.StartServing(humanTask), 1, num_filling_boxes);
+        end 
         idx_going_tasks_consider = idx_to_consider_r;
         idx_waiting_tasks_consider = idx_going_tasks_consider + num_service_tasks; 
         idx_approaching_tasks_consider = idx_waiting_tasks_consider + num_service_tasks;  
@@ -173,7 +202,7 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
         prob.Constraints.approaching_time1 = timeF(idx_approaching_tasks_consider) == timeS(idx_approaching_tasks_consider) + (max_invprod(idx_approaching_tasks_consider).*distance_proximity(idx_going_tasks_consider)')'; %invprod(idx_approaching_tasks_consider,:)/l_approaching;%(timeSh(num_humans+1:length(idx_waiting_tasks_consider))-timeF(idx_services_tasks_consider(1:length(idx_waiting_tasks_consider)-num_humans)))/(max(dist(:))/min(vel_min) + serv_time)
 
         prob.Constraints.services_time = timeS(idx_services_tasks_consider) == timeF(idx_approaching_tasks_consider); %time to make the service to the human
-        prob.Constraints.services_time2 = timeF(idx_services_tasks_consider) == timeS(idx_services_tasks_consider) + serv_time(idx_going_tasks_consider); %time to make the service to the human using idx going because we can't exceed num_taks
+        prob.Constraints.services_time2 = timeF(idx_services_tasks_consider) == timeS(idx_services_tasks_consider) + serv_time%(idx_going_tasks_consider); %time to make the service to the human using idx going because we can't exceed num_taks
         prob.Constraints.depot_time = timeS(idx_depot_tasks_consider) == timeF(idx_services_tasks_consider);
 
         prob.Constraints.humanduration1 = timeFh(idx_to_ignore_h) == ReAll.timeFh(idx_to_ignore_h);
@@ -268,26 +297,26 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     end
     prob.Constraints.parallelism = parallelism;
 
-    options = optimoptions('intlinprog','Display',"iter");
-    [sol,fval,exitflag] = solve(prob,'Options',options, 'Solver', 'intlinprog');
-    disp(['Cost: ', num2str(max(sol.timeF)) ]);
-    Reall = sol, humanTime_filling;
+    % options = optimoptions('intlinprog','Display',"iter");
+    % [sol,fval,exitflag] = solve(prob,'Options',options, 'Solver', 'intlinprog');
+    % disp(['Cost: ', num2str(max(sol.timeF)) ]);
+    % Reall = sol, humanTime_filling;
     % 
-    % % Define the time limit in seconds
-    % timeLimit = 25; 
-    % 
-    % % Set the options for intlinprog with the time limit
-    % options = optimoptions('intlinprog', 'Display', 'iter', 'MaxTime', timeLimit);
-    % 
-    % % Solve the problem with the specified options
-    % [sol, fval, exitflag] = solve(prob, 'Options', options, 'Solver', 'intlinprog');
-    % 
-    % % Display the final cost
-    % disp(['Cost: ', num2str(max(sol.timeF))]);
-    % 
-    % % Store results
-    % Reall = sol;
-    % humanTime_filling;
+    % Define the time limit in seconds
+    timeLimit = 20; 
+
+    % Set the options for intlinprog with the time limit
+    options = optimoptions('intlinprog', 'Display', 'iter', 'MaxTime', timeLimit);
+
+    % Solve the problem with the specified options
+    [sol, fval, exitflag] = solve(prob, 'Options', options, 'Solver', 'intlinprog');
+
+    % Display the final cost
+    disp(['Cost: ', num2str(max(sol.timeF))]);
+
+    % Store results
+    Reall = sol;
+    humanTime_filling;
 
 
 end

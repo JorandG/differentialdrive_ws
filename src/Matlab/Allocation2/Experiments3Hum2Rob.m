@@ -44,24 +44,24 @@ elseif any(timingData >= ReAllSave.timeFh(3)) && ~flags(6)
 end
 
 % Finish Serving 1
-if any(timingData >= ReAllSave.timeF(37)) && ~flags(7)
-    humanData{1}.FinishServing(1) = ReAllSave.timeF(37);
+if any(timingData >= ReAllSave.timeF(28)) && ~flags(7)
+    humanData{1}.FinishServing(1) = ReAllSave.timeF(28);
     humanData{1}.ConfirmServing(1) = 1;
     humanData{1}.RobotVelocityProximity(1) = -1; % Very Fast
     %humanData{1}.WaitingTime(1) = feedback(1);
     humanData{1}.RobotWaitingDistance(1) = 0.5;
     flags(7) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= ReAllSave.timeF(38)) && ~flags(8)
-    humanData{2}.FinishServing(1) = ReAllSave.timeF(38);
+elseif any(timingData >= ReAllSave.timeF(29)) && ~flags(8)
+    humanData{2}.FinishServing(1) = ReAllSave.timeF(29);
     humanData{2}.ConfirmServing(1) = 1;
     humanData{2}.RobotVelocityProximity(1) = 1; % Very Slow
     %humanData{2}.WaitingTime(1) = feedback(2);
     humanData{2}.RobotWaitingDistance(2) = 1;
     flags(8) = true;
     send(pub{2}, humanData{2});
-elseif any(timingData >= ReAllSave.timeF(39)) && ~flags(9)
-    humanData{3}.FinishServing(1) = ReAllSave.timeF(39);
+elseif any(timingData >= ReAllSave.timeF(30)) && ~flags(9)
+    humanData{3}.FinishServing(1) = ReAllSave.timeF(30);
     humanData{3}.ConfirmServing(1) = 1;
     humanData{3}.RobotVelocityProximity(1) = 0.5; % Slow
     %humanData{3}.WaitingTime(1) = feedback(3);
@@ -107,24 +107,24 @@ elseif any(timingData >= ReAllSave.timeFh(6)) && ~flags(15)
 end
 
 % Finish Serving 2
-if any(timingData >= ReAllSave.timeF(40)) && ~flags(16)
-    humanData{1}.FinishServing(2) = ReAllSave.timeF(40);
+if any(timingData >= ReAllSave.timeF(31)) && ~flags(16)
+    humanData{1}.FinishServing(2) = ReAllSave.timeF(31);
     humanData{1}.ConfirmServing(2) = 1;
     humanData{1}.RobotVelocityProximity(2) = -0.5; % Fast
     %humanData{1}.WaitingTime(2) = feedback(1);
     humanData{1}.RobotWaitingDistance(2) = 1;
     flags(16) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= ReAllSave.timeF(41)) && ~flags(17)
-    humanData{2}.FinishServing(2) = ReAllSave.timeF(41);
+elseif any(timingData >= ReAllSave.timeF(32)) && ~flags(17)
+    humanData{2}.FinishServing(2) = ReAllSave.timeF(32);
     humanData{2}.ConfirmServing(2) = 1;
     humanData{2}.RobotVelocityProximity(2) = 0.5; % Slow
     %humanData{2}.WaitingTime(2) = feedback(2);
     humanData{2}.RobotWaitingDistance(2) = 1;
     flags(17) = true;
     send(pub{2}, humanData{2});
-elseif any(timingData >= ReAllSave.timeF(42)) && ~flags(18)
-    humanData{3}.FinishServing(2) = ReAllSave.timeF(42);
+elseif any(timingData >= ReAllSave.timeF(33)) && ~flags(18)
+    humanData{3}.FinishServing(2) = ReAllSave.timeF(33);
     humanData{3}.ConfirmServing(2) = 1;
     humanData{3}.RobotVelocityProximity(2) = 0; % Moderate
     %humanData{3}.WaitingTime(2) = feedback(3);
@@ -170,24 +170,24 @@ elseif any(timingData >= ReAllSave.timeFh(9)) && ~flags(24)
 end
 
 % Finish Serving 3
-if any(timingData >= ReAllSave.timeF(43)) && ~flags(25)
-    humanData{1}.FinishServing(3) = ReAllSave.timeF(43);
+if any(timingData >= ReAllSave.timeF(34)) && ~flags(25)
+    humanData{1}.FinishServing(3) = ReAllSave.timeF(34);
     humanData{1}.ConfirmServing(3) = 1;
     humanData{1}.RobotVelocityProximity(3) = 0; % Ok
     %humanData{1}.WaitingTime(3) = feedback(1);
     humanData{1}.RobotWaitingDistance(3) = 0.5;
     flags(25) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= ReAllSave.timeF(44)) && ~flags(26)
-    humanData{2}.FinishServing(3) = ReAllSave.timeF(44);
+elseif any(timingData >= ReAllSave.timeF(35)) && ~flags(26)
+    humanData{2}.FinishServing(3) = ReAllSave.timeF(35);
     humanData{2}.ConfirmServing(3) = 1;  
     humanData{2}.RobotVelocityProximity(3) = 0; % Ok
     %humanData{2}.WaitingTime(3) = feedback(2);
     humanData{2}.RobotWaitingDistance(3) = 1.5;
     flags(26) = true;
     send(pub{2}, humanData{2});
-elseif any(timingData >= ReAllSave.timeF(45)) && ~flags(27)
-    humanData{3}.FinishServing(3) = ReAllSave.timeF(45);
+elseif any(timingData >= ReAllSave.timeF(36)) && ~flags(27)
+    humanData{3}.FinishServing(3) = ReAllSave.timeF(36);
     humanData{3}.ConfirmServing(3) = 1;  
     humanData{3}.RobotVelocityProximity(3) = 0; % Ok
     %humanData{3}.WaitingTime(3) = feedback(3);

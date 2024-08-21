@@ -15,7 +15,7 @@ flags = false(1, 36);
 
 num_humans = 3;
 num_agents = num_humans;
-num_filling_boxes = 4;
+num_filling_boxes = 3;
 num_robots = 2;
 initialTime = randi([120, 250], 1, num_agents);
 humanData = cell(num_humans, 1);
@@ -339,7 +339,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
         indexValW{h} = 1;
     end
     num_phases = 5;
-    duration = max(ReAllSave.timeSh(10:12)); %ReAll.makespan;
+    duration = max(ReAllSave.timeSh(6:9)); %ReAll.makespan;
     valuetime = 0;
     waitingTime = [];
 
@@ -393,8 +393,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
         end
         pause(0.01); % Pause for 0.1 second
         
-        Experiments3Hum2Rob
-        duration = max(ReAllSave.timeSh(10:12)); %duration = ReAll.makespan;
+        Experiments31
+        duration = max(ReAllSave.timeSh(6:9)); %duration = ReAll.makespan;
         i = i + 1;
         agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
         X1 = repmat(ReAll.X,num_phases,1);
@@ -423,9 +423,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     
                 if humanData{u}.ConfirmFilling(humanData{u}.TaskFilling) == 1
                     for hum = 1:num_humans
-                        if humanData{hum}.Task < num_filling_boxes
-                            EMAWeights(humanData, num_humans, pub, hum)
-                        end
+                        EMAWeights(humanData, num_humans, pub, hum)
                     end
 
                     agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
@@ -513,11 +511,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                 end
 
                 if humanData{u}.ConfirmServing(humanData{u}.Task) == 1 %|| humanData{u}.ConfirmFilling(humanData{u}.Task) == 1
-                    for hum = 1:num_humans
-                        if humanData{hum}.Task < num_filling_boxes
-                            EMAWeights(humanData, num_humans, pub, hum)
-                        end
-                    end
+                    EMAWeights(humanData, num_humans, pub, u)
                     RobotID = u;
                     %% ROS topic for the robots
 
@@ -587,9 +581,9 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         humanData{u}.FinishFilling = ReAll.timeFh(u:num_agents:end);
                         humanData{u}.StartFilling = ReAll.timeSh(u:num_agents:end);
                         MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks = MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks + 1;
-                        %if humanData{u}.Task < num_filling_boxes
+                        if humanData{u}.Task < num_filling_boxes
                             NumericalValidation(ReAll, humanData, u);
-                        %end
+                        end
                         if humanData{u}.Task == num_filling_boxes
                             humanData{u}.Task = num_filling_boxes + 1;
                         else
@@ -739,14 +733,12 @@ if Wt1p + alpha*UpLevelProx > 0
 else
     Wtp = 0;
 end
-
 Wtp = (2/5) * Wtp + 1; % To map from [0; 5] fro the feedback to [1; 3] for the MILP
-
 if humanData{h}.WaitingTime(humanData{h}.Task) == -0.5
-    Wtw = 0.97
+    Wtw = 0.98
 elseif humanData{h}.WaitingTime(humanData{h}.Task) == -0.9
     Wtw = 0.95
-elseif humanData{h}.WaitingTime(humanData{h}.Task) == 1
+elseif humanData{h}.WaitingTime(humanData{h}.Task) == 0.9
     Wtw = 3
 elseif humanData{h}.WaitingTime(humanData{h}.Task) == 0.5
     Wtw = 2
