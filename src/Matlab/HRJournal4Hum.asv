@@ -355,7 +355,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
 
             for u=1:num_agents
                 for hu=1:num_agents
-                    humanData{hu}.Robots = [];
+                humanData{hu}.Robots = [];
                 end
                 % Loop over each task to map robots to humans
                 for task_idx = 1:num_tasks
@@ -437,11 +437,6 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     %humanData{u}.FinishFilling(humanData{u}.Task) = FinishFill;
                     
                     for h=1:num_agents
-                        humanData{h}.FinishFilling = ReAll.timeFh(h:num_agents:end);
-                        humanData{h}.StartFilling = ReAll.timeSh(h:num_agents:end);
-                        humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
-                        humanData{h}.FinishServing = ReAll.timeF(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
-
                         humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
                         humanTime_serving(h:num_humans:end) = humanData{h}.FinishServing - humanData{h}.StartServing;
                         humanData{h}.TimeServing = humanData{h}.FinishServing - humanData{h}.StartServing;
@@ -514,16 +509,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         end
 
                         ReAllSave = ReAll;
-                       
                         for h=1:num_agents  
-                            humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
-                            humanData{h}.FinishServing = ReAll.timeF(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
-
-                            % Send new timings on the topic
-                            humanData{h}.FinishFilling = ReAll.timeFh(h:num_agents:end);
-                            humanData{h}.StartFilling = ReAll.timeSh(h:num_agents:end);
                             humanData{h}.TimeFilling = humanData{h}.FinishFilling - humanData{h}.StartFilling;
-                            send(pub{h}, humanData{h});
                         end
 
                         humanTime_fillingPrev = humanTime_filling;
@@ -582,9 +569,6 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         humanData{u}.Task = humanData{u}.Task + 1;
 
                         for h=1:num_agents  
-                            humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
-                            humanData{h}.FinishServing = ReAll.timeF(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
-
                             % Send new timings on the topic
                             humanData{h}.FinishFilling = ReAll.timeFh(h:num_agents:end);
                             humanData{h}.StartFilling = ReAll.timeSh(h:num_agents:end);
