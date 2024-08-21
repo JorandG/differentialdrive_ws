@@ -72,6 +72,7 @@ if any(timingData >= ReAllSave.timeF(38)) && ~flags(10)
     humanData{2}.RobotWaitingDistance(2) = 1;
     flags(10) = true;
     send(pub{2}, humanData{2});
+    pause(0.1)
 end
 
 if any(timingData >= ReAllSave.timeF(39)) && ~flags(11)
