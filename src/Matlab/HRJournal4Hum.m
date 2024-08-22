@@ -7,7 +7,7 @@ savepath
 clear all;
 close all;
 
-global agents_ordered_allocation FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights Prox ReAllSave approaching_time waiting_time humanTime_serving humanTime_fillingPrev timingData TimingSub MILPData MILPDataPub sizeFinishFilling msgTime pubTime pub msg humanSub humanData Ph human num_farming_robot tasknum tasknum1 num_robots initialTime num_filling_boxes idx_going_tasks idx_depot_tasks idx_waiting_tasks idx_approaching_tasks idx_services_tasks dist  num_humans VelRob HumWait HumTimeList num_service_tasks num_tasks num_depot_tasks service_time num_agents humanTime_filling humanTime_filling1 WeightHumanwaiting WeightEnergyProximity WeightEnergyDepositing WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+global indVal1 indVal2 indVal1W indVal2W agents_ordered_allocation FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights Prox ReAllSave approaching_time waiting_time humanTime_serving humanTime_fillingPrev timingData TimingSub MILPData MILPDataPub sizeFinishFilling msgTime pubTime pub msg humanSub humanData Ph human num_farming_robot tasknum tasknum1 num_robots initialTime num_filling_boxes idx_going_tasks idx_depot_tasks idx_waiting_tasks idx_approaching_tasks idx_services_tasks dist  num_humans VelRob HumWait HumTimeList num_service_tasks num_tasks num_depot_tasks service_time num_agents humanTime_filling humanTime_filling1 WeightHumanwaiting WeightEnergyProximity WeightEnergyDepositing WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
 
 global flags
 
@@ -160,6 +160,18 @@ drawnow
 ReAll = Reallocation1(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);
 ReAllSave = ReAll;
 
+for h=1:num_agents
+    humanData{h}.FinishFilling = ReAll.timeFh(h:num_agents:end);
+    humanData{h}.StartFilling = ReAll.timeSh(h:num_agents:end);
+    humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
+    humanData{h}.FinishServing = ReAll.timeF(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
+
+    humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
+    humanTime_serving(h:num_humans:end) = humanData{h}.FinishServing - humanData{h}.StartServing;
+    humanData{h}.TimeServing = humanData{h}.FinishServing - humanData{h}.StartServing;
+    send(pub{h}, humanData{h});
+end
+
 display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
 
 ProximityTaskDurations = [(ReAll.timeF(idx_approaching_tasks) - ReAll.timeS(idx_approaching_tasks))] 
@@ -286,7 +298,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
 end
 
 function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
-    global finfill finserv alreadyHere agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+    global finfill finserv alreadyHere agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation indVal1 indVal2 indVal1W indVal2W
     ReAll1 = ReAll
     reall_already_once = 0;
     num_phases = 5;

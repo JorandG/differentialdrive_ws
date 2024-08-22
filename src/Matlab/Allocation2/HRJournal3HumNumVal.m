@@ -7,9 +7,9 @@ savepath
 clearvars -except indVal indexCamp indice indValW indexCampW
 close all;
 
-global FirstReAll indexVal indexValW agents_ordered_allocation FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights Prox ReAllSave approaching_time waiting_time humanTime_serving humanTime_fillingPrev timingData TimingSub MILPData MILPDataPub sizeFinishFilling msgTime pubTime pub msg humanSub humanData Ph human num_farming_robot tasknum tasknum1 num_robots initialTime num_filling_boxes idx_going_tasks idx_depot_tasks idx_waiting_tasks idx_approaching_tasks idx_services_tasks dist  num_humans VelRob HumWait HumTimeList num_service_tasks num_tasks num_depot_tasks service_time num_agents humanTime_filling humanTime_filling1 WeightHumanwaiting WeightEnergyProximity WeightEnergyDepositing WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+global storedIndexValW storedIndexVal FirstReAll indexVal indexValW agents_ordered_allocation FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights Prox ReAllSave approaching_time waiting_time humanTime_serving humanTime_fillingPrev timingData TimingSub MILPData MILPDataPub sizeFinishFilling msgTime pubTime pub msg humanSub humanData Ph human num_farming_robot tasknum tasknum1 num_robots initialTime num_filling_boxes idx_going_tasks idx_depot_tasks idx_waiting_tasks idx_approaching_tasks idx_services_tasks dist  num_humans VelRob HumWait HumTimeList num_service_tasks num_tasks num_depot_tasks service_time num_agents humanTime_filling humanTime_filling1 WeightHumanwaiting WeightEnergyProximity WeightEnergyDepositing WeightEnergyPicking WeightMakespan vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
 
-global flags
+global flags numstored
 
 flags = false(1, 36);
 
@@ -28,6 +28,7 @@ approaching_time = 5;
 serving_time = 7;
 home = 1;
 sim = 0;
+numstored = 1;
 
 if ros.internal.Global.isNodeActive == 0
     if home == 1
@@ -331,7 +332,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
 end
 
 function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
-    global FirstReAll indexVal indexValW agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
+    global storedIndexValW storedIndexVal FirstReAll indexVal indexValW agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation
     ReAll1 = ReAll
     reall_already_once = 0;
     for h=1:num_agents
@@ -339,7 +340,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
         indexValW{h} = 1;
     end
     num_phases = 5;
-    duration = max(ReAllSave.timeSh(10:12)); %ReAll.makespan;
+    duration = ReAll.makespan;%max(ReAllSave.timeSh(10:12)); %ReAll.makespan;
     valuetime = 0;
     waitingTime = [];
 
@@ -394,7 +395,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
         pause(0.01); % Pause for 0.1 second
         
         Experiments3Hum2Rob
-        duration = max(ReAllSave.timeSh(10:12)); %duration = ReAll.makespan;
+        duration = ReAll.makespan; %max(ReAllSave.timeSh(10:12)); %duration = ReAll.makespan;
         i = i + 1;
         agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
         X1 = repmat(ReAll.X,num_phases,1);
@@ -587,9 +588,9 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         humanData{u}.FinishFilling = ReAll.timeFh(u:num_agents:end);
                         humanData{u}.StartFilling = ReAll.timeSh(u:num_agents:end);
                         MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks = MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks + 1;
-                        %if humanData{u}.Task < num_filling_boxes
+                        if humanData{u}.Task < num_filling_boxes
                             NumericalValidation(ReAll, humanData, u);
-                        %end
+                        end
                         if humanData{u}.Task == num_filling_boxes
                             humanData{u}.Task = num_filling_boxes + 1;
                         else

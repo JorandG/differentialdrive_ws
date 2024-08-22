@@ -1,54 +1,61 @@
 function NumericalValidation(ReAll, humanData, u)
-global num_agents indexVal indexValW FirstReAll
-
-if humanData{u}.WaitingTime(humanData{u}.Task-1) < 0 % human asks for a longer waiting time
-    taup = ReAll.timeSh(u+num_agents*humanData{u}.Task) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-1))
-    taup1 = ReAll.timeSh(u+num_agents*(humanData{u}.Task-1)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task - 1))
-    if taup > taup1
-        indexVal{u} = indexVal{u} - (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taup - taup1)/taup)
-    elseif taup < taup1
-        indexVal{u} = indexVal{u} + (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taup - taup1)/taup)
-    elseif taup == taup1
-        indexVal{u} = indexVal{u}
+    global num_agents indexVal indexValW FirstReAll storedIndexVal storedIndexValW numstored
+    
+    if isempty(storedIndexVal)
+        storedIndexVal = {}; % Initialize storage for indexVal
     end
-end
-
-if humanData{u}.WaitingTime(humanData{u}.Task-1) > 0 % human asks for a shorter waiting time
-    taup = ReAll.timeSh(u+num_agents*humanData{u}.Task) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-1))
-    taup1 = ReAll.timeSh(u+num_agents*(humanData{u}.Task-1)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task - 1))
-    if taup > taup1
-        indexVal{u} = indexVal{u} - (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taup - taup1)/taup)
-    elseif taup < taup1
-        indexVal{u} = indexVal{u} + (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taup - taup1)/taup)
-    elseif taup == taup1
-        indexVal{u} = indexVal{u}
+    
+    if isempty(storedIndexValW)
+        storedIndexValW = {}; % Initialize storage for indexValW
     end
-end
-
-%% Without ReAll
-if humanData{u}.WaitingTime(humanData{u}.Task-1) < 0
-    taupW = FirstReAll.timeSh(u+num_agents*humanData{u}.Task) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-1))
-    taupW1 = FirstReAll.timeSh(u+num_agents*(humanData{u}.Task-1)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task - 1))
-    if taupW > taupW1
-        indexValW{u} = indexValW{u} - (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taupW - taupW1)/taupW)
-    elseif taupW < taupW1
-        indexValW{u} = indexValW{u} + (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taupW - taupW1)/taupW)
-    elseif taupW == taupW1
-        indexValW{u} = indexVal{u}
+    
+    if humanData{u}.WaitingTime(humanData{u}.Task-1) < 0 % human asks for a longer waiting time
+        taup = ReAll.timeSh(u+num_agents*(humanData{u}.Task-1)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-2));
+        taup1 = ReAll.timeSh(u+num_agents*(humanData{u}.Task)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-1));
+        if taup > taup1
+            indexVal{u} = indexVal{u} - (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taup - taup1)/taup);
+        elseif taup < taup1
+            indexVal{u} = indexVal{u} + (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taup - taup1)/taup);
+        end
     end
-end
 
-if humanData{u}.WaitingTime(humanData{u}.Task-1) > 0
-    taupW = FirstReAll.timeSh(u+num_agents*humanData{u}.Task) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-1))
-    taupW1 = FirstReAll.timeSh(u+num_agents*(humanData{u}.Task-1)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task - 1))
-    if taupW > taupW1
-        indexValW{u} = indexValW{u} - (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taupW - taupW1)/taupW)
-    elseif taupW < taupW1
-        indexValW{u} = indexValW{u} + (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taupW - taupW1)/taupW)
-    elseif taupW == taupW1
-        indexValW{u} = indexVal{u}
+    if humanData{u}.WaitingTime(humanData{u}.Task-1) > 0 % human asks for a shorter waiting time
+        taup = ReAll.timeSh(u+num_agents*(humanData{u}.Task-1)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-2));
+        taup1 = ReAll.timeSh(u+num_agents*(humanData{u}.Task)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-1));
+        if taup > taup1
+            indexVal{u} = indexVal{u} - (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taup - taup1)/taup);
+        elseif taup < taup1
+            indexVal{u} = indexVal{u} + (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taup - taup1)/taup);
+        end
     end
-end
 
-indexVal
-indexValW
+    % Store the current value of indexVal{u}
+    storedIndexVal{u}{humanData{u}.Task-1} = indexVal{u};
+    
+    %% Without ReAll
+    if humanData{u}.WaitingTime(humanData{u}.Task-1) < 0
+        taupW = FirstReAll.timeSh(u+num_agents*(humanData{u}.Task-1)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-2));
+        taupW1 = FirstReAll.timeSh(u+num_agents*(humanData{u}.Task)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-1));
+        if taupW > taupW1
+            indexValW{u} = indexValW{u} - (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taupW - taupW1)/taupW);
+        elseif taupW < taupW1
+            indexValW{u} = indexValW{u} + (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taupW - taupW1)/taupW);
+        end
+    end
+
+    if humanData{u}.WaitingTime(humanData{u}.Task-1) > 0
+        taupW = FirstReAll.timeSh(u+num_agents*humanData{u}.Task-1) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-2));
+        taupW1 = FirstReAll.timeSh(u+num_agents*(humanData{u}.Task)) - ReAll.timeFh(u+num_agents*(humanData{u}.Task-1));
+        if taupW > taupW1
+            indexValW{u} = indexValW{u} - (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taupW - taupW1)/taupW);
+        elseif taupW < taupW1
+            indexValW{u} = indexValW{u} + (1/humanData{u}.WaitingTime(humanData{u}.Task-1))*(abs(taupW - taupW1)/taupW);
+        end
+    end
+
+    % Store the current value of indexValW{u}
+    storedIndexValW{u}{humanData{u}.Task-1} = indexValW{u};
+    
+    indexVal
+    indexValW
+end
