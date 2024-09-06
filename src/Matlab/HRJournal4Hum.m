@@ -94,7 +94,7 @@ for h=1:num_humans
     humanData{h}.HappinessWait = repmat(0, 1, num_filling_boxes+1);
     humanData{h}.HappinessProx = repmat(0, 1, num_filling_boxes+1);
     humanData{h}.Efficiency = repmat(0, 1, num_filling_boxes+1);
-    humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
+    humanData{h}.Severity = [0.75; 0.5; 1]%repmat(1, 1, num_filling_boxes+1);
     send(pub{h}, humanData{h});
 end 
 %Reduce the waiting time weight for the robot considered as human 4 here
@@ -115,9 +115,10 @@ num_tasks = num_service_tasks;
 service_time = zeros(num_tasks, num_robots);
 
 M = 100000;
-vel_min = ones(num_robots,1)*0.05*0.5; % min velocity for the robots
-vel_max = ones(num_robots,1)*0.2*0.5; % max velocity for the robots
-chi = ones(num_robots,1)*1;
+vel_min = ones(num_robots,1)*0.05; % min velocity for the robots
+vel_max = ones(num_robots,1)*0.2; % max velocity for the robots
+%chi = ones(num_robots,1)*1;
+chi = [0.75; 1];
 Reduction = 1;
 
 % Weights for objective function
