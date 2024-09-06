@@ -16,8 +16,8 @@ global num_humans num_robots
 num_filling_boxes = 3;
 flags = false(1, num_humans*num_filling_boxes*3);
 compteur = 0;
-%num_humans = 3;
-%num_robots = 2;
+num_humans = 2;
+num_robots = 2;
 num_agents = num_humans;
 
 initialTime = randi([120, 250], 1, num_agents);
@@ -209,7 +209,7 @@ ReAll = Reallocation2(num_service_tasks, num_tasks, num_agents, num_filling_boxe
 ReAllSave = ReAll;
 FirstReAll = ReAll;
 
-%display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
 
 ProximityTaskDurations = [(ReAll.timeF(idx_approaching_tasks) - ReAll.timeS(idx_approaching_tasks))] 
 for h=1:num_agents
@@ -262,10 +262,9 @@ end
 simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
 
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
-    global num_phases
+    global num_phases idx_depot_tasks idx_services_tasks idx_waiting_tasks idx_approaching_tasks
     %% Display
-    %close all
-    %rng(28)
+    rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
     colors_matrix = rand(num_agents*num_filling_boxes*5,3);
     figure;
@@ -277,75 +276,87 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
 
     hold on
 
-    for i = 1:num_robots
-        index = find(X1(:,i) > 0.1);
-        inittime = ReAll.timeS(X1(:,i) > 0.1);
-        endtime = ReAll.timeF(X1(:,i) > 0.1);
-        for k = 1:length(inittime)
+    for i=1:num_robots
+        index = find(X1(:,i)>0.1);
+        inittime = ReAll.timeS(X1(:,i)>0.1);
+        endtime = ReAll.timeF(X1(:,i)>0.1);
+        for k=1:length(inittime)
             displacement = 0.07;
             if find(index(k) == idx_going_tasks)
                 h_idx = mod(index(k), num_agents);
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(index(k) / num_agents);
-                color_index = h_idx * (num_filling_boxes * num_agents - 1) + t_idx;
-                if color_index > size(colors_matrix, 1)
-                    warning('Color index exceeds color matrix size. Adjusting size.');
-                    colors_matrix = rand(color_index, 3);  % Resize color matrix if necessary
-                end
-                plot([i i], [inittime(k) endtime(k)], '-', 'LineWidth', 5, 'Color', colors_matrix(color_index,:));
-                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^p$'];
-            else
-                displacement = -0.35;
-                idxdep = index(k) - max(idx_going_tasks);
-                h_idx = mod(idxdep, num_agents);
+                t_idx = ceil(index(k)/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 5, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^g$'];
+            elseif find(index(k) == idx_depot_tasks)
+                displacement = 0.07;
+                h_idx = mod(index(k), num_agents);
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(idxdep / num_agents);
-                color_index = h_idx * (num_filling_boxes * num_agents - 1) + t_idx;
-                if color_index > size(colors_matrix, 1)
-                    warning('Color index exceeds color matrix size. Adjusting size.');
-                    colors_matrix = rand(color_index, 3);  % Resize color matrix if necessary
-                end
-                plot([i i], [inittime(k) endtime(k)], '-', 'LineWidth', 2, 'Color', colors_matrix(color_index,:));
+                t_idx = ceil(index(k)/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^d$'];
+            elseif find(index(k) == idx_services_tasks)
+                displacement = -0.35;
+                h_idx = mod(index(k), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(index(k)/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^s$'];
+            elseif find(index(k) == idx_approaching_tasks)
+                displacement = 0.07;
+                h_idx = mod(index(k), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(index(k)/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^p$'];
+            elseif find(index(k) == idx_waiting_tasks)
+                % Lower the displacement for waiting tasks
+                displacement = -0.5;  % Adjust this value to control how low you want it
+                h_idx = mod(index(k), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(index(k)/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^w$'];
             end
-            text(i + displacement, mean([inittime(k) endtime(k)]), processText, 'Interpreter', 'latex', 'FontSize', fontsize);
+            text(i+displacement, mean([inittime(k) endtime(k)]), processText, 'Interpreter', 'latex', 'FontSize', fontsize);
         end
     end
 
-    for i = 1:num_agents
+    for i=1:num_agents
         idx_curr_hum = i:num_agents:num_agents*num_filling_boxes;
         inittime = ReAll.timeSh(idx_curr_hum);
         endtime = ReAll.timeFh(idx_curr_hum);
-        for k = 1:length(inittime)
-            color_index = i * (num_filling_boxes * num_agents - 1) + k;
-            if color_index > size(colors_matrix, 1)
-                warning('Color index exceeds color matrix size. Adjusting size.');
-                colors_matrix = rand(color_index, 3);  % Resize color matrix if necessary
-            end
-            plot([i + num_robots i + num_robots], [inittime(k) endtime(k)], 'LineWidth', 5, 'Color', colors_matrix(color_index,:));
+        for k=1:length(inittime)
+            plot([i+num_robots i+num_robots], [inittime(k) endtime(k)], 'LineWidth', 5, 'Color', colors_matrix(i*(num_filling_boxes*num_agents-1)+k,:));
 
             processText = ['$\tau_{', num2str(i),',', num2str(k), '}^o$'];
-            text(i + num_robots + 0.1, mean([inittime(k) endtime(k)]), processText, 'Interpreter', 'latex', 'FontSize', fontsize);
+            text(i+num_robots+0.1, mean([inittime(k) endtime(k)]), processText, 'Interpreter', 'latex', 'FontSize', fontsize);
         end
     end
-    xlim([0 num_robots + num_agents + 1]);
+    xlim([0 num_robots+num_agents + 1]);
     xlabel('Agents', 'Interpreter', 'latex', 'FontSize', fontsize);
     ylabel('t[s]', 'Interpreter', 'latex', 'FontSize', fontsize);
 
     labels{1} = '';
-    for i = 1:num_robots
-        labels{i + 1} = ['$r_{', num2str(i), '}$'];
+    for i=1:num_robots
+        labels{i+1} = ['$r_{', num2str(i), '}$'];
     end
-    for i = 1:num_agents
-        labels{num_robots + i + 1} = ['$h_{', num2str(i), '}$'];
+    for i=1:num_agents
+        labels{num_robots+i+1} = ['$h_{', num2str(i), '}$'];
     end
 
-    set(gca, 'XTick', [0:num_agents + num_robots], 'XTickLabel', labels, 'FontSize', fontsize);
-    grid on
+    set(gca, 'XTick', [0:num_agents+num_robots], 'XTickLabel', labels, 'FontSize', fontsize);
+    grid
     box on
 end
 
@@ -684,7 +695,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         end                    
                     end
 
-                    %display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                    display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
                     %human{u}.confirmModif = 0;
                     % idx_to_consider_r = [];
                     % idx_to_consider_h = [];
