@@ -100,7 +100,10 @@ for h=1:num_humans
         humanData{h}.Severity = repmat(0.5, 1, num_filling_boxes+1);
     elseif h == 3
         humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
+    elseif h == 4
+        humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
     end
+    
     send(pub{h}, humanData{h});
 end 
 %Reduce the waiting time weight for the robot considered as human 4 here
