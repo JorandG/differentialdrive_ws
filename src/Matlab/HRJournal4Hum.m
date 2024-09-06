@@ -290,7 +290,6 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^p$'];
             elseif find(index(k) == idx_waiting_tasks)
-                
                 displacement = -0.5;  
                 h_idx = mod(index(k), num_agents);
                 if h_idx == 0
@@ -331,6 +330,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
     grid
     box on
 end
+
 
 
 function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
