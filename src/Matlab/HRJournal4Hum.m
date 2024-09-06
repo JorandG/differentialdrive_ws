@@ -94,7 +94,15 @@ for h=1:num_humans
     humanData{h}.HappinessWait = repmat(0, 1, num_filling_boxes+1);
     humanData{h}.HappinessProx = repmat(0, 1, num_filling_boxes+1);
     humanData{h}.Efficiency = repmat(0, 1, num_filling_boxes+1);
-    humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
+    if h == 1
+        humanData{h}.Severity = repmat(0.75, 1, num_filling_boxes+1);
+    elseif h == 2
+        humanData{h}.Severity = repmat(0.5, 1, num_filling_boxes+1);
+    elseif h == 3
+        humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
+    elseif h == 4
+        humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
+    end
     send(pub{h}, humanData{h});
 end 
 %Reduce the waiting time weight for the robot considered as human 4 here
@@ -115,17 +123,18 @@ num_tasks = num_service_tasks;
 service_time = zeros(num_tasks, num_robots);
 
 M = 100000;
-vel_min = ones(num_robots,1)*0.05*0.5; % min velocity for the robots
-vel_max = ones(num_robots,1)*0.2*0.5; % max velocity for the robots
-chi = ones(num_robots,1)*1;
+vel_min = ones(num_robots,1)*0.05; % min velocity for the robots
+vel_max = ones(num_robots,1)*0.2; % max velocity for the robots
+%chi = ones(num_robots,1)*1;
+chi = [0.75; 1];
 Reduction = 1;
 
 % Weights for objective function
-WeightHumanwaiting = 1;
+WeightHumanwaiting = 2;
 WeightEnergyPicking = 1;
 WeightEnergyProximity = 1;
 WeightEnergyDepositing = 1;
-WeightMakespan = 20;
+WeightMakespan = 10;
 inv_vel_min = 1./vel_min;
 inv_vel_max = 1./vel_max;
 

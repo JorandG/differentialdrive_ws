@@ -1,0 +1,58 @@
+global timingData humanData pub ReAllSave flags num_agents num_filling_boxes
+
+% Loop through each filling box
+for box_num = 1:num_filling_boxes
+    % Start Filling for each agent
+    for human_idx = 1:num_agents
+        timeSh_index = (box_num - 1) * num_agents + human_idx;
+        flag_index = timeSh_index;
+        
+        if any(timingData >= ReAllSave.timeSh(timeSh_index)) && ~flags(flag_index)
+            humanData{human_idx}.StartFilling(box_num) = ReAllSave.timeSh(timeSh_index);
+            flags(flag_index) = true;
+            send(pub{human_idx}, humanData{human_idx});
+        end
+    end
+    
+    % Finish Filling & Start Serving for each agent
+    for human_idx = 1:num_agents
+        timeFh_index = (box_num - 1) * num_agents + human_idx;
+        flag_index = num_filling_boxes * num_agents + timeFh_index;
+        
+        if any(timingData >= ReAllSave.timeFh(timeFh_index)) && ~flags(flag_index)
+            humanData{human_idx}.FinishFilling(box_num) = ReAllSave.timeFh(timeFh_index);
+            humanData{human_idx}.ConfirmFilling(box_num) = 1;
+            humanData{human_idx}.StartServing(box_num) = ReAllSave.timeFh(timeFh_index);
+            flags(flag_index) = true;
+            send(pub{human_idx}, humanData{human_idx});
+        end
+    end
+
+    % Finish Serving for each agent
+    for human_idx = 1:num_agents
+        timeF_index = (box_num - 1) * num_agents + human_idx + num_filling_boxes * num_agents * 2;
+        flag_index = 2 * num_filling_boxes * num_agents + (box_num - 1) * num_agents + human_idx;
+        
+        if any(timingData >= ReAllSave.timeF(timeF_index)) && ~flags(flag_index)
+            humanData{human_idx}.FinishServing(box_num) = ReAllSave.timeF(timeF_index);
+            humanData{human_idx}.ConfirmServing(box_num) = 1;
+            % Example for setting RobotVelocityProximity and RobotWaitingDistance
+            switch human_idx
+                case 1
+                    humanData{human_idx}.RobotVelocityProximity(box_num) = -1 + 0.5 * (box_num - 1); % Adjust this as needed
+                    humanData{human_idx}.RobotWaitingDistance(box_num) = 0.5;
+                case 2
+                    humanData{human_idx}.RobotVelocityProximity(box_num) = 1 - 0.5 * (box_num - 1); % Adjust this as needed
+                    humanData{human_idx}.RobotWaitingDistance(box_num) = 1;
+                case 3
+                    humanData{human_idx}.RobotVelocityProximity(box_num) = 0.5 - 0.5 * (box_num - 1); % Adjust this as needed
+                    humanData{human_idx}.RobotWaitingDistance(box_num) = 1.5;
+            end
+            flags(flag_index) = true;
+            send(pub{human_idx}, humanData{human_idx});
+        end
+    end
+    
+    % Optionally reset flags at the end of each cycle or as needed:
+    % flags = false(size(flags));
+end

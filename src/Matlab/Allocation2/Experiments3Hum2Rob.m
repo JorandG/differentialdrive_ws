@@ -1,12 +1,6 @@
 global timingData humanData pub ReAllSave MILPData
 global flags feedback
 
-% Ensure feedback is initialized
-if isempty(feedback) && ~flags(36)
-    feedback = arrayfun(@(~) randsample([-1, -0.5, 0.5, 1], 1), 1:4); % Extend to 4
-    flags(28) = true;
-end
-
 % Start Filling 1
 if any(timingData >= ReAllSave.timeSh(1)) && ~flags(1)
     humanData{1}.StartFilling(1) = ReAllSave.timeSh(1);

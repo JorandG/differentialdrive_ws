@@ -1,18 +1,18 @@
-% clear all
-% close all
-% 
-% global indexVal num_agents indexValW
-% indVal = [];
-% indValW = [];
-% indexCamp = [];
-% indexCampW = [];
-% 
-% indexCamp = [indexCamp, zeros(1, 10)]; % Append zeros to extend the list to accommodate indices 11 to 20
-% indexCampW = [indexCampW, zeros(1, 10)]; % Similarly extend indexCampW
+clear all
+close all
+
+global indexVal num_agents indexValW
+indVal = [];
+indValW = [];
+indexCamp = [];
+indexCampW = [];
+
+indexCamp = [indexCamp, zeros(1, 10)]; % Append zeros to extend the list to accommodate indices 11 to 20
+indexCampW = [indexCampW, zeros(1, 10)]; % Similarly extend indexCampW
 
 
 for indice = 1:10 
-    HRJournal3HumNumVal;
+    HRJournalXHumXRobNumVal;
     
     % Update the index values for each iteration
     indVal = [indVal, indexVal{1}, indexVal{2}, indexVal{3}, indexVal{4}];
@@ -63,3 +63,62 @@ legend;
 
 % Display the plot
 drawnow;
+
+
+% Assuming num_agents is the total number of agents
+num_agents = length(storedIndexVal); % Or set this value accordingly
+
+% Define the number of iterations (assuming all agents have the same number of iterations)
+num_iterations = length(storedIndexVal{1});
+
+% Create a colormap with two distinct colors for two iterations
+colors = lines(2);
+
+% Create the first figure for storedIndexVal
+figure;
+
+% Initialize arrays to store plot handles for the legend
+h = gobjects(2, 1);
+
+% Plot each point for storedIndexVal
+for iter = 1:num_iterations
+    for u = 1:num_agents
+        h(iter) = plot(u, indexValMatrix(u, iter), 'o', 'MarkerSize', 8, 'MarkerFaceColor', colors(iter, :), 'MarkerEdgeColor', 'black');
+        hold on;
+    end
+end
+
+% Customize the plot
+xlabel('Agent');
+ylabel('Stored Index Value');
+title('Stored Index Values (indexVal) for All Agents');
+xlim([0, num_agents + 1]);
+grid on;
+
+% Add a legend corresponding to the two iterations
+legend(h, {'Iteration 1', 'Iteration 2'}, 'Location', 'Best');
+
+% Create the second figure for storedIndexValW
+figure;
+
+% Initialize arrays to store plot handles for the legend
+h = gobjects(2, 1);
+
+% Plot each point for storedIndexValW
+for iter = 1:num_iterations
+    for u = 1:num_agents
+        h(iter) = plot(u, indexValWMatrix(u, iter), 'o', 'MarkerSize', 8, 'MarkerFaceColor', colors(iter, :), 'MarkerEdgeColor', 'black');
+        hold on;
+    end
+end
+
+% Customize the plot
+xlabel('Agent');
+ylabel('Stored Index Value');
+title('Stored Index Values (indexValW) for All Agents');
+xlim([0, num_agents + 1]);
+grid on;
+
+% Add a legend corresponding to the two iterations
+legend(h, {'Iteration 1', 'Iteration 2'}, 'Location', 'Best');
+

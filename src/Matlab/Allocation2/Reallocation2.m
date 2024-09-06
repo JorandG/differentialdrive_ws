@@ -94,13 +94,26 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
     %% Constraints
     humanwaiting1 = WaitWeight(1)*(sum(timeSh(num_agents + 1:num_agents:num_service_tasks) - timeFh(1:num_agents:num_service_tasks - num_agents)) + timeSh(1)); 
     humanwaiting2 = WaitWeight(2)*(sum(timeSh(num_agents + 2:num_agents:num_service_tasks) - timeFh(2:num_agents:num_service_tasks - num_agents)) + timeSh(2)); 
-    humanwaiting3 = WaitWeight(3)*(sum(timeSh(num_agents + 3:num_agents:num_service_tasks) - timeFh(3:num_agents:num_service_tasks - num_agents)) + timeSh(3)); 
-    %humanwaiting4 = WaitWeight(4)*(sum(timeSh(num_agents + 4:num_agents:num_service_tasks) - timeFh(4:num_agents:num_service_tasks - num_agents)) + timeSh(4)); 
-    
+    if num_agents > 2
+        humanwaiting3 = WaitWeight(3)*(sum(timeSh(num_agents + 3:num_agents:num_service_tasks) - timeFh(3:num_agents:num_service_tasks - num_agents)) + timeSh(3)); 
+        if num_agents > 3
+            humanwaiting4 = WaitWeight(4)*(sum(timeSh(num_agents + 4:num_agents:num_service_tasks) - timeFh(4:num_agents:num_service_tasks - num_agents)) + timeSh(4)); 
+            if num_agents > 4
+                humanwaiting5 = WaitWeight(5)*(sum(timeSh(num_agents + 5:num_agents:num_service_tasks) - timeFh(5:num_agents:num_service_tasks - num_agents)) + timeSh(5)); 
+            end
+        end
+    end
     prob.Constraints.individual_human_waiting1 = individual_human_waiting(1) == humanwaiting1;
     prob.Constraints.individual_human_waiting2 = individual_human_waiting(2) == humanwaiting2;
-    prob.Constraints.individual_human_waiting3 = individual_human_waiting(3) == humanwaiting3;
-    %prob.Constraints.individual_human_waiting4 = individual_human_waiting(4) == humanwaiting4;
+    if num_agents > 2
+        prob.Constraints.individual_human_waiting3 = individual_human_waiting(3) == humanwaiting3;
+        if num_agents > 3
+            prob.Constraints.individual_human_waiting4 = individual_human_waiting(4) == humanwaiting4;
+            if num_agents > 4
+                prob.Constraints.individual_human_waiting5 = individual_human_waiting(5) == humanwaiting5;
+            end
+        end
+    end
     %humanwaiting = humanwaiting1 + humanwaiting2 + humanwaiting3 + humanwaiting4;
 	balance_factor = 2; % Example value, adjust as needed
     average_waiting_time = sum(individual_human_waiting) / num_agents;
@@ -113,13 +126,18 @@ function Reall = Reallocation(num_service_tasks, num_tasks, num_agents, num_fill
 
     prob.Constraints.balanced_waiting_time_upper2 = individual_human_waiting(2) <= (1.5 + 1/WaitWeight(2)) * average_waiting_time;
     prob.Constraints.balanced_waiting_time_lower2 = individual_human_waiting(2) >= (1/WaitWeight(2)) * average_waiting_time;
-
-    prob.Constraints.balanced_waiting_time_upper3 = individual_human_waiting(3) <= (1.5 + 1/WaitWeight(3)) * average_waiting_time;
-    prob.Constraints.balanced_waiting_time_lower3 = individual_human_waiting(3) >= (1/WaitWeight(3)) * average_waiting_time;
-
-    %prob.Constraints.balanced_waiting_time_upper4 = individual_human_waiting(4) <= (1 + balance_factor) * average_waiting_time;
-    %prob.Constraints.balanced_waiting_time_lower4 = individual_human_waiting(4) >= (1 - balance_factor) * average_waiting_time;
-    % 
+    if num_agents > 2
+        prob.Constraints.balanced_waiting_time_upper3 = individual_human_waiting(3) <= (1.5 + 1/WaitWeight(3)) * average_waiting_time;
+        prob.Constraints.balanced_waiting_time_lower3 = individual_human_waiting(3) >= (1/WaitWeight(3)) * average_waiting_time;
+        if num_agents > 3
+            prob.Constraints.balanced_waiting_time_upper4 = individual_human_waiting(4) <= (1.5 + 1/WaitWeight(4)) * average_waiting_time;
+            prob.Constraints.balanced_waiting_time_lower4 = individual_human_waiting(4) >= (1/WaitWeight(4)) * average_waiting_time;
+            if num_agents > 4
+                prob.Constraints.balanced_waiting_time_upper5 = individual_human_waiting(5) <= (1.5 + 1/WaitWeight(5)) * average_waiting_time;
+                prob.Constraints.balanced_waiting_time_lower5 = individual_human_waiting(5) >= (1/WaitWeight(5)) * average_waiting_time;
+            end
+        end
+    end
     prob.Constraints.sum_ind_wait = sum_ind_wait == humanwaiting
 
     prob.Constraints.maxInvProd1 = max_invprod >= invprod(:,1) + invprod(:,2);

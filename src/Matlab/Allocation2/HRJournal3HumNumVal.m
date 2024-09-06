@@ -15,7 +15,7 @@ flags = false(1, 36);
 
 num_humans = 3;
 num_agents = num_humans;
-num_filling_boxes = 4;
+num_filling_boxes = 3;
 num_robots = 2;
 initialTime = randi([120, 250], 1, num_agents);
 humanData = cell(num_humans, 1);
@@ -394,7 +394,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
         end
         pause(0.01); % Pause for 0.1 second
         
-        Experiments3Hum2Rob
+        ExperimentsFinal
         duration = ReAll.makespan; %max(ReAllSave.timeSh(10:12)); %duration = ReAll.makespan;
         i = i + 1;
         agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
