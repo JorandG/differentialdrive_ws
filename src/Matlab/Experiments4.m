@@ -99,16 +99,16 @@ if any(timingData >= ReAllSave.timeF(40)) && ~flags(12)
 end
 
 % Start Filling 2
-if any(timingData >= ReAllSave.timeSh(5)+50) && ~flags(13)
-    humanData{1}.StartFilling(2) = ReAllSave.timeSh(5)+50;
+if any(timingData >= ReAllSave.timeSh(5)+15) && ~flags(13)
+    humanData{1}.StartFilling(2) = ReAllSave.timeSh(5)+15;
     flags(13) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= ReAllSave.timeSh(6)) && ~flags(14)
+elseif any(timingData >= ReAllSave.timeSh(6)+5) && ~flags(14)
     humanData{2}.StartFilling(2) = ReAllSave.timeSh(6)+5;
     flags(14) = true;
     send(pub{2}, humanData{2});
-elseif any(timingData >= ReAllSave.timeSh(7)+60) && ~flags(15)
-    humanData{3}.StartFilling(2) = ReAllSave.timeSh(7)+60;
+elseif any(timingData >= ReAllSave.timeSh(7)+20) && ~flags(15)
+    humanData{3}.StartFilling(2) = ReAllSave.timeSh(7)+20;
     flags(15) = true;
     send(pub{3}, humanData{3});
 elseif any(timingData >= ReAllSave.timeSh(8)) && ~flags(16)
@@ -118,9 +118,9 @@ elseif any(timingData >= ReAllSave.timeSh(8)) && ~flags(16)
 end
 
 % Finish Filling & Start Serving 2
-if any(timingData >= ReAllSave.timeFh(5)+50) && ~flags(17)
+if any(timingData >= ReAllSave.timeFh(5)-10) && ~flags(17)
     finfill = true;
-    humanData{1}.FinishFilling(2) = ReAllSave.timeFh(5)+50;
+    humanData{1}.FinishFilling(2) = ReAllSave.timeFh(5)-10;
     humanData{1}.ConfirmFilling(2) = 1;
     humanData{1}.StartServing(2) = ReAllSave.timeS(41);
     flags(17) = true;
@@ -136,7 +136,7 @@ elseif any(timingData >= ReAllSave.timeFh(7)+30) && ~flags(19)
     finfill = true;
     humanData{3}.FinishFilling(2) = ReAllSave.timeFh(7)+30;
     humanData{3}.ConfirmFilling(2) = 1;
-    humanData{3}.StartServing(2) = ReAllSave.timeS(43)+30;
+    humanData{3}.StartServing(2) = ReAllSave.timeS(43);
     flags(19) = true;
     send(pub{3}, humanData{3});
 elseif any(timingData >= ReAllSave.timeFh(8)) && ~flags(20)
@@ -224,7 +224,7 @@ elseif any(timingData >= ReAllSave.timeFh(10)) && ~flags(30)
     send(pub{2}, humanData{2});
 elseif any(timingData >= ReAllSave.timeFh(11)+30) && ~flags(31)
     finfill = true;
-    humanData{3}.FinishFilling(3) = ReAllSave.timeFh(11);
+    humanData{3}.FinishFilling(3) = ReAllSave.timeFh(11)+30;
     humanData{3}.ConfirmFilling(3) = 1;
     humanData{3}.StartServing(3) = ReAllSave.timeFh(11);
     flags(31) = true;
