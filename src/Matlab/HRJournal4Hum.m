@@ -234,7 +234,7 @@ end
 simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
 
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
-    global num_phases idx_depot_tasks idx_services_tasks idx_waiting_tasks idx_approaching_tasks
+    global num_tasks num_phases idx_depot_tasks idx_services_tasks idx_waiting_tasks idx_approaching_tasks
     %% Display
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
@@ -244,7 +244,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
     xaxisproperties.TickLabelInterpreter = 'latex';
     yaxisproperties= get(gca, 'YAxis');
     yaxisproperties.TickLabelInterpreter = 'latex'; % tex for y-axis
-    fontsize = 12;
+    fontsize = 15;
 
     hold on
 
@@ -268,8 +268,9 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(index(k)/num_agents);
-                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                k1 = index(k) - num_tasks*4
+                t_idx = ceil(k1/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^d$'];
             elseif find(index(k) == idx_services_tasks)
                 displacement = -0.35;
@@ -277,8 +278,9 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(index(k)/num_agents);
-                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                k1 = index(k) - num_tasks*3
+                t_idx = ceil(k1/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^s$'];
             elseif find(index(k) == idx_approaching_tasks)
                 displacement = 0.07;
@@ -286,17 +288,19 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(index(k)/num_agents);
-                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                k1 = index(k) - num_tasks*2
+                t_idx = ceil(k1/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^p$'];
             elseif find(index(k) == idx_waiting_tasks)
-                displacement = -0.5;  
+                displacement = -0.5;  % Adjust this value to control how low you want it
                 h_idx = mod(index(k), num_agents);
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(index(k)/num_agents);
-                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                k1 = index(k) - num_tasks
+                t_idx = ceil(k1/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^w$'];
             end
             text(i+displacement, mean([inittime(k) endtime(k)]), processText, 'Interpreter', 'latex', 'FontSize', fontsize);
