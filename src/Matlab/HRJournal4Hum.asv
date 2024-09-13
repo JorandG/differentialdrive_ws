@@ -234,9 +234,8 @@ end
 simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
 
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
-    global num_phases
+    global num_tasks num_phases idx_depot_tasks idx_services_tasks idx_waiting_tasks idx_approaching_tasks
     %% Display
-    %close all
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
     colors_matrix = rand(num_agents*num_filling_boxes*5,3);
@@ -263,18 +262,45 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 t_idx = ceil(index(k)/num_agents);
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 5, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^g$'];
-            else
-                displacement = -0.35;
-                idxdep = index(k)-max(idx_going_tasks);
-                h_idx = mod(idxdep, num_agents);
+            elseif find(index(k) == idx_depot_tasks)
+                displacement = 0.07;
+                h_idx = mod(index(k), num_agents);
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(idxdep/num_agents);
-                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:));
+                k1 = index(k) - num_tasks*4
+                t_idx = ceil(index(k1)/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^d$'];
+            elseif find(index(k) == idx_services_tasks)
+                displacement = -0.35;
+                h_idx = mod(index(k), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                %t_idx = ceil(index(k)/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^s$'];
+            elseif find(index(k) == idx_approaching_tasks)
+                displacement = 0.07;
+                h_idx = mod(index(k), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                %t_idx = ceil(index(k)/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^p$'];
+            elseif find(index(k) == idx_waiting_tasks)
+                displacement = -0.5;  % Adjust this value to control how low you want it
+                h_idx = mod(index(k), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                %t_idx = ceil(index(k)/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^w$'];
             end
-            text(i+displacement,mean([inittime(k) endtime(k)]),processText,'Interpreter','latex', 'FontSize',fontsize);
+            text(i+displacement, mean([inittime(k) endtime(k)]), processText, 'Interpreter', 'latex', 'FontSize', fontsize);
         end
     end
 
@@ -286,12 +312,12 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
             plot([i+num_robots i+num_robots], [inittime(k) endtime(k)], 'LineWidth', 5, 'Color', colors_matrix(i*(num_filling_boxes*num_agents-1)+k,:));
 
             processText = ['$\tau_{', num2str(i),',', num2str(k), '}^o$'];
-            text(i+num_robots+0.1,mean([inittime(k) endtime(k)]),processText,'Interpreter','latex','FontSize',fontsize);
+            text(i+num_robots+0.1, mean([inittime(k) endtime(k)]), processText, 'Interpreter', 'latex', 'FontSize', fontsize);
         end
     end
     xlim([0 num_robots+num_agents + 1]);
-    xlabel('Agents','Interpreter','latex','FontSize',fontsize);
-    ylabel('t[s]','Interpreter','latex','FontSize',fontsize);
+    xlabel('Agents', 'Interpreter', 'latex', 'FontSize', fontsize);
+    ylabel('t[s]', 'Interpreter', 'latex', 'FontSize', fontsize);
 
     labels{1} = '';
     for i=1:num_robots
@@ -301,13 +327,15 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
         labels{num_robots+i+1} = ['$h_{', num2str(i), '}$'];
     end
 
-    set(gca, 'XTick', [0:num_agents+num_robots], 'XTickLabel', labels, 'FontSize',fontsize);
+    set(gca, 'XTick', [0:num_agents+num_robots], 'XTickLabel', labels, 'FontSize', fontsize);
     grid
     box on
 end
 
+
+
 function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
-    global finfill finserv alreadyHere agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation indVal1 indVal2 indVal1W indVal2W
+    global num_tasks finfill finserv alreadyHere agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation indVal1 indVal2 indVal1W indVal2W
     ReAll1 = ReAll
     reall_already_once = 0;
     num_phases = 5;
@@ -458,8 +486,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     %humanData{u}.FinishFilling(humanData{u}.Task) = FinishFill;
                     
                     for h=1:num_agents
-                        humanData{h}.FinishFilling = ReAll.timeFh(h:num_agents:end);
-                        humanData{h}.StartFilling = ReAll.timeSh(h:num_agents:end);
+                        %humanData{h}.FinishFilling = ReAll.timeFh(h:num_agents:end);
+                        %humanData{h}.StartFilling = ReAll.timeSh(h:num_agents:end);
                         humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
                         humanData{h}.FinishServing = ReAll.timeF(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
 
@@ -520,7 +548,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         if humanData{u}.FinishFilling(humanData{u}.Task) > ReAllSave.timeFh(u+(humanData{u}.Task-1)*num_humans)
                             disp('human slower shifting ...');
                             ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
-                            %display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                            display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
                         end
 
                         agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
@@ -579,7 +607,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         % 
                         if humanData{u}.FinishFilling(humanData{u}.Task) > ReAllSave.timeFh(u)                   
                             ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
-                            %display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                            display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
                             disp('human slower shifting ...')
                         end
 

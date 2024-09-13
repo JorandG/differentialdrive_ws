@@ -78,8 +78,8 @@ for h=1:num_humans
     humanData{h}.RobotMinVelocityProximity = repmat(0.04, 1, num_filling_boxes); %inv_vel_min 1/0.04
     humanData{h}.RobotMaxVelocityProximity = repmat(0.15, 1, num_filling_boxes); %inv_vel_max 1/0.15: 75% of the physical v_max
     humanData{h}.RobotVelocityProximityWeight = repmat(1, 1, num_filling_boxes);
-    humanData{h}.WaitingTime = repmat(2, 1, num_filling_boxes); %Initialized with 1, it's the weight mapping to the Objective Function directly
-    humanData{h}.WaitingTimeWeight = repmat(2, 1, num_filling_boxes);
+    humanData{h}.WaitingTime = repmat(1, 1, num_filling_boxes); %Initialized with 1, it's the weight mapping to the Objective Function directly
+    humanData{h}.WaitingTimeWeight = repmat(1, 1, num_filling_boxes);
 
     for i = 1:num_filling_boxes, humanData{h}.StartFilling(i) = sum([0, repmat([initialTime + approaching_time + serving_time], 1, i-1)]); end
     for i = 1:num_filling_boxes, humanData{h}.FinishFilling(i) = sum([initialTime, repmat([initialTime + approaching_time + serving_time], 1, i-1)]); end
@@ -95,11 +95,11 @@ for h=1:num_humans
     humanData{h}.HappinessProx = repmat(0, 1, num_filling_boxes+1);
     humanData{h}.Efficiency = repmat(0, 1, num_filling_boxes+1);
     if h == 1
-        humanData{h}.Severity = repmat(0.75, 1, num_filling_boxes+1);
+        humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
     elseif h == 2
         humanData{h}.Severity = repmat(0.5, 1, num_filling_boxes+1);
     elseif h == 3
-        humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
+        humanData{h}.Severity = repmat(0.75, 1, num_filling_boxes+1);
     elseif h == 4
         humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
     end
@@ -234,7 +234,7 @@ end
 simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
 
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
-    global num_phases idx_depot_tasks idx_services_tasks idx_waiting_tasks idx_approaching_tasks
+    global num_tasks num_phases idx_depot_tasks idx_services_tasks idx_waiting_tasks idx_approaching_tasks
     %% Display
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
@@ -244,7 +244,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
     xaxisproperties.TickLabelInterpreter = 'latex';
     yaxisproperties= get(gca, 'YAxis');
     yaxisproperties.TickLabelInterpreter = 'latex'; % tex for y-axis
-    fontsize = 12;
+    fontsize = 15;
 
     hold on
 
@@ -268,8 +268,9 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(index(k)/num_agents);
-                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                k1 = index(k) - num_tasks*4
+                t_idx = ceil(k1/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^d$'];
             elseif find(index(k) == idx_services_tasks)
                 displacement = -0.35;
@@ -277,8 +278,9 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(index(k)/num_agents);
-                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                k1 = index(k) - num_tasks*3
+                t_idx = ceil(k1/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^s$'];
             elseif find(index(k) == idx_approaching_tasks)
                 displacement = 0.07;
@@ -286,17 +288,19 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(index(k)/num_agents);
-                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                k1 = index(k) - num_tasks*2
+                t_idx = ceil(k1/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^p$'];
             elseif find(index(k) == idx_waiting_tasks)
-                displacement = -0.5;  
+                displacement = -0.5;  % Adjust this value to control how low you want it
                 h_idx = mod(index(k), num_agents);
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                t_idx = ceil(index(k)/num_agents);
-                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
+                k1 = index(k) - num_tasks
+                t_idx = ceil(k1/num_agents);
+                plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^w$'];
             end
             text(i+displacement, mean([inittime(k) endtime(k)]), processText, 'Interpreter', 'latex', 'FontSize', fontsize);
@@ -425,7 +429,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                 end
                     
                 if humanData{u}.ConfirmFilling(humanData{u}.TaskFilling) == 1
-                    EMAWeights(humanData, num_humans, pub, u)
+                    %EMAWeights(humanData, num_humans, pub, u)
                     
                     agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                     for hum = 1:num_humans
@@ -741,8 +745,8 @@ end
 %Weight of Velocity for the proximity phase 
 humanData{h}.RobotVelocityProximityWeight(humanData{h}.Task) = Wtp
 %Weight of Waiting time 
-%humanData{h}.WaitingTimeWeight(humanData{h}.Task) = Wtw
-humanData{h}.WaitingTimeWeight = repmat(Wtw, 1, num_filling_boxes);
+humanData{h}.WaitingTimeWeight(humanData{h}.Task) = Wtw
+%humanData{h}.WaitingTimeWeight = repmat(Wtw, 1, num_filling_boxes);
 
 send(pub{h}, humanData{h});
 %end

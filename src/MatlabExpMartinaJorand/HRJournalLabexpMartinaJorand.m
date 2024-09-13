@@ -226,42 +226,45 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 5, 'Color', colors_matrix(h_idx*(num_filling_boxes*num_agents-1)+t_idx,:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^g$'];
             elseif find(index(k) == idx_depot_tasks)
+                k1 = k - 4*num_filling_boxes;
                 displacement = 0.07;
-                % h_idx = mod(index(k), num_agents);
-                % if h_idx == 0
-                %     h_idx = num_agents;
-                % end
-                %t_idx = ceil(index(k)/num_agents);
+                h_idx = mod(index(k1), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(index(k1)/num_agents);
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
-                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx -1),  '}^d$'];
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^d$'];
             elseif find(index(k) == idx_services_tasks)
+                k1 = k - 3*num_filling_boxes;
                 displacement = -0.35;
-                % h_idx = mod(index(k), num_agents);
-                % if h_idx == 0
-                %     h_idx = num_agents;
-                % end
-                %t_idx = ceil(index(k)/num_agents);
+                h_idx = mod(index(k1), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(index(k1)/num_agents);
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
-                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx-1),  '}^s$'];
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^s$'];
             elseif find(index(k) == idx_approaching_tasks)
+                k1 = k - 2*num_filling_boxes;
                 displacement = 0.07;
-                % h_idx = mod(index(k), num_agents);
-                % if h_idx == 0
-                %     h_idx = num_agents;
-                % end
-                %t_idx = ceil(index(k)/num_agents);
+                h_idx = mod(index(k1), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(index(k1)/num_agents);
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
-                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx-1),  '}^p$'];
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^p$'];
             elseif find(index(k) == idx_waiting_tasks)
-                % Lower the displacement for waiting tasks
+                k1 = k - num_filling_boxes;
                 displacement = -0.5;  % Adjust this value to control how low you want it
-                % h_idx = mod(index(k), num_agents);
-                % if h_idx == 0
-                %     h_idx = num_agents;
-                % end
-                % t_idx = ceil(index(k)/num_agents);
+                h_idx = mod(index(k1), num_agents);
+                if h_idx == 0
+                    h_idx = num_agents;
+                end
+                t_idx = ceil(index(k1)/num_agents);
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
-                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx -1),  '}^w$'];
+                processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^w$'];
             end
             text(i+displacement, mean([inittime(k) endtime(k)]), processText, 'Interpreter', 'latex', 'FontSize', fontsize);
         end
