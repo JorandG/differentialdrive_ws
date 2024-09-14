@@ -144,18 +144,21 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
 
                 All.timeS(dep) = All.timeF(serv);%All.timeS(dep) + deltar; %depot
                 All.timeF(dep) = All.timeS(dep) + nonzeros(dist1(dep,:).*X(dep,:))/(max(vel_max));%update final time of depot
-            elseif curr_hum == human_to_shift + 1
+            else
                 All.timeS(curr_hum) = All1.timeS(curr_hum) + waiting_time(human_to_shift);
                 All.timeF(curr_hum) = All1.timeF(curr_hum)+ waiting_time(human_to_shift);
+
+                %All.timeS(wait) = All.timeF(curr_hum); %All.timeS(wait) + deltar; %waiting
+                %All.timeF(wait) = All.timeS(wait) + waiting_time(curr_hum); %All.timeF(wait) + deltar;
 
                 All.timeS(app) = All1.timeS(app) + waiting_time(human_to_shift);
                 All.timeF(app) = All1.timeF(app) + waiting_time(human_to_shift);
 
-                All.timeS(serv) = All1.timeS(serv) + waiting_time(human_to_shift); %serving
+                All.timeS(serv) = All1.timeS(serv); %serving
                 All.timeF(serv) = All1.timeF(serv) + waiting_time(human_to_shift);
 
-                All.timeS(dep) = All1.timeS(dep);
-                All.timeF(dep) = All1.timeF(dep) + waiting_time(human_to_shift);
+                All.timeS(dep) = All.timeS(dep)
+                All.timeF(dep) = All.timeS(dep) + nonzeros(dist1(dep,:).*X(dep,:))/(max(vel_max));%update final time of depot
             end
         end
 

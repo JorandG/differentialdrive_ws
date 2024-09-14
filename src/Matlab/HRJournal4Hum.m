@@ -95,11 +95,11 @@ for h=1:num_humans
     humanData{h}.HappinessProx = repmat(0, 1, num_filling_boxes+1);
     humanData{h}.Efficiency = repmat(0, 1, num_filling_boxes+1);
     if h == 1
-        humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
-    elseif h == 2
         humanData{h}.Severity = repmat(0.5, 1, num_filling_boxes+1);
-    elseif h == 3
+    elseif h == 2
         humanData{h}.Severity = repmat(0.75, 1, num_filling_boxes+1);
+    elseif h == 3
+        humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
     elseif h == 4
         humanData{h}.Severity = repmat(1, 1, num_filling_boxes+1);
     end
@@ -268,7 +268,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                k1 = index(k) - num_tasks*4
+                k1 = index(k) - num_tasks*4;
                 t_idx = ceil(k1/num_agents);
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^d$'];
@@ -278,7 +278,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                k1 = index(k) - num_tasks*3
+                k1 = index(k) - num_tasks*3;
                 t_idx = ceil(k1/num_agents);
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^s$'];
@@ -288,7 +288,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                k1 = index(k) - num_tasks*2
+                k1 = index(k) - num_tasks*2;
                 t_idx = ceil(k1/num_agents);
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^p$'];
@@ -298,7 +298,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 if h_idx == 0
                     h_idx = num_agents;
                 end
-                k1 = index(k) - num_tasks
+                k1 = index(k) - num_tasks;
                 t_idx = ceil(k1/num_agents);
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^w$'];
@@ -429,7 +429,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                 end
                     
                 if humanData{u}.ConfirmFilling(humanData{u}.TaskFilling) == 1
-                    %EMAWeights(humanData, num_humans, pub, u)
+                    EMAWeights(humanData, num_humans, pub, u)
                     
                     agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                     for hum = 1:num_humans
@@ -683,7 +683,7 @@ global num_filling_boxes humanTime_filling
 %X_t−1 is the feedback at time t−1.
 alpha = 0.75;
 gamma = 0.2;
-theta = 0.9;
+theta = 0.7;
 initialValues = 1
 h = u;
 
