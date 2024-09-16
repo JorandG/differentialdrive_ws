@@ -568,7 +568,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         end
 
                         ReAllSave = ReAll;
-                        pause(0.1);
+                        pause(0.2);
                        
                         for h=1:num_agents  
                             humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
@@ -634,7 +634,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                             ReAll = Reallocation1(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);
                         end
                         ReAllSave = ReAll;
-                        pause(0.1);
+                        pause(0.2);
                         humanData{u}.Task = humanData{u}.Task + 1;
                         
                         for h=1:num_agents  
