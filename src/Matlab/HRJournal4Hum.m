@@ -245,6 +245,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
     yaxisproperties= get(gca, 'YAxis');
     yaxisproperties.TickLabelInterpreter = 'latex'; % tex for y-axis
     fontsize = 15;
+    fontsize1 = 20;
 
     hold on
 
@@ -293,7 +294,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
                 plot([i i], [inittime(k) endtime(k)],'-', 'LineWidth', 2, 'Color', colors_matrix(randi(30),:))
                 processText = ['$\tau_{', num2str(h_idx),',', num2str(t_idx),  '}^p$'];
             elseif find(index(k) == idx_waiting_tasks)
-                displacement = -0.5;  % Adjust this value to control how low you want it
+                displacement = -0.55;  % Adjust this value to control how low you want it
                 h_idx = mod(index(k), num_agents);
                 if h_idx == 0
                     h_idx = num_agents;
@@ -319,18 +320,19 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
         end
     end
     xlim([0 num_robots+num_agents + 1]);
-    xlabel('Agents', 'Interpreter', 'latex', 'FontSize', fontsize);
-    ylabel('t[s]', 'Interpreter', 'latex', 'FontSize', fontsize);
+    xlabel('Agents', 'Interpreter', 'latex', 'FontSize', fontsize1);
+    ylabel('t[s]', 'Interpreter', 'latex', 'FontSize', fontsize1);
 
     labels{1} = '';
     for i=1:num_robots
-        labels{i+1} = ['$r_{', num2str(i), '}$'];
+        labels{i+1} = ['$m_{', num2str(i), '}$'];
     end
-    for i=1:num_agents
+    for i=1:num_agents-1
         labels{num_robots+i+1} = ['$h_{', num2str(i), '}$'];
     end
+    labels{num_robots+num_agents+1} = ['$w_{', num2str(1), '}$'];
 
-    set(gca, 'XTick', [0:num_agents+num_robots], 'XTickLabel', labels, 'FontSize', fontsize);
+    set(gca, 'XTick', [0:num_agents+num_robots], 'XTickLabel', labels, 'FontSize', fontsize1);
     grid
     box on
 end
@@ -566,6 +568,7 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         end
 
                         ReAllSave = ReAll;
+                        pause(0.1);
                        
                         for h=1:num_agents  
                             humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
@@ -631,8 +634,9 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                             ReAll = Reallocation1(num_service_tasks, num_tasks, num_agents, num_filling_boxes, num_robots, service_time, timeReall, humanTime_filling, RobotID, ReAll);
                         end
                         ReAllSave = ReAll;
+                        pause(0.1);
                         humanData{u}.Task = humanData{u}.Task + 1;
-
+                        
                         for h=1:num_agents  
                             humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
                             humanData{h}.FinishServing = ReAll.timeF(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));

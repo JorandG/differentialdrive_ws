@@ -28,9 +28,9 @@ if any(timingData >= ReAllSave.timeFh(1)-20) && ~flags(5)
     humanData{1}.StartServing(1) = ReAllSave.timeS(37);
     flags(5) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= ReAllSave.timeFh(2)+40) && ~flags(6)
+elseif any(timingData >= ReAllSave.timeFh(2)+50) && ~flags(6)
     finfill = true;
-    humanData{2}.FinishFilling(1) = ReAllSave.timeFh(2)+40;
+    humanData{2}.FinishFilling(1) = ReAllSave.timeFh(2)+50;
     humanData{2}.ConfirmFilling(1) = 1;
     humanData{2}.StartServing(1) = ReAllSave.timeS(38);
     flags(6) = true;
@@ -63,9 +63,9 @@ if any(timingData >= ReAllSave.timeF(37)) && ~flags(9)
     send(pub{1}, humanData{1});
 end
 
-if any(timingData >= ReAllSave.timeF(38)+40) && ~flags(10)
+if any(timingData >= ReAllSave.timeF(38)+50) && ~flags(10)
     finserv = true;
-    humanData{2}.FinishServing(1) = ReAllSave.timeF(38)+40;
+    humanData{2}.FinishServing(1) = ReAllSave.timeF(38)+50;
     humanData{2}.ConfirmServing(1) = 1;
     humanData{2}.RobotVelocityProximity(1) = -1; % Very Fast
     humanData{2}.WaitingTime = repmat(-0.5, 1, num_filling_boxes); % Waiting time low
