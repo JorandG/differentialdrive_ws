@@ -28,9 +28,9 @@ if any(timingData >= ReAllSave.timeFh(1)-20) && ~flags(5)
     humanData{1}.StartServing(1) = ReAllSave.timeS(37);
     flags(5) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= ReAllSave.timeFh(2)+50) && ~flags(6)
+elseif any(timingData >= ReAllSave.timeFh(2)+40) && ~flags(6)
     finfill = true;
-    humanData{2}.FinishFilling(1) = ReAllSave.timeFh(2)+50;
+    humanData{2}.FinishFilling(1) = ReAllSave.timeFh(2)+40;
     humanData{2}.ConfirmFilling(1) = 1;
     humanData{2}.StartServing(1) = ReAllSave.timeS(38);
     flags(6) = true;
