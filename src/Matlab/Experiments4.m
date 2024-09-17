@@ -63,9 +63,9 @@ if any(timingData >= ReAllSave.timeF(37)) && ~flags(9)
     send(pub{1}, humanData{1});
 end
 
-if any(timingData >= ReAllSave.timeF(38)+50) && ~flags(10)
+if any(timingData >= ReAllSave.timeF(38)+60) && ~flags(10)
     finserv = true;
-    humanData{2}.FinishServing(1) = ReAllSave.timeF(38)+50;
+    humanData{2}.FinishServing(1) = ReAllSave.timeF(38)+60;
     humanData{2}.ConfirmServing(1) = 1;
     humanData{2}.RobotVelocityProximity(1) = -1; % Very Fast
     humanData{2}.WaitingTime = repmat(-0.5, 1, num_filling_boxes); % Waiting time low
