@@ -31,11 +31,7 @@ if any(timingData >= ReAllSave.timeFh(1)-20) && ~flags(5)
 elseif any(timingData >= ReAllSave.timeFh(2)+60) && ~flags(6)
     finfill = true;
     humanData{2}.FinishFilling(1) = ReAllSave.timeFh(2)+60;
-<<<<<<< HEAD
     %humanData{2}.ConfirmFilling(1) = 1;
-=======
-    humanData{2}.ConfirmFilling(1) = 1;
->>>>>>> 3c344924467144715a790a1347fb84e5b96e3d78
     humanData{2}.StartServing(1) = ReAllSave.timeS(38);
     flags(6) = true;
     send(pub{2}, humanData{2});
