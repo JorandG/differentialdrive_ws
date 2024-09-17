@@ -208,6 +208,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
     yaxisproperties= get(gca, 'YAxis');
     yaxisproperties.TickLabelInterpreter = 'latex'; % tex for y-axis
     fontsize = 12;
+    fontsize1 = 18;
 
     hold on
 
@@ -282,18 +283,18 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
         end
     end
     xlim([0 num_robots+num_agents + 1]);
-    xlabel('Agents', 'Interpreter', 'latex', 'FontSize', fontsize);
-    ylabel('t[s]', 'Interpreter', 'latex', 'FontSize', fontsize);
+    xlabel('Agents', 'Interpreter', 'latex', 'FontSize', fontsize1);
+    ylabel('t[s]', 'Interpreter', 'latex', 'FontSize', fontsize1);
 
     labels{1} = '';
     for i=1:num_robots
-        labels{i+1} = ['$r_{', num2str(i), '}$'];
+        labels{i+1} = ['$m_{', num2str(i), '}$'];
     end
     for i=1:num_agents
         labels{num_robots+i+1} = ['$h_{', num2str(i), '}$'];
     end
 
-    set(gca, 'XTick', [0:num_agents+num_robots], 'XTickLabel', labels, 'FontSize', fontsize);
+    set(gca, 'XTick', [0:num_agents+num_robots], 'XTickLabel', labels, 'FontSize', fontsize1);
     grid
     box on
 end
