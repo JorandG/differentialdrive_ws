@@ -28,11 +28,17 @@
 % meansIndexCampWSum = meansIndexCampW1 + 15*meansIndexCampW;
 % 
 % % Sum of the standard deviations (assuming independence)
-stdIndexCamp = [1.0398; 1.8042; 1.2979; 1.6975];
-stdIndexCampW = [0.3874; 1.2172; 0.8597; 0.5861];
+% stdIndexCamp = [1.0398; 1.8042; 1.2979; 1.6975];
+% stdIndexCampW = [0.3874; 1.2172; 0.8597; 0.5861];
+% 
+% meansIndexCamp = [2.9786; 2.8027; 2.4034; 2.2642];
+% meansIndexCampW = [0.9307; 1.2669; 0.9706; 0.9683];
 
-meansIndexCamp = [2.9786; 2.8027; 2.4034; 2.2642];
-meansIndexCampW = [0.9307; 1.2669; 0.9706; 0.9683];
+stdIndexCamp = [1.3065; 1.7741; 1.4764; 1.4964; 0];
+stdIndexCampW = [0.2890; 1.1845; 0.9640; 0.9119; 0];
+
+meansIndexCamp = [3.3991; 2.6735; 2.4146; 2.3208; 0.6184];
+meansIndexCampW = [1.0931; 1.0024; 1.02778; 1.1097; -0.5574];
 
 % Plotting the mean results with std error bars
 num_scenarios = length(meansIndexCamp);

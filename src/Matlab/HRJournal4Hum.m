@@ -340,13 +340,15 @@ end
 
 
 function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, service_time, num_tasks, idx_to_consider_r, idx_to_consider_h, idx_to_ignore_r, idx_to_ignore_h)
-    global finfill finserv alreadyHere agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation indVal1 indVal2 indVal1W indVal2W
+    global  slowlier finfill finserv alreadyHere agents_ordered_allocation initialTime FinishFill Reduction chi inv_vel_min_prox inv_vel_max_prox ProximityTaskDurations ProximityTaskVelocities ProximityTaskFeedback ProximityTaskWeights idx_approaching_tasks Prox waiting_time idx_services_tasks ReAllSave humanTime_serving FirstSendMILPResults idx_to_consider_current_r difference humanTime_fillingPrev timeReall num_humans timingData TimingSub MILPData MILPDataPub sizeFinishFilling pub msg humanSub humanData msgTime pubTime WeightHumanwaiting TimeHumFilling1 Ph num_phases dist num_agents human num_robots tasknum tasknum1 humanTime_filling num_filling_boxes num_service_tasks vel_min vel_max inv_vel_max inv_vel_min M idx_to_consider_h idx_to_ignore_h idx_to_consider_r idx_to_ignore_r first_allocation indVal1 indVal2 indVal1W indVal2W
     ReAll1 = ReAll
     reall_already_once = 0;
     num_phases = 5;
     duration = ReAll.makespan;
     valuetime = 0;
     waitingTime = [];
+    updateAlready = false;
+    slowlier = false;
 
     ProximityTaskVelocities = [];
 
@@ -461,6 +463,8 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     FinishFill = humanData{u}.FinishFilling(humanData{u}.Task);
       
                     for h=1:num_agents
+                        humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
+                        humanData{h}.FinishServing = ReAll.timeF(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
                         humanTime_filling(h:num_humans:end) = humanData{h}.FinishFilling - humanData{h}.StartFilling;
                         humanTime_serving(h:num_humans:end) = humanData{h}.FinishServing - humanData{h}.StartServing;
                         humanData{h}.TimeServing = humanData{h}.FinishServing - humanData{h}.StartServing;
@@ -473,6 +477,13 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     %ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
                     %display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, FinishFill);
                     send(pub{u}, humanData{u});
+                end
+
+                if humanData{u}.FinishFilling(1) > ReAllSave.timeFh(u) && humanData{u}.FinishFilling(1) && ~updateAlready                
+                    ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
+                    display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                    updateAlready = true;
+                    disp('human slower shifting ...')
                 end
 
                 if humanData{u}.ConfirmServing(humanData{u}.Task) == 1 %|| humanData{u}.ConfirmFilling(humanData{u}.Task) == 1
@@ -610,11 +621,13 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                         send(pub{u}, humanData{u});        
                         %Need to run updateSchedule before Reallocation
                         % 
-                        if humanData{u}.FinishFilling(humanData{u}.Task) > ReAllSave.timeFh(u)                   
-                            ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
-                            %display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
-                            disp('human slower shifting ...')
-                        end
+                        %if humanData{u}.FinishFilling(humanData{u}.Task) > ReAllSave.timeFh(u)  
+                        % if slowlier
+                        %     ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
+                        %     display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
+                        %     disp('human slower shifting ...')
+                        %     slowlier = false;
+                        % end
 
                         agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
                         for c=1:num_robots

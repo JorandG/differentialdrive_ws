@@ -16,7 +16,7 @@ global num_humans num_robots
 num_filling_boxes = 3;
 flags = false(1, num_humans*num_filling_boxes*3);
 compteur = 0;
-num_humans = 2;
+num_humans = 6;
 num_robots = 2;
 num_agents = num_humans;
 
@@ -266,7 +266,7 @@ function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tas
     %% Display
     rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
-    colors_matrix = rand(num_agents*num_filling_boxes*5,3);
+    colors_matrix = rand(num_agents*num_filling_boxes*8,3);
     figure;
     xaxisproperties= get(gca, 'XAxis');
     xaxisproperties.TickLabelInterpreter = 'latex';
