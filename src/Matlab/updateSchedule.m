@@ -146,7 +146,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
 
                 All.timeS(dep) = All.timeF(serv);%All.timeS(dep) + deltar; %depot
                 All.timeF(dep) = All.timeS(dep) + nonzeros(dist1(dep,:).*X(dep,:))/(max(vel_max));%update final time of depot
-            elseif curr_hum == human_to_shift + 1 && ~alreadyShifted
+            elseif curr_hum == human_to_shift - 1 && ~alreadyShifted
                 alreadyShifted = true
                 All.timeS(curr_hum) = All1.timeS(curr_hum) + waiting_time(human_to_shift);
                 All.timeF(curr_hum) = All1.timeF(curr_hum) + waiting_time(human_to_shift);
