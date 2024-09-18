@@ -480,6 +480,10 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                 end
 
                 if humanData{u}.FinishFilling(1) > ReAllSave.timeFh(u) && ~updateAlready
+                    %waiting_time(u) = 60;
+                    FinishFill = humanData{u}.FinishFilling(humanData{u}.Task);
+                    waiting_time(u) = FinishFill - MILPData{humanData{u}.Robots(humanData{u}.Task)}.GoingFinish(humanData{u}.Task) 
+                    ReAll.timeFh(u) = humanData{u}.FinishFilling(1);
                     ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
                     display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
                     updateAlready = true;
@@ -500,12 +504,6 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     humanData{u}.FinishFilling = ReAll.timeFh(u:num_agents:end);
                     humanData{u}.StartFilling = ReAll.timeSh(u:num_agents:end);
                     MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks = MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks + 1;
-                    if humanData{u}.Task == num_filling_boxes
-                        humanData{u}.Task = num_filling_boxes + 1;
-
-                    else
-                        humanData{u}.Task = humanData{u}.Task + 1;
-                    end
                     send(pub{u}, humanData{u});
 
 

@@ -5,6 +5,7 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
     humanTime_filling1 = repmat(0,1, num_humans*num_filling_boxes);
     serv_time = humanTime_serving; %All.timeF(idx_services_tasks) - All.timeS(idx_services_tasks);
     alreadyShifted = false;
+    alreadyShifted1 = false;
 
     for h=1:num_agents
         if humanData{h}.Task < num_filling_boxes
@@ -129,7 +130,8 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
             disp('shifting current human');
             deltar = All.timeFh(curr_hum) - All.timeF(curr_hum);
             
-            if curr_hum == human_to_shift
+            if curr_hum == human_to_shift && ~alreadyShifted1
+                alreadyShifted1 = true;
                 All.timeSh(curr_hum) = All1.timeSh(curr_hum);
                 All.timeFh(curr_hum) = All1.timeFh(curr_hum);
                 All.timeS(curr_hum) = All1.timeS(curr_hum);
