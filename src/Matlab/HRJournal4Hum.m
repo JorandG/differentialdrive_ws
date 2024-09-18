@@ -479,11 +479,40 @@ function simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min,
                     send(pub{u}, humanData{u});
                 end
 
-                if humanData{u}.FinishFilling(1) > ReAllSave.timeFh(u) && ~updateAlready                
+                if humanData{u}.FinishFilling(1) > ReAllSave.timeFh(u) && ~updateAlready
                     ReAll = updateSchedule(ReAll, humanTime_filling, dist, vel_min, vel_max, inv_vel_min, inv_vel_max, idx_depot_tasks, idx_going_tasks, idx_to_ignore_r, idx_to_ignore_h, agents_ordered_allocation, service_time, humanTime_fillingPrev);
                     display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReall);
                     updateAlready = true;
                     disp('human slower shifting ...')
+                    for h=1:num_agents
+                        humanData{h}.StartServing = ReAll.timeS(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
+                        humanData{h}.FinishServing = ReAll.timeF(h+num_agents*3*num_filling_boxes:num_agents:num_agents*3*(num_filling_boxes+1));
+
+                        % Send new timings on the topic
+                        humanData{h}.FinishFilling = ReAll.timeFh(h:num_agents:end);
+                        humanData{h}.StartFilling = ReAll.timeSh(h:num_agents:end);
+                        humanData{h}.TimeFilling = humanData{h}.FinishFilling - humanData{h}.StartFilling;
+                        send(pub{h}, humanData{h});
+                    end
+
+                    humanTime_fillingPrev = humanTime_filling;
+                    % Send new timings on the topic
+                    humanData{u}.FinishFilling = ReAll.timeFh(u:num_agents:end);
+                    humanData{u}.StartFilling = ReAll.timeSh(u:num_agents:end);
+                    MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks = MILPData{humanData{u}.Robots(humanData{u}.Task)}.Tasks + 1;
+                    if humanData{u}.Task == num_filling_boxes
+                        humanData{u}.Task = num_filling_boxes + 1;
+
+                    else
+                        humanData{u}.Task = humanData{u}.Task + 1;
+                    end
+                    send(pub{u}, humanData{u});
+
+
+                    agents_ordered_allocation = processAllocation(ReAll, num_phases, num_robots, num_agents, idx_going_tasks, idx_depot_tasks);
+                    for c=1:num_robots
+                        sendRobotTaskUpdates(c, u, ReAll, X1, MILPDataPub, MILPData, idx_going_tasks, num_filling_boxes, humanData, humanData{u}.Task)
+                    end
                 end
 
                 if humanData{u}.ConfirmServing(humanData{u}.Task) == 1 %|| humanData{u}.ConfirmFilling(humanData{u}.Task) == 1

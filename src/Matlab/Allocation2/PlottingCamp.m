@@ -34,11 +34,11 @@
 % meansIndexCamp = [2.9786; 2.8027; 2.4034; 2.2642];
 % meansIndexCampW = [0.9307; 1.2669; 0.9706; 0.9683];
 
-stdIndexCamp = [1.3065; 1.7741; 1.4764; 1.4964; 0];
-stdIndexCampW = [0.2890; 1.1845; 0.9640; 0.9119; 0];
+stdIndexCamp = [1.3065; 1.7741; 1.4764; 1.4964; 0.9573];
+stdIndexCampW = [0.2890; 1.1845; 0.9640; 0.9119; 0.9602];
 
-meansIndexCamp = [3.3991; 2.6735; 2.4146; 2.3208; 0.6184];
-meansIndexCampW = [1.0931; 1.0024; 1.02778; 1.1097; -0.5574];
+meansIndexCamp = [3.3991; 2.6735; 2.4146; 2.3208; 1.5729];
+meansIndexCampW = [1.0931; 1.0024; 1.02778; 1.1097; 0.9058];
 
 % Plotting the mean results with std error bars
 num_scenarios = length(meansIndexCamp);
@@ -47,17 +47,23 @@ figure;
 hold on;
 
 % Plot mean and std for indexCamp (with reallocation)
-errorbar(1:num_scenarios, meansIndexCamp, stdIndexCamp, '-o', 'DisplayName', 'With Reallocation');
+errorbar(1:num_scenarios, meansIndexCamp, stdIndexCamp, '-o', 'DisplayName', ...
+    '$\textbf{With Reallocation}$');
+hold on;
 
 % Plot mean and std for indexCampW (without reallocation)
-errorbar(1:num_scenarios, meansIndexCampW, stdIndexCampW, '-x', 'DisplayName', 'Without Reallocation');
+errorbar(1:num_scenarios, meansIndexCampW, stdIndexCampW, '-x', 'DisplayName', ...
+    '$\textbf{Without Reallocation}$');
 
+% Set the interpreter for the legend to LaTeX and font size
+legend('Interpreter', 'latex', 'FontSize', 18);
 % Add title and labels
-title('Mean Index Values with and without Reallocation across Scenarios');
-xlabel('Scenario');
-ylabel('Mean Index Value');
+%title('Mean Index Values with and without Reallocation across Scenarios');
+xlabel('Scenario', 'Interpreter', 'latex', 'FontSize', 18);
+ylabel('Mean Index Value', 'Interpreter', 'latex', 'FontSize', 18);
 xticks(1:num_scenarios);
 xticklabels({'2H2R', '3H2R', '4H2R', '5H2R'});
+set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 18);
 grid on;
 
 % Add a legend to distinguish the two plots

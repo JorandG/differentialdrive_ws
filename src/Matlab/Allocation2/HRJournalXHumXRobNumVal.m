@@ -14,10 +14,11 @@ global flags numstored
 global num_humans num_robots
 
 num_filling_boxes = 3;
-flags = false(1, num_humans*num_filling_boxes*3);
+
 compteur = 0;
 num_humans = 6;
 num_robots = 2;
+flags = false(1, num_humans*num_filling_boxes*3);
 num_agents = num_humans;
 
 initialTime = randi([120, 250], 1, num_agents);
@@ -264,7 +265,7 @@ simulation(ReAll, idx_going_tasks, dist, vel_min, vel_max, inv_vel_min, inv_vel_
 function display(ReAll, num_robots, num_agents, num_filling_boxes, idx_going_tasks, timeReAll)
     global num_phases idx_depot_tasks idx_services_tasks idx_waiting_tasks idx_approaching_tasks
     %% Display
-    rng(28)
+    %rng(28)
     X1 = repmat(ReAll.X,num_phases,1);
     colors_matrix = rand(num_agents*num_filling_boxes*8,3);
     figure;
