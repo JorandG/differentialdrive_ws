@@ -134,6 +134,10 @@ function AllUpdated = updateSchedule(All, humanTime_filling, dist, vel_min, vel_
                 alreadyShifted1 = true;
                 All.timeSh(curr_hum) = All1.timeSh(curr_hum);
                 All.timeFh(curr_hum) = All1.timeFh(curr_hum);
+
+                All.timeSh(curr_hum+num_agents) = All1.timeSh(curr_hum+num_agents) + waiting_time(curr_hum);
+                All.timeFh(curr_hum+num_agents) = All1.timeFh(curr_hum+num_agents) + waiting_time(curr_hum);
+
                 All.timeS(curr_hum) = All1.timeS(curr_hum);
                 All.timeF(curr_hum) = All1.timeF(curr_hum);
 
