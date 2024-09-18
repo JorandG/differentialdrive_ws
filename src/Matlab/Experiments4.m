@@ -108,7 +108,7 @@ if any(timingData >= ReAllSave.timeSh(5)+15) && ~flags(13)
     humanData{1}.StartFilling(2) = ReAllSave.timeSh(5)+15;
     flags(13) = true;
     send(pub{1}, humanData{1});
-elseif any(timingData >= ReAllSave.timeSh(6)+20) && ~flags(14)
+elseif any(timingData >= ReAllSave.timeSh(6)+70) && ~flags(14)
     humanData{2}.StartFilling(2) = ReAllSave.timeSh(6)+70;
     flags(14) = true;
     send(pub{2}, humanData{2});
